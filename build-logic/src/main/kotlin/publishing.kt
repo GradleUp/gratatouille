@@ -1,66 +1,179 @@
-
-import EnvVarKeys.Nexus.username
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import net.mbonnin.vespene.lib.NexusStagingClient
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.tasks.Jar
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 import kotlin.time.Duration.Companion.minutes
 
 
-object EnvVarKeys {
-    object Nexus {
-        const val username = "SONATYPE_NEXUS_USERNAME"
-        const val password = "SONATYPE_NEXUS_PASSWORD"
-        const val profileId = "IO_OPENFEEDBACK_PROFILE_ID"
-    }
-
-    object GPG {
-        const val privateKey = "OPENFEEDBACK_GPG_PRIVATE_KEY"
-        const val password = "OPENFEEDBACK_GPG_PRIVATE_KEY_PASSWORD"
-    }
-
-    object GitHub {
-        const val event = "GITHUB_EVENT_NAME"
-        const val ref = "GITHUB_REF"
-    }
+enum class SonatypeHost {
+    Ossrh,
+    OssrhS01,
 }
 
-fun Project.configurePublishing() {
-    group = "com.gradleup.gratatouille"
+
+class SonatypeOptions(
+    val username: String,
+    val password: String,
+    val host: SonatypeHost,
+    val stagingProfile: String
+)
+
+class ProjectOptions(
+    val groupId: String,
+    val version: String,
+    val descriptions: String,
+    val vcsUrl: String,
+    val developers: String,
+    val license: String,
+    val licenseUrl: String,
+)
+
+class SigningOptions(
+    /**
+     * GPG_PRIVATE_KEY must contain the armoured private key that starts with -----BEGIN PGP PRIVATE KEY BLOCK-----
+     * It can be obtained with gpg --armour --export-secret-keys KEY_ID
+     */
+    val privateKey: String,
+    val privateKeyPassword: String
+)
+
+class GithubOptions(
+    val mainBranch: String,
+    val autoRelease: Boolean
+)
+
+/**
+ * Configures publishing
+ *
+ * @param projectOptions options for coordinates and POM
+ * @param sonatypeOptions sonatype options
+ * @param signingOptions signing options. May be null to skip signing
+ */
+fun Project.configurePublishing(
+    projectOptions: ProjectOptions,
+    sonatypeOptions: SonatypeOptions?,
+    signingOptions: SigningOptions?,
+    configurePublications: Action<PublicationContainer> = Action {  }
+) {
+    group = projectOptions.groupId
+    version = projectOptions.version
 
     plugins.apply("maven-publish")
-    plugins.apply("signing")
-    extensions.configurePublishing(
-        project = this@configurePublishing,
-        artifactName = name
-    )
 
-    extensions.configureSigning()
+    val publishing = extensions.getByType(PublishingExtension::class.java)
+    configurePublications.execute(publishing.publications)
 
-    tasks.withType(Sign::class.java).configureEach {
-        it.isEnabled = !System.getenv(EnvVarKeys.GPG.privateKey).isNullOrBlank()
+    if (sonatypeOptions != null) {
+        publishing.repositories {
+            it.mavenSonatypeSnapshot(sonatypeOptions)
+            it.mavenSonatypeStaging(sonatypeOptions = sonatypeOptions, project = project)
+        }
+    }
+    val emptyJavadocJarTaskProvider = tasks.register("libEmptyJavadocJar", Jar::class.java) {
+        it.archiveClassifier.set("javadoc")
     }
 
-    rootProject.tasks.named("ossStagingRelease").configure {
-        it.dependsOn(tasks.named("publishAllPublicationsToOssStagingRepository"))
+    val emptySourcesJarTaskProvider = tasks.register("libEmptySourcesJar", Jar::class.java) {
+        it.archiveClassifier.set("sources")
+    }
+    afterEvaluate {
+        publishing.publications.configureEach {
+            (it as MavenPublication)
+            if (it.pom.packaging != "pom") {
+                if (it.artifacts.none { it.classifier == "javadoc" }) {
+                    it.artifact(emptyJavadocJarTaskProvider)
+                }
+                if (it.artifacts.none { it.classifier == "sources" }) {
+                    it.artifact(emptySourcesJarTaskProvider)
+                }
+            }
+            it.pom {
+                it.name.set(name)
+                it.description.set(projectOptions.descriptions)
+                it.url.set(projectOptions.vcsUrl)
+                it.scm {
+                    it.url.set(projectOptions.vcsUrl)
+                    it.connection.set(projectOptions.vcsUrl)
+                    it.developerConnection.set(projectOptions.vcsUrl)
+                }
+                it.licenses {
+                    it.license {
+                        it.name.set(projectOptions.license)
+                        it.url.set(projectOptions.licenseUrl)
+                    }
+                }
+                it.developers {
+                    it.developer {
+                        it.id.set(projectOptions.developers)
+                        it.name.set(projectOptions.developers)
+                    }
+                }
+            }
+        }
+    }
+
+    if (signingOptions != null) {
+        plugins.apply("signing")
+        val signing = extensions.getByType(SigningExtension::class.java)
+        signing.useInMemoryPgpKeys(
+            System.getenv(signingOptions.privateKey),
+            System.getenv(signingOptions.privateKeyPassword)
+        )
+        signing.sign(publishing.publications)
+
+        // See https://github.com/gradle/gradle/issues/26091
+        tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+            val signingTasks = tasks.withType(Sign::class.java)
+            it.mustRunAfter(signingTasks)
+        }
     }
 }
 
-private fun Project.getOrCreateRepoIdTask(): TaskProvider<Task> {
+/**
+ * @param githubOptions CI options. May be null to skip publishing on CI. If non-null, creates `publishIfNeeded` task
+ * that publishes to SNAPSHOTS if the version ends with `-SNAPSHOT` or Maven Central else
+ */
+fun Project.configureGitHub(sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
+    if (githubOptions != null && this == rootProject && sonatypeOptions != null) {
+        val publishIfNeeded = project.publishIfNeededTaskProvider()
+        val ossStagingReleaseTask =
+            project.registerReleaseTask(sonatypeOptions, githubOptions.autoRelease, "ossStagingRelease")
+
+        val eventName = System.getenv("GITHUB_EVENT_NAME")
+        val ref = System.getenv("GITHUB_REF")
+
+        if (eventName == "push" && ref == "refs/heads/${githubOptions.mainBranch}" && project.version.toString()
+                .endsWith("-SNAPSHOT")
+        ) {
+            project.logger.log(LogLevel.LIFECYCLE, "Deploying snapshot to OssSnapshot...")
+            publishIfNeeded.dependsOn(project.tasks.named("publishAllPublicationsToOssSnapshotsRepository"))
+        }
+
+        if (ref?.startsWith("refs/tags/") == true) {
+            project.logger.log(LogLevel.LIFECYCLE, "Deploying release to OssStaging...")
+            publishIfNeeded.dependsOn(ossStagingReleaseTask)
+        }
+    }
+}
+
+private fun Project.getOrCreateRepoIdTask(
+    sonatypeOptions: SonatypeOptions,
+): TaskProvider<Task> {
     return try {
         rootProject.tasks.named("createStagingRepo")
     } catch (e: UnknownDomainObjectException) {
@@ -69,9 +182,9 @@ private fun Project.getOrCreateRepoIdTask(): TaskProvider<Task> {
 
             it.doLast {
                 val repoId = runBlocking {
-                    nexusStagingClient.createRepository(
-                        profileId = System.getenv(EnvVarKeys.Nexus.profileId),
-                        description = "io.openfeedback ${rootProject.version}"
+                    nexusStatingClient(sonatypeOptions).createRepository(
+                        profileId = sonatypeOptions.stagingProfile,
+                        description = "$group:$name:$version"
                     )
                 }
                 logger.log(LogLevel.LIFECYCLE, "repo created: $repoId")
@@ -89,53 +202,65 @@ fun Project.publishIfNeededTaskProvider(): TaskProvider<Task> {
     }
 }
 
-private val baseUrl = "https://s01.oss.sonatype.org/service/local/"
-
-private val nexusStagingClient by lazy {
-    NexusStagingClient(
-        baseUrl = baseUrl,
-        username = System.getenv(username)
-            ?: error("please set the $username environment variable"),
-        password = System.getenv(EnvVarKeys.Nexus.password)
-            ?: error("please set the ${EnvVarKeys.Nexus.password} environment variable"),
+private fun nexusStatingClient(sonatypeOptions: SonatypeOptions): NexusStagingClient {
+    return NexusStagingClient(
+        baseUrl = "${sonatypeOptions.host.toBaseUrl()}/service/local/",
+        username = sonatypeOptions.username,
+        password = sonatypeOptions.password
     )
 }
 
-fun Project.getOrCreateRepoId(): Provider<String> {
-    return getOrCreateRepoIdTask().map {
+fun Project.getOrCreateRepoId(sonatypeOptions: SonatypeOptions): Provider<String> {
+    return getOrCreateRepoIdTask(
+        sonatypeOptions,
+    ).map {
         it.outputs.files.singleFile.readText()
     }
 }
 
-fun Project.getOrCreateRepoUrl(): Provider<String> {
-    return getOrCreateRepoId().map { "${baseUrl}staging/deployByRepositoryId/$it/" }
-}
-
-fun Task.closeAndReleaseStagingRepository(repoId: String) {
-    runBlocking {
-        logger.log(LogLevel.LIFECYCLE, "Closing repository $repoId")
-        nexusStagingClient.closeRepositories(listOf(repoId))
-        withTimeout(5.minutes) {
-            nexusStagingClient.waitForClose(repoId, 1000) {
-                logger.log(LogLevel.LIFECYCLE, ".")
-            }
-        }
-        nexusStagingClient.releaseRepositories(listOf(repoId), true)
+private fun Project.getOrCreateRepoUrl(
+    sonatypeOptions: SonatypeOptions
+): Provider<String> {
+    return getOrCreateRepoId(sonatypeOptions).map {
+        "${sonatypeOptions.host.toBaseUrl()}/service/local/staging/deployByRepositoryId/$it/"
     }
 }
 
-private fun Project.registerReleaseTask(name: String): TaskProvider<Task> {
+
+private fun Project.registerReleaseTask(
+    sonatypeOptions: SonatypeOptions,
+    autoRelease: Boolean,
+    name: String
+): TaskProvider<Task> {
     val task = try {
         rootProject.tasks.named(name)
     } catch (e: UnknownDomainObjectException) {
-        val repoId = getOrCreateRepoId()
+        val repoId = getOrCreateRepoId(sonatypeOptions)
         rootProject.tasks.register(name) {
             it.inputs.property(
                 "repoId",
                 repoId
             )
+            it.inputs.property(
+                "autoRelease",
+                autoRelease
+            )
             it.doLast {
-                it.closeAndReleaseStagingRepository(it.inputs.properties.get("repoId") as String)
+                runBlocking {
+                    val finalizedRepoId = it.inputs.properties.get("repoId") as String
+                    val finalizedAutoRelease = it.inputs.properties.get("autoRelease") as Boolean
+                    logger.log(LogLevel.LIFECYCLE, "Closing repository $repoId")
+                    val nexusStagingClient = nexusStatingClient(sonatypeOptions)
+                    nexusStagingClient.closeRepositories(listOf(finalizedRepoId))
+                    withTimeout(5.minutes) {
+                        nexusStagingClient.waitForClose(finalizedRepoId, 1000) {
+                            logger.log(LogLevel.LIFECYCLE, ".")
+                        }
+                    }
+                    if (finalizedAutoRelease) {
+                        nexusStagingClient.releaseRepositories(listOf(finalizedRepoId), true)
+                    }
+                }
             }
         }
     }
@@ -143,60 +268,13 @@ private fun Project.registerReleaseTask(name: String): TaskProvider<Task> {
     return task
 }
 
-fun Project.configureRoot() {
-    check(this == rootProject) {
-        "configureRoot must be called from the root project"
-    }
 
-    val publishIfNeeded = project.publishIfNeededTaskProvider()
-    val ossStagingReleaseTask = project.registerReleaseTask("ossStagingRelease")
-
-    val eventName = System.getenv(EnvVarKeys.GitHub.event)
-    val ref = System.getenv(EnvVarKeys.GitHub.ref)
-
-    if (eventName == "push" && ref == "refs/heads/main" && project.version.toString().endsWith("SNAPSHOT")) {
-        project.logger.log(LogLevel.LIFECYCLE, "Deploying snapshot to OssSnapshot...")
-        publishIfNeeded.dependsOn(project.tasks.named("publishAllPublicationsToOssSnapshotsRepository"))
-    }
-
-    if (ref?.startsWith("refs/tags/") == true) {
-        project.logger.log(LogLevel.LIFECYCLE, "Deploying release to OssStaging...")
-        publishIfNeeded.dependsOn(ossStagingReleaseTask)
-    }
-}
-
-fun <T: Task> TaskProvider<T>.dependsOn(other: Any) {
+fun <T : Task> TaskProvider<T>.dependsOn(other: Any) {
     configure {
         it.dependsOn(other)
     }
 }
 
-fun ExtensionContainer.configurePublishing(
-    project: Project,
-    artifactName: String
-) = getByType(PublishingExtension::class.java).apply {
-    publications {
-        it.createReleasePublication(
-            project = project,
-            artifactName = artifactName
-        )
-    }
-
-    repositories {
-        it.mavenSonatypeSnapshot(project = project)
-        it.mavenSonatypeStaging(project = project)
-    }
-}
-
-fun ExtensionContainer.configureSigning() = configure(SigningExtension::class.java) {
-    // GPG_PRIVATE_KEY should contain the armoured private key that starts with -----BEGIN PGP PRIVATE KEY BLOCK-----
-    // It can be obtained with gpg --armour --export-secret-keys KEY_ID
-    it.useInMemoryPgpKeys(
-        System.getenv(EnvVarKeys.GPG.privateKey),
-        System.getenv(EnvVarKeys.GPG.password)
-    )
-    it.sign((getByName("publishing") as PublishingExtension).publications)
-}
 
 fun PublicationContainer.createReleasePublication(
     project: Project,
@@ -237,22 +315,32 @@ fun PublicationContainer.createReleasePublication(
     }
 }
 
-fun RepositoryHandler.mavenSonatypeSnapshot(project: Project) = maven {
-    it.name = "ossSnapshots"
-    it.url = project.uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    it.credentials {
-        it.username = System.getenv(username)
-        it.password = System.getenv(EnvVarKeys.Nexus.password)
+private fun SonatypeHost.toBaseUrl(): String {
+    return when (this) {
+        SonatypeHost.OssrhS01 -> "https://s01.oss.sonatype.org"
+        SonatypeHost.Ossrh -> "https://oss.sonatype.org"
     }
 }
 
-fun RepositoryHandler.mavenSonatypeStaging(project: Project) = maven {
-    it.name = "ossStaging"
-    it.setUrl {
-        project.uri(project.getOrCreateRepoUrl())
-    }
+private fun RepositoryHandler.mavenSonatypeSnapshot(
+    sonatypeOptions: SonatypeOptions,
+) = maven {
+    it.name = "ossSnapshots"
+    it.url = URI("${sonatypeOptions.host.toBaseUrl()}/content/repositories/snapshots/")
     it.credentials {
-        it.username = System.getenv(username)
-        it.password = System.getenv(EnvVarKeys.Nexus.password)
+        it.username = sonatypeOptions.username
+        it.password = sonatypeOptions.password
+    }
+}
+
+fun RepositoryHandler.mavenSonatypeStaging(
+    project: Project,
+    sonatypeOptions: SonatypeOptions,
+) = maven {
+    it.name = "ossStaging"
+    it.setUrl(project.getOrCreateRepoUrl(sonatypeOptions).map { URI(it) })
+    it.credentials {
+        it.username = System.getenv(sonatypeOptions.username)
+        it.password = System.getenv(sonatypeOptions.password)
     }
 }

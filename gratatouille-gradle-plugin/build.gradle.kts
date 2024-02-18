@@ -5,14 +5,14 @@ plugins {
     id("java-gradle-plugin")
 }
 
+configureLib()
+
 dependencies {
     implementation(libs.kotlin.test)
     compileOnly(gradleApi())
     compileOnly(libs.ksp.gradle.plugin)
     compileOnly(libs.kotlin.gradle.plugin)
 }
-
-configureLib()
 
 buildConfig {
     useKotlinOutput()

@@ -1,0 +1,21 @@
+name: publish
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: ./gradlew publishIfNeeded
+        env:
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USER: ${{ secrets.OSSRH_USER }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
+          COM_GRADLEUP_PROFILE_ID: ${{ secrets.COM_GRADLEUP_PROFILE_ID }}

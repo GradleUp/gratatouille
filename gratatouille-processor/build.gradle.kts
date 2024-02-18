@@ -2,6 +2,8 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
+configureLib()
+
 dependencies {
     implementation(libs.kotlin.test)
     implementation(libs.kotlinpoet)
@@ -9,4 +11,3 @@ dependencies {
     implementation(libs.ksp.api)
 }
 
-configureLib()
