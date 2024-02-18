@@ -15,19 +15,21 @@ private val sonatypeOptions = System.getenv("OSSRH_USER")?.let {
     )
 }
 
+private val projectOptions = ProjectOptions(
+    groupId = "com.gradleup.gratatouille",
+    version = "0.0.1-SNAPSHOT",
+    descriptions = "Cook yourself delicious Gradle plugins",
+    vcsUrl = "https://github.com/GradleUp/gratatouille",
+    developers = "GradleUp authors",
+    license = "MIT License",
+    licenseUrl = "https://github.com/GradleUp/gratatouille/blob/main/LICENSE"
+)
+
 fun Project.configureLib() {
     targetJdk(11)
 
     configurePublishing(
-        projectOptions = ProjectOptions(
-            groupId = "com.gradleup.gratatouille",
-            version = "0.0.1-SNAPSHOT",
-            descriptions = "Cook yourself delicious Gradle plugins",
-            vcsUrl = "https://github.com/GradleUp/gratatouille",
-            developers = "GradleUp authors",
-            license = "MIT License",
-            licenseUrl = "https://github.com/GradleUp/gratatouille/blob/main/LICENSE"
-        ),
+        projectOptions = projectOptions,
         sonatypeOptions = sonatypeOptions,
         signingOptions = System.getenv("GPG_KEY")?.let {
             SigningOptions(
@@ -40,6 +42,7 @@ fun Project.configureLib() {
 
 fun Project.configureRoot() {
     configureGitHub(
+        projectOptions = projectOptions,
         sonatypeOptions = sonatypeOptions,
         githubOptions = GithubOptions(
             mainBranch = "main",

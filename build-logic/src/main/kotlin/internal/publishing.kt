@@ -150,7 +150,7 @@ internal fun Project.configurePublishing(
  * @param githubOptions CI options. May be null to skip publishing on CI. If non-null, creates `publishIfNeeded` task
  * that publishes to SNAPSHOTS if the version ends with `-SNAPSHOT` or Maven Central else
  */
-internal fun Project.configureGitHub(sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
+internal fun Project.configureGitHub(projectOptions: ProjectOptions, sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
     if (githubOptions != null && this == rootProject && sonatypeOptions != null) {
         val publishIfNeeded = project.publishIfNeededTaskProvider()
         val ossStagingReleaseTask =
@@ -159,11 +159,18 @@ internal fun Project.configureGitHub(sonatypeOptions: SonatypeOptions?, githubOp
         val eventName = System.getenv("GITHUB_EVENT_NAME")
         val ref = System.getenv("GITHUB_REF")
 
-        if (eventName == "push" && ref == "refs/heads/${githubOptions.mainBranch}" && project.version.toString()
-                .endsWith("-SNAPSHOT")
+        if (eventName == "push" && ref == "refs/heads/${githubOptions.mainBranch}" && projectOptions.version.endsWith("-SNAPSHOT")
         ) {
             project.logger.log(LogLevel.LIFECYCLE, "Deploying snapshot to OssSnapshot...")
-            publishIfNeeded.dependsOn(project.tasks.named("publishAllPublicationsToOssSnapshotsRepository"))
+            allprojects {
+                try {
+                    it.tasks.named("publishAllPublicationsToOssSnapshotsRepository").configure {
+                        it.dependsOn(publishIfNeeded)
+                    }
+                } catch (e: Throwable) {
+                    // Ignored
+                }
+            }
         }
 
         if (ref?.startsWith("refs/tags/") == true) {
