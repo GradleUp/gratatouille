@@ -1,6 +1,12 @@
+import internal.*
+import internal.ProjectOptions
+import internal.SonatypeHost
+import internal.SonatypeOptions
+import internal.configurePublishing
+import internal.targetJdk
 import org.gradle.api.Project
 
-val sonatypeOptions = System.getenv("OSSRH_USER")?.let {
+private val sonatypeOptions = System.getenv("OSSRH_USER")?.let {
     SonatypeOptions(
         username = it,
         password = System.getenv("OSSRH_PASSWORD") ?: error("OSSRH_PASSWORD not found"),
@@ -15,7 +21,7 @@ fun Project.configureLib() {
     configurePublishing(
         projectOptions = ProjectOptions(
             groupId = "com.gradleup.gratatouille",
-            version = "0.0.1",
+            version = "0.0.1-SNAPSHOT",
             descriptions = "Cook yourself delicious Gradle plugins",
             vcsUrl = "https://github.com/GradleUp/gratatouille",
             developers = "GradleUp authors",

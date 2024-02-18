@@ -1,3 +1,5 @@
+package internal
+
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import net.mbonnin.vespene.lib.NexusStagingClient
@@ -20,20 +22,20 @@ import java.net.URI
 import kotlin.time.Duration.Companion.minutes
 
 
-enum class SonatypeHost {
+internal enum class SonatypeHost {
     Ossrh,
     OssrhS01,
 }
 
 
-class SonatypeOptions(
+internal class SonatypeOptions(
     val username: String,
     val password: String,
     val host: SonatypeHost,
     val stagingProfile: String
 )
 
-class ProjectOptions(
+internal class ProjectOptions(
     val groupId: String,
     val version: String,
     val descriptions: String,
@@ -43,7 +45,7 @@ class ProjectOptions(
     val licenseUrl: String,
 )
 
-class SigningOptions(
+internal class SigningOptions(
     /**
      * GPG_PRIVATE_KEY must contain the armoured private key that starts with -----BEGIN PGP PRIVATE KEY BLOCK-----
      * It can be obtained with gpg --armour --export-secret-keys KEY_ID
@@ -52,7 +54,7 @@ class SigningOptions(
     val privateKeyPassword: String
 )
 
-class GithubOptions(
+internal class GithubOptions(
     val mainBranch: String,
     val autoRelease: Boolean
 )
@@ -64,7 +66,7 @@ class GithubOptions(
  * @param sonatypeOptions sonatype options
  * @param signingOptions signing options. May be null to skip signing
  */
-fun Project.configurePublishing(
+internal fun Project.configurePublishing(
     projectOptions: ProjectOptions,
     sonatypeOptions: SonatypeOptions?,
     signingOptions: SigningOptions?,
@@ -148,7 +150,7 @@ fun Project.configurePublishing(
  * @param githubOptions CI options. May be null to skip publishing on CI. If non-null, creates `publishIfNeeded` task
  * that publishes to SNAPSHOTS if the version ends with `-SNAPSHOT` or Maven Central else
  */
-fun Project.configureGitHub(sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
+internal fun Project.configureGitHub(sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
     if (githubOptions != null && this == rootProject && sonatypeOptions != null) {
         val publishIfNeeded = project.publishIfNeededTaskProvider()
         val ossStagingReleaseTask =
@@ -210,7 +212,7 @@ private fun nexusStatingClient(sonatypeOptions: SonatypeOptions): NexusStagingCl
     )
 }
 
-fun Project.getOrCreateRepoId(sonatypeOptions: SonatypeOptions): Provider<String> {
+internal fun Project.getOrCreateRepoId(sonatypeOptions: SonatypeOptions): Provider<String> {
     return getOrCreateRepoIdTask(
         sonatypeOptions,
     ).map {
@@ -333,7 +335,7 @@ private fun RepositoryHandler.mavenSonatypeSnapshot(
     }
 }
 
-fun RepositoryHandler.mavenSonatypeStaging(
+internal fun RepositoryHandler.mavenSonatypeStaging(
     project: Project,
     sonatypeOptions: SonatypeOptions,
 ) = maven {

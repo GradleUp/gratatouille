@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: gradle/gradle-build-action@v2
       - run: ./gradlew publishIfNeeded
         env:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
