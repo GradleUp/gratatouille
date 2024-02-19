@@ -192,11 +192,11 @@ This means your plugin can depend on popular dependencies such as the Kotlin std
 
 ## Build cache by default
 
-`@CacheableTask` is added by default. All input files use `PathSensitivity.RELATIVE` making your tasks build relocatable.
+`@CacheableTask` is added by default. All input files use `PathSensitivity.RELATIVE` making your tasks relocatable.
 
 ## Easy documentation
 
-`@GTaskAction` takes a `taskDescription` and a `taskGroup` argument making it easy to colocate your documentation with your implementation:
+`@GTaskAction` takes a `description` and a `group` argument making it easy to colocate your documentation with your implementation:
 
 ```kotlin
 @GTaskAction(
