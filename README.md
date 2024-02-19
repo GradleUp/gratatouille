@@ -26,12 +26,12 @@ Create an `implementation` module for your plugin implementation and apply the `
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille.implementation")
+    id("com.gradleup.gratatouille.implementation").version("0.0.1-SNAPSHOT")
 }
 
 dependencies {
     // Add the gratatouille annotations
-    implementation("com.gradleup.gratatouille:gratatouille-core")
+    implementation("com.gradleup.gratatouille:gratatouille-core:0.0.1-SNAPSHOT")
     // Add other dependencies
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("org.ow2.asm:asm-commons:9.6")
@@ -75,7 +75,7 @@ The `gradle-plugin` module should depend on the Gradle API and apply the `com.gr
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille.plugin")
+    id("com.gradleup.gratatouille.plugin").version("0.0.1-SNAPSHOT")
 }
 
 dependencies {
