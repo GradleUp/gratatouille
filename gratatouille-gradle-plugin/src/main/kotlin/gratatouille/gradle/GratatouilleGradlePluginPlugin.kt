@@ -1,10 +1,11 @@
 package gratatouille.gradle
 
-import com.gradleup.gratatouille.gradle.BuildConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import javax.inject.Inject
 
 class GratatouilleGradlePluginPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -17,8 +18,8 @@ class GratatouilleGradlePluginPlugin : Plugin<Project> {
     }
 
     private fun Project.configure() {
-        val extractSources = tasks.register("extractGratatouilleSources", Copy::class.java) { task ->
-            task.from(configurations.getByName("gratatouille").elements.map { it.map { zipTree(it) } })
+        val extractSources = tasks.register("extractGratatouilleSources", ExtractGratatouilleSources::class.java) { task ->
+            task.from(configurations.getByName("gratatouille").elements.map { it.map { task.getArchiveOperations().zipTree(it) } })
 
             task.include("META-INF/gratatouille/**")
             task.eachFile {
@@ -39,4 +40,9 @@ class GratatouilleGradlePluginPlugin : Plugin<Project> {
             sourceSets.getByName("main").kotlin.srcDir(extractSources)
         }
     }
+}
+
+abstract class ExtractGratatouilleSources: Copy() {
+    @Inject
+    abstract fun getArchiveOperations(): ArchiveOperations
 }
