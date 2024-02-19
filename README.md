@@ -15,6 +15,8 @@ Gratatouille enforces a clear separation between your plugin logic (**implementa
 * [Parallel execution](#parallel-task-execution-by-default)
 * [Compile-time task wiring](#compile-time-task-wiring)
 
+Check out the [sample-plugin](sample-plugin) and [sample-app](sample-app).
+
 # Quick Start
 
 ## Step 1/2: `com.gradleup.gratatouille.implementation` 
@@ -91,7 +93,7 @@ gradlePlugin {
 }
 ```
 
-In your plugin code, use `Project.registerPrepareIngredientsTask()` to register the task:
+In your plugin code, use `Project.register${TaskAction}Task()` to register the task:
 
 ```kotlin
 override fun apply(project: Project) {
@@ -217,8 +219,3 @@ Finally, Gratatouille encourages exposing extensions to users instead of task cl
 
 When a task has a high number of inputs, it can become hard to track which ones have been wired and which ones haven't. By using a central registration point, Gratatouille enforces at build time that all inputs/outputs have been properly wired.
 
-
-# Sample plugin
-
-* Open [sample-plugin](sample-plugin) in IntelliJ for an example plugin.
-* Open [sample-app](sample-app) in IntelliJ and run `./gradlew -p sample-app cook` for an example app using the example plugin.
