@@ -217,7 +217,7 @@ Even with `org.gradle.parallel=true`, [Gradle tasks execute serially in a single
 
 Because your task actions are pure Kotlin function, no state is shared, making them perfect candidates for parallelization. 
 
-Gratatouille uses the [Worker API](https://docs.gradle.org/current/userguide/worker_api.html) to allow parallel execution making you build faster in general. Use `org.gradle.workers.max` to control the maximum number of workers.
+Gratatouille uses the [Worker API](https://docs.gradle.org/current/userguide/worker_api.html) to allow parallel execution making your build faster overall. Use `org.gradle.workers.max` to control the maximum number of workers.
 
 ## Compile time task wiring
 
