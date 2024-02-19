@@ -11,6 +11,9 @@ class GratatouilleImplementationPlugin : Plugin<Project> {
             target.configurations.getByName("ksp").dependencies.add(
                 target.dependencies.create("${BuildConfig.group}:gratatouille-processor:${BuildConfig.version}")
             )
+            target.configurations.getByName("implementation").dependencies.add(
+                target.dependencies.create("${BuildConfig.group}:gratatouille-core:${BuildConfig.version}")
+            )
 
             target.extensions.getByName("ksp").apply {
                 this as KspExtension

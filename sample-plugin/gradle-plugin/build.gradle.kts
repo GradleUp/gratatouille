@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation(gradleApi())
     gratatouille(project(":implementation"))
 }
 

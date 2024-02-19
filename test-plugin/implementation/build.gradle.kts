@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    implementation("com.gradleup.gratatouille:gratatouille-core")
     implementation(libs.kotlinx.serialization.json)
 }
 

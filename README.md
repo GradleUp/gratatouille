@@ -75,6 +75,7 @@ The `gradle-plugin` module should depend on the Gradle API and apply the `com.gr
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
+    id("java-gradle-plugin")
     id("com.gradleup.gratatouille.plugin").version("0.0.1-SNAPSHOT")
 }
 
@@ -83,8 +84,6 @@ dependencies {
     // This adds the wiring code to the main source set. No dependency is pulled 
     // in the plugin classpath.
     gratatouille(project(":implementation"))
-    // Add the gradle API 
-    implementation(gradleApi())
 }
 
 // Create your plugin as usual, see https://docs.gradle.org/current/userguide/java_gradle_plugin.html 
