@@ -68,7 +68,7 @@ Gratatouille generates entry points, tasks, workers and Gradle wiring code that 
 
 To use the generated code in your plugin, create a `gradle-plugin` module next to your `implementation` module. 
 
-> [!TIP]
+> [!NOTE]
 > By using two different modules, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
 
 Apply the `com.gradleup.gratatouille.plugin` plugin in your `gradle-plugin` module:
@@ -143,7 +143,7 @@ Outputs:
 
 ## Non-overlapping task outputs by default
 
-Gratatouille allocate paths for output files and directories automatically. Each output gets a dedicated filesystem location at `"build/gtask/${taskName}/${outputName}"`. 
+Gratatouille allocates paths for output files and directories automatically. Each output gets a dedicated filesystem location at `"build/gtask/${taskName}/${outputName}"`. 
 
 This way:
 * you don't have to set inputs.
