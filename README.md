@@ -1,4 +1,4 @@
-# Gratatouille 🐘🤝🐭👉👨‍🍳 
+# Gratatouille 🐘🤝🐭👉🧑‍🍳 
 
 Gratatouille is an opinionated framework to build Gradle plugins. Write pure Kotlin functions and the Gratatouille KSP processor generates tasks, workers and wiring code for you.
 
