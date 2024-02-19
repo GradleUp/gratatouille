@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("gratatouille.gradle.plugin")
+    id("com.gradleup.gratatouille.plugin")
     id("java-gradle-plugin")
 }
 

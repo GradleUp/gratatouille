@@ -17,14 +17,14 @@ Gratatouille enforces a clear separation between your plugin logic (**implementa
 
 # Quick Start
 
-## Step 1/2: `gratatouille.implementation` 
+## Step 1/2: `com.gradleup.gratatouille.implementation` 
 
-Create an `implementation` module for your plugin implementation and apply the `gratatouille.implementation` plugin:
+Create an `implementation` module for your plugin implementation and apply the `com.gradleup.gratatouille.implementation` plugin:
 
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("gratatouille.implementation")
+    id("com.gradleup.gratatouille.implementation")
 }
 
 dependencies {
@@ -62,18 +62,18 @@ Gratatouille automatically maps function parameters to Gradle inputs and the ret
 
 Gratatouille generates entry points, task, workers and Gradle wiring code that can be used from your plugin.
 
-## Step 2/2 `gratatouille.gradle.plugin` 
+## Step 2/2 `com.gradleup.gratatouille.plugin` 
 
 To use the generated code in your plugin, create a `gradle-plugin` module next to your `implementation` module. 
 
 By using two different modules, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
 
-The `gradle-plugin` module should depend on the Gradle API and apply the `gratatouille.gradle.plugin`:
+The `gradle-plugin` module should depend on the Gradle API and apply the `com.gradleup.gratatouille.plugin`:
 
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("gratatouille.gradle.plugin")
+    id("com.gradleup.gratatouille.plugin")
 }
 
 dependencies {

@@ -24,13 +24,13 @@ buildConfig {
 
 gradlePlugin {
     plugins {
-        create("gratatouille.implementation") {
+        create("com.gradleup.gratatouille.implementation") {
             this.implementationClass = "gratatouille.gradle.GratatouilleImplementationPlugin"
-            this.id = "gratatouille.implementation"
+            this.id = "com.gradleup.gratatouille.implementation"
         }
-        create("gratatouille.gradle.plugin") {
+        create("com.gradleup.gratatouille.plugin") {
             this.implementationClass = "gratatouille.gradle.GratatouilleGradlePluginPlugin"
-            this.id = "gratatouille.gradle.plugin"
+            this.id = "com.gradleup.gratatouille.plugin"
         }
     }
 }
