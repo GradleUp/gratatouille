@@ -1,6 +1,12 @@
 package gratatouille.processor
 
-import com.google.devtools.ksp.symbol.*
+import com.google.devtools.ksp.symbol.KSAnnotation
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Origin
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
@@ -9,7 +15,7 @@ import com.squareup.kotlinpoet.ksp.toTypeName
 internal class GTaskAction(
     val packageName: String,
     val functionName: String,
-    val name: String?,
+    val annotationName: String?,
     val description: String?,
     val group: String?,
     val parameters: List<Property>,
@@ -123,7 +129,7 @@ internal fun KSFunctionDeclaration.toGTaskAction(): GTaskAction {
         functionName = this.simpleName.asString(),
         parameters = parameters,
         returnValues = returnValues,
-        name = name,
+        annotationName = name,
         description = description,
         group = group
     )

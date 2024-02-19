@@ -1,7 +1,18 @@
 package gratatouille.processor
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
 
 internal fun GTaskAction.taskFile(coordinates: String): FileSpec {
     val className = taskClassName()
@@ -17,14 +28,14 @@ internal fun GTaskAction.taskFile(coordinates: String): FileSpec {
 }
 
 private fun GTaskAction.register(coordinates: String): FunSpec {
-    val thisTaskName = name ?: taskName()
+    val defaultTaskName = annotationName ?: taskName()
     return FunSpec.builder(registerName())
         .addModifiers(KModifier.INTERNAL)
         .receiver(ClassName("org.gradle.api", "Project"))
         .returns(ClassName("org.gradle.api.tasks", "TaskProvider").parameterizedBy(taskClassName()))
         .addParameter(
             ParameterSpec.builder(taskName, ClassName("kotlin", "String"))
-                .defaultValue(thisTaskName.toCodeBlock())
+                .defaultValue(defaultTaskName.toCodeBlock())
                 .build()
         )
         .addParameter(
@@ -109,10 +120,10 @@ private fun GTaskAction.register(coordinates: String): FunSpec {
                                 else -> error("Gratatouille: invalid output type for '${it.name}': ${it.type}")
                             }
                             add(
-                                "it.%L.set(this@%L.layout.buildDirectory.$method(%S))\n",
+                                "it.%L.set(this@%L.layout.buildDirectory.$method(%L))\n",
                                 it.name,
                                 registerName(),
-                                "gtask/$thisTaskName/${it.name}"
+                                "\"gtask/\${$taskName}/${it.name}\""
                             )
                         }
                     }
@@ -393,7 +404,7 @@ private fun GTaskAction.workActionExecute(): FunSpec {
             .add("%T.getPlatformClassLoader()\n", ClassName("java.lang", "ClassLoader"))
             .unindent()
             .add(")")
-            .add(".loadClass(%S)\n", entryPointClassName().toString())
+            .add(".loadClass(%S)\n", entryPointClassName().canonicalName)
             .add(".declaredMethods.single()\n")
             .add(".invoke(\n")
             .indent()
