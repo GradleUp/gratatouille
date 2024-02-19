@@ -85,6 +85,13 @@ internal fun Project.configurePublishing(
             it.mavenSonatypeSnapshot(sonatypeOptions)
             it.mavenSonatypeStaging(sonatypeOptions = sonatypeOptions, project = project)
         }
+
+        rootProject.publishSnapshotsTaskProvider().configure {
+            it.dependsOn(tasks.named("publishAllPublicationsToOssSnapshotsRepository"))
+        }
+        rootProject.publishStagingTaskProvider().configure {
+            it.dependsOn(tasks.named("publishAllPublicationsToOssStagingRepository"))
+        }
     }
     val emptyJavadocJarTaskProvider = tasks.register("libEmptyJavadocJar", Jar::class.java) {
         it.archiveClassifier.set("javadoc")
@@ -151,30 +158,22 @@ internal fun Project.configurePublishing(
  * that publishes to SNAPSHOTS if the version ends with `-SNAPSHOT` or Maven Central else
  */
 internal fun Project.configureGitHub(projectOptions: ProjectOptions, sonatypeOptions: SonatypeOptions?, githubOptions: GithubOptions?) {
-    if (githubOptions != null && this == rootProject && sonatypeOptions != null) {
-        val publishIfNeeded = project.publishIfNeededTaskProvider()
-        val ossStagingReleaseTask =
-            project.registerReleaseTask(sonatypeOptions, githubOptions.autoRelease, "ossStagingRelease")
+    if (githubOptions != null  && sonatypeOptions != null) {
+        val publishIfNeeded = publishIfNeededTaskProvider()
+        val publishStaging = publishStagingTaskProvider()
+        val publishSnapshots = publishSnapshotsTaskProvider()
+        val ossStagingReleaseTask = registerReleaseTask(sonatypeOptions, githubOptions.autoRelease, "ossStagingRelease")
+        ossStagingReleaseTask.dependsOn(publishStaging)
 
         val eventName = System.getenv("GITHUB_EVENT_NAME")
         val ref = System.getenv("GITHUB_REF")
 
         if (eventName == "push" && ref == "refs/heads/${githubOptions.mainBranch}" && projectOptions.version.endsWith("-SNAPSHOT")
         ) {
-            project.logger.log(LogLevel.LIFECYCLE, "Deploying snapshot to OssSnapshot...")
-            allprojects {
-                try {
-                    it.tasks.named("publishAllPublicationsToOssSnapshotsRepository").configure {
-                        it.dependsOn(publishIfNeeded)
-                    }
-                } catch (e: Throwable) {
-                    // Ignored
-                }
-            }
+            publishIfNeeded.dependsOn(publishSnapshots)
         }
 
         if (ref?.startsWith("refs/tags/") == true) {
-            project.logger.log(LogLevel.LIFECYCLE, "Deploying release to OssStaging...")
             publishIfNeeded.dependsOn(ossStagingReleaseTask)
         }
     }
@@ -204,10 +203,29 @@ private fun Project.getOrCreateRepoIdTask(
 }
 
 fun Project.publishIfNeededTaskProvider(): TaskProvider<Task> {
+    check(this == rootProject)
     return try {
         tasks.named("publishIfNeeded")
     } catch (ignored: Exception) {
         tasks.register("publishIfNeeded")
+    }
+}
+
+fun Project.publishSnapshotsTaskProvider(): TaskProvider<Task> {
+    check(this == rootProject)
+    return try {
+        tasks.named("publishSnapshots")
+    } catch (ignored: Exception) {
+        tasks.register("publishSnapshots")
+    }
+}
+
+fun Project.publishStagingTaskProvider(): TaskProvider<Task> {
+    check(this == rootProject)
+    return try {
+        tasks.named("publishStaging")
+    } catch (ignored: Exception) {
+        tasks.register("publishStaging")
     }
 }
 
@@ -241,11 +259,12 @@ private fun Project.registerReleaseTask(
     autoRelease: Boolean,
     name: String
 ): TaskProvider<Task> {
+    check(this == rootProject)
     val task = try {
-        rootProject.tasks.named(name)
+        tasks.named(name)
     } catch (e: UnknownDomainObjectException) {
         val repoId = getOrCreateRepoId(sonatypeOptions)
-        rootProject.tasks.register(name) {
+        tasks.register(name) {
             it.inputs.property(
                 "repoId",
                 repoId
