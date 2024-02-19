@@ -17,7 +17,7 @@ Gratatouille enforces a clear separation between your plugin logic (**implementa
 
 # Quick Start
 
-## Module 1/2: `gratatouille.implementation` 
+## Step 1/2: `gratatouille.implementation` 
 
 Create an `implementation` module for your plugin implementation and apply the `gratatouille.implementation` plugin:
 
@@ -62,7 +62,7 @@ Gratatouille automatically maps function parameters to Gradle inputs and the ret
 
 Gratatouille generates entry points, task, workers and Gradle wiring code that can be used from your plugin.
 
-## Module 2/2 `gratatouille.gradle.plugin` 
+## Step 2/2 `gratatouille.gradle.plugin` 
 
 To use the generated code in your plugin, create a `gradle-plugin` module next to your `implementation` module. 
 
