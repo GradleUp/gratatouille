@@ -153,7 +153,7 @@ private fun GTaskAction.task(): TypeSpec {
             AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "CacheableTask"))
                 .build()
         )
-        .addModifiers(KModifier.ABSTRACT)
+        .addModifiers(KModifier.ABSTRACT, KModifier.INTERNAL)
         .superclass(ClassName("org.gradle.api", "DefaultTask"))
         .apply {
             (listOf(classpathProperty) + parameters + returnValues).forEach {
