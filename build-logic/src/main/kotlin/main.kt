@@ -4,7 +4,9 @@ import internal.SonatypeHost
 import internal.SonatypeOptions
 import internal.configurePublishing
 import internal.targetJdk
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.publish.PublicationContainer
 
 private val sonatypeOptions = System.getenv("OSSRH_USER")?.let {
     SonatypeOptions(
@@ -25,7 +27,7 @@ private val projectOptions = ProjectOptions(
     licenseUrl = "https://github.com/GradleUp/gratatouille/blob/main/LICENSE"
 )
 
-fun Project.configureLib() {
+fun Project.configureLib(configurePublications: Action<PublicationContainer> = Action {  }) {
     targetJdk(11)
 
     configurePublishing(
@@ -37,6 +39,7 @@ fun Project.configureLib() {
                 privateKeyPassword = System.getenv("GPG_KEY_PASSWORD") ?: error("GPG_KEY_PASSWORD not found")
             )
         },
+        configurePublications = configurePublications
     )
 }
 

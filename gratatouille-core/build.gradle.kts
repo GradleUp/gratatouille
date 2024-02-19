@@ -3,7 +3,11 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-configureLib()
+configureLib {
+    create("default", MavenPublication::class.java) {
+        from(components["java"])
+    }
+}
 
 dependencies {
     implementation(libs.kotlin.test)

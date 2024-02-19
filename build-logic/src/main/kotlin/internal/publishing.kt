@@ -139,9 +139,10 @@ internal fun Project.configurePublishing(
     if (signingOptions != null) {
         plugins.apply("signing")
         val signing = extensions.getByType(SigningExtension::class.java)
+
         signing.useInMemoryPgpKeys(
-            System.getenv(signingOptions.privateKey),
-            System.getenv(signingOptions.privateKeyPassword)
+            signingOptions.privateKey,
+            signingOptions.privateKeyPassword
         )
         signing.sign(publishing.publications)
 
