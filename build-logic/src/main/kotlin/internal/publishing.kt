@@ -140,10 +140,7 @@ internal fun Project.configurePublishing(
         plugins.apply("signing")
         val signing = extensions.getByType(SigningExtension::class.java)
 
-        signing.useInMemoryPgpKeys(
-            signingOptions.privateKey,
-            signingOptions.privateKeyPassword
-        )
+        signing.useInMemoryPgpKeys(System.getenv("GPG_KEY"), System.getenv("GPG_KEY_PASSWORD"))
         signing.sign(publishing.publications)
 
         // See https://github.com/gradle/gradle/issues/26091
