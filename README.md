@@ -146,7 +146,8 @@ Outputs:
 Gratatouille allocates paths for output files and directories automatically. Each output gets a dedicated filesystem location at `"build/gtask/${taskName}/${outputName}"`. 
 
 This way:
-* you don't have to set inputs.
+* you don't have to think about what path to use.
+* the outputs are consistent and discoverable.
 * issues like [#26091](https://github.com/gradle/gradle/issues/26091) are avoided by construction.
 
 If your function has a single return value, Gratatouille uses `outputFile` as output name.
