@@ -136,26 +136,22 @@ internal fun Project.configurePublishing(
         }
     }
 
-    plugins.apply("signing")
-    extensions.getByType(SigningExtension::class.java).apply {
-        // GPG_PRIVATE_KEY should contain the armoured private key that starts with -----BEGIN PGP PRIVATE KEY BLOCK-----
-        // It can be obtained with gpg --armour --export-secret-keys KEY_ID
-        useInMemoryPgpKeys(System.getenv("GPG_KEY"), System.getenv("GPG_KEY_PASSWORD"))
-        sign(publishing.publications)
-    }
+    if (signingOptions != null) {
+        plugins.apply("signing")
+        val signing = extensions.getByType(SigningExtension::class.java)
 
-//    if (signingOptions != null) {
-//        val signing = extensions.getByType(SigningExtension::class.java)
-//
-//        signing.useInMemoryPgpKeys(System.getenv("GPG_KEY"), System.getenv("GPG_KEY_PASSWORD"))
-//        signing.sign(publishing.publications)
-//
-//        // See https://github.com/gradle/gradle/issues/26091
-//        tasks.withType(AbstractPublishToMaven::class.java).configureEach {
-//            val signingTasks = tasks.withType(Sign::class.java)
-//            it.mustRunAfter(signingTasks)
-//        }
-//    }
+        signing.useInMemoryPgpKeys(
+            signingOptions.privateKey,
+            signingOptions.privateKeyPassword
+        )
+        signing.sign(publishing.publications)
+
+        // See https://github.com/gradle/gradle/issues/26091
+        tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+            val signingTasks = tasks.withType(Sign::class.java)
+            it.mustRunAfter(signingTasks)
+        }
+    }
 }
 
 /**
