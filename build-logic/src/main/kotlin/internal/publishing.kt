@@ -369,7 +369,7 @@ internal fun RepositoryHandler.mavenSonatypeStaging(
     it.name = "ossStaging"
     it.setUrl(project.getOrCreateRepoUrl(sonatypeOptions).map { URI(it) })
     it.credentials {
-        it.username = System.getenv(sonatypeOptions.username)
-        it.password = System.getenv(sonatypeOptions.password)
+        it.username = sonatypeOptions.username
+        it.password = sonatypeOptions.password
     }
 }
