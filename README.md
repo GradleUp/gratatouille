@@ -214,7 +214,7 @@ internal fun cook(
 
 ## Parallel task execution by default
 
-Even with `org.gradle.parallel=true`, [Gradle tasks execute serially in a single module](https://docs.gradle.org/current/userguide/performance.html#parallel_execution).
+By default, [Gradle tasks execute serially in a single module](https://docs.gradle.org/current/userguide/performance.html#parallel_execution) (unless using the [configuration cache](https://docs.gradle.org/current/userguide/performance.html#additional_configuration_cache_benefits)).
 
 Because your task actions are pure Kotlin function, no state is shared, making them perfect candidates for parallelization. 
 
