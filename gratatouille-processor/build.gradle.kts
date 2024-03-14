@@ -2,7 +2,11 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
 }
 
-configureLib()
+configureLib {
+    create("default", MavenPublication::class.java) {
+        from(components["java"])
+    }
+}
 
 dependencies {
     implementation(libs.kotlin.test)
