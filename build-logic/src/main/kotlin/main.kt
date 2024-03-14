@@ -19,7 +19,7 @@ private val sonatypeOptions = System.getenv("OSSRH_USER")?.let {
 
 private val projectOptions = ProjectOptions(
     groupId = "com.gradleup.gratatouille",
-    version = "0.0.2",
+    version = "0.0.3-SNAPSHOT",
     descriptions = "Cook yourself delicious Gradle plugins",
     vcsUrl = "https://github.com/GradleUp/gratatouille",
     developers = "GradleUp authors",
