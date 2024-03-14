@@ -8,7 +8,4 @@ buildscript {
     }
 }
 
-group = "com.gradleup.gratatouille"
-version = "0.1"
-
 configureRoot()

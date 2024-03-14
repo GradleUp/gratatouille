@@ -83,7 +83,7 @@ internal fun Project.configurePublishing(
     if (sonatypeOptions != null) {
         publishing.repositories {
             it.mavenSonatypeSnapshot(sonatypeOptions)
-            it.mavenSonatypeStaging(sonatypeOptions = sonatypeOptions, project = project)
+            it.mavenSonatypeStaging(sonatypeOptions = sonatypeOptions, project = project, group = projectOptions.groupId, version = projectOptions.version)
         }
 
         rootProject.publishSnapshotsTaskProvider().configure {
@@ -163,7 +163,13 @@ internal fun Project.configureGitHub(projectOptions: ProjectOptions, sonatypeOpt
         val publishIfNeeded = publishIfNeededTaskProvider()
         val publishStaging = publishStagingTaskProvider()
         val publishSnapshots = publishSnapshotsTaskProvider()
-        val ossStagingReleaseTask = registerReleaseTask(sonatypeOptions, githubOptions.autoRelease, "ossStagingRelease")
+        val ossStagingReleaseTask = registerReleaseTask(
+            sonatypeOptions = sonatypeOptions,
+            autoRelease = githubOptions.autoRelease,
+            name = "ossStagingRelease",
+            group = projectOptions.groupId,
+            version = projectOptions.version
+        )
         ossStagingReleaseTask.dependsOn(publishStaging)
 
         val eventName = System.getenv("GITHUB_EVENT_NAME")
@@ -182,6 +188,8 @@ internal fun Project.configureGitHub(projectOptions: ProjectOptions, sonatypeOpt
 
 private fun Project.getOrCreateRepoIdTask(
     sonatypeOptions: SonatypeOptions,
+    group: String,
+    version: String,
 ): TaskProvider<Task> {
     return try {
         rootProject.tasks.named("createStagingRepo")
@@ -238,18 +246,22 @@ private fun nexusStatingClient(sonatypeOptions: SonatypeOptions): NexusStagingCl
     )
 }
 
-internal fun Project.getOrCreateRepoId(sonatypeOptions: SonatypeOptions): Provider<String> {
+internal fun Project.getOrCreateRepoId(sonatypeOptions: SonatypeOptions, group: String, version: String): Provider<String> {
     return getOrCreateRepoIdTask(
         sonatypeOptions,
+        group,
+        version
     ).map {
         it.outputs.files.singleFile.readText()
     }
 }
 
 private fun Project.getOrCreateRepoUrl(
-    sonatypeOptions: SonatypeOptions
+    sonatypeOptions: SonatypeOptions,
+    group: String,
+    version: String
 ): Provider<String> {
-    return getOrCreateRepoId(sonatypeOptions).map {
+    return getOrCreateRepoId(sonatypeOptions, group, version).map {
         "${sonatypeOptions.host.toBaseUrl()}/service/local/staging/deployByRepositoryId/$it/"
     }
 }
@@ -258,13 +270,15 @@ private fun Project.getOrCreateRepoUrl(
 private fun Project.registerReleaseTask(
     sonatypeOptions: SonatypeOptions,
     autoRelease: Boolean,
-    name: String
+    name: String,
+    group: String,
+    version: String
 ): TaskProvider<Task> {
     check(this == rootProject)
     val task = try {
         tasks.named(name)
     } catch (e: UnknownDomainObjectException) {
-        val repoId = getOrCreateRepoId(sonatypeOptions)
+        val repoId = getOrCreateRepoId(sonatypeOptions, group, version)
         tasks.register(name) {
             it.inputs.property(
                 "repoId",
@@ -304,46 +318,6 @@ fun <T : Task> TaskProvider<T>.dependsOn(other: Any) {
     }
 }
 
-
-fun PublicationContainer.createReleasePublication(
-    project: Project,
-    artifactName: String
-) = create("default", MavenPublication::class.java) { publication ->
-    apply {
-        publication.from(project.components.findByName("java"))
-
-        publication.groupId = project.rootProject.group.toString()
-        publication.version = project.rootProject.version.toString()
-
-        publication.pom { pom ->
-            pom.name.set(artifactName)
-            pom.packaging = "jar"
-            pom.description.set(artifactName)
-            pom.url.set("https://github.com/gradleup/gratatouille")
-
-            pom.scm {
-                it.url.set("https://github.com/gradleup/gratatouille")
-                it.connection.set("https://github.com/gradleup/gratatouille")
-                it.developerConnection.set("https://github.com/gradleup/gratatouille")
-            }
-
-            pom.licenses {
-                it.license {
-                    it.name.set("MIT License")
-                    it.url.set("https://github.com/gradleup/gratatouille/blob/master/LICENSE")
-                }
-            }
-
-            pom.developers {
-                it.developer {
-                    it.id.set("GradleUp team")
-                    it.name.set("GradleUp team")
-                }
-            }
-        }
-    }
-}
-
 private fun SonatypeHost.toBaseUrl(): String {
     return when (this) {
         SonatypeHost.OssrhS01 -> "https://s01.oss.sonatype.org"
@@ -365,9 +339,11 @@ private fun RepositoryHandler.mavenSonatypeSnapshot(
 internal fun RepositoryHandler.mavenSonatypeStaging(
     project: Project,
     sonatypeOptions: SonatypeOptions,
+    group: String,
+    version: String
 ) = maven {
     it.name = "ossStaging"
-    it.setUrl(project.getOrCreateRepoUrl(sonatypeOptions).map { URI(it) })
+    it.setUrl(project.getOrCreateRepoUrl(sonatypeOptions, group, version).map { URI(it) })
     it.credentials {
         it.username = sonatypeOptions.username
         it.password = sonatypeOptions.password
