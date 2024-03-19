@@ -2,7 +2,7 @@
 
 Gratatouille is an opinionated framework to build Gradle plugins. Write pure Kotlin functions and the Gratatouille KSP processor generates tasks, workers and wiring code for you.
 
-Gratatouille enforces a clear separation between your plugin logic (**implementation**) and your plugin wiring (**gradle-plugin**) making your plugin immune to classloader issues 🛡️ 
+Gratatouille enforces a clear separation between your plugin logic (**implementation**) and your plugin wiring (**gradle-plugin**) making your plugin immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
 
 **Features**:
 * [Pure functions](#pure-functions)
