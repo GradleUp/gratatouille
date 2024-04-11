@@ -8,4 +8,5 @@ buildscript {
     }
 }
 
+version = "0.0.1"
 group = "sample-plugin"

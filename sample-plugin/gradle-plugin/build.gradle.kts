@@ -4,6 +4,8 @@ plugins {
     id("java-gradle-plugin")
 }
 
+version = rootProject.version
+
 dependencies {
     gratatouille(project(":implementation"))
 }

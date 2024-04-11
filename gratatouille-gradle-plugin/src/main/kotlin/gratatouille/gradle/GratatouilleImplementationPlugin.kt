@@ -15,9 +15,12 @@ class GratatouilleImplementationPlugin : Plugin<Project> {
                 target.dependencies.create("${BuildConfig.group}:gratatouille-core:${BuildConfig.version}")
             )
 
-            target.extensions.getByName("ksp").apply {
-                this as KspExtension
-                this.arg("gratatouilleCoordinates", "${target.group}:${target.name}:${target.version}")
+
+            target.afterEvaluate {
+                target.extensions.getByName("ksp").apply {
+                    this as KspExtension
+                    this.arg("gratatouilleCoordinates", "${target.group}:${target.name}:${target.version}")
+                }
             }
         }
     }

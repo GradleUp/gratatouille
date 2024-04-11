@@ -5,6 +5,8 @@ plugins {
     id("com.gradleup.gratatouille.implementation")
 }
 
+version = rootProject.version
+
 dependencies {
     implementation(libs.kotlinx.serialization.json)
 }
