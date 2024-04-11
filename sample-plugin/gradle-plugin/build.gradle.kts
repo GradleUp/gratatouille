@@ -1,7 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("com.gradleup.gratatouille.plugin")
     id("java-gradle-plugin")
+    id("com.gradleup.gratatouille.plugin")
 }
 
 version = rootProject.version
