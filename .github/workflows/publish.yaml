@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: gradle/gradle-build-action@v2
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      - uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 #v3.5.0
       - name: publish artifacts
         run: ./gradlew publishIfNeeded
         env:
