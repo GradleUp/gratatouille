@@ -4,7 +4,8 @@ Gratatouille is an opinionated framework to build Gradle plugins. Write pure Kot
 
 Gratatouille enforces a clear separation between your plugin logic (**implementation**) and your plugin wiring (**gradle-plugin**) making your plugin immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
 
-**Features**:
+**Key Features**:
+
 * [Pure functions](#pure-functions)
 * [Kotlinx serialization support](#built-in-kotlinxserialization-support)
 * [Comprehensive input/output types](#supported-input-and-output-types)
@@ -17,9 +18,9 @@ Gratatouille enforces a clear separation between your plugin logic (**implementa
 
 Check out the [sample-plugin](sample-plugin) and [sample-app](sample-app).
 
-# Quick Start
+## Quick Start
 
-## Step 1/2: `com.gradleup.gratatouille.implementation` 
+### Step 1/2: `com.gradleup.gratatouille.implementation` 
 
 Create an `implementation` module for your plugin implementation and apply the `com.gradleup.gratatouille.implementation` plugin:
 
@@ -64,7 +65,7 @@ Gratatouille automatically maps function parameters to Gradle inputs and the ret
 
 Gratatouille generates entry points, tasks, workers and Gradle wiring code that you can then use to cook your plugin.
 
-## Step 2/2 `com.gradleup.gratatouille.plugin` 
+### Step 2/2 `com.gradleup.gratatouille.plugin` 
 
 To use the generated code in your plugin, create a `gradle-plugin` module next to your `implementation` module. 
 
@@ -114,19 +115,19 @@ override fun apply(project: Project) {
 }
 ```
 
-# Features
+## Features
 
-## Pure functions
+### Pure functions
 
 Your task code is a side-effect-free function, making it easier to [parallelize](#parallel-task-execution-by-default) and reason about. 
 
 Nullable parameters are generated as optional task properties. Calls to `Provider.get()` or `Provider.orNull` are automated.
 
-## Built-in kotlinx.serialization support
+### Built-in kotlinx.serialization support
 
 Gratatouille has builtin support for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization). Models are serialized and deserialized as needed.
 
-## Supported input and output types
+### Supported input and output types
 
 Inputs:
 * Any type annotated with `@Serializable` (serialized to a File)
@@ -141,7 +142,7 @@ Outputs:
 * Single File using the `GOutputFile` typealias
 * Directory using the `GOutputDirectory` typealias
 
-## Non-overlapping task outputs by default
+### Non-overlapping task outputs by default
 
 Gratatouille allocates paths for output files and directories automatically. Each output gets a dedicated filesystem location at `"build/gtask/${taskName}/${outputName}"`. 
 
@@ -184,17 +185,17 @@ project.registerCookTask(
 )
 ```
 
-## Classloader isolation by default
+### Classloader isolation by default
 
 Gratatouille creates a separate classloader for each task and calls your pure functions using reflection. 
 
 This means your plugin can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself. 
 
-## Build cache by default
+### Build cache by default
 
 `@CacheableTask` is added by default. All input files use `PathSensitivity.RELATIVE` making your tasks relocatable.
 
-## Easy documentation
+### Easy documentation
 
 `@GTaskAction` takes a `description` and a `group` argument making it easy to colocate your documentation with your implementation:
 
@@ -212,7 +213,7 @@ internal fun cook(
 }
 ```
 
-## Parallel task execution by default
+### Parallel task execution by default
 
 By default, [Gradle tasks execute serially in a single module](https://docs.gradle.org/current/userguide/performance.html#parallel_execution) (unless using the [configuration cache](https://docs.gradle.org/current/userguide/performance.html#additional_configuration_cache_benefits)).
 
@@ -220,7 +221,7 @@ Because your task actions are pure Kotlin function, no state is shared, making t
 
 Gratatouille uses the [Worker API](https://docs.gradle.org/current/userguide/worker_api.html) to allow parallel execution making your build faster overall. Use `org.gradle.workers.max` to control the maximum number of workers.
 
-## Compile time task wiring
+### Compile time task wiring
 
 Finally, Gratatouille encourages exposing extensions to users instead of task classes directly. All generated code is generated as `internal`. This makes it easier to have some inputs user configurable while some others are an implementation details and more generally makes it easier to evolve the public API of your plugin.
 
