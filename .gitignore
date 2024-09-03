@@ -1,3 +1,27 @@
-.idea
+.kotlin
+.fleet
 .gradle
+
+# Build outputs
 build
+
+# Idea
+**/.idea/*
+!**/.idea/codeStyles
+!**/.idea/icon.png
+!**/.idea/runConfigurations
+!**/.idea/scopes
+!**/.idea/dictionaries
+*.iml
+
+# Place where the Android SDK path is set
+local.properties
+
+# XCode
+xcuserdata
+project.xcworkspace
+
+# Mac OS Finder
+.DS_Store
+Thumbs.db
+

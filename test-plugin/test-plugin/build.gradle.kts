@@ -1,11 +1,9 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
-    id("com.gradleup.gratatouille.plugin")
+    id("org.jetbrains.kotlin.plugin.serialization")
+    id("com.google.devtools.ksp")
+    id("com.gradleup.gratatouille")
     id("java-gradle-plugin")
-}
-
-dependencies {
-    gratatouille(project(":implementation"))
 }
 
 gradlePlugin {
