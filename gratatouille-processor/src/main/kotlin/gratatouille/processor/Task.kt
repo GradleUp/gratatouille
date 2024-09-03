@@ -206,8 +206,8 @@ private fun isolate2(): FunSpec {
       """
             return buildList {
                 asFileTree.visit { 
-                    add(it.name)
                     add(it.file)
+                    add(it.name)
                 }
             }
             """.trimIndent(),
