@@ -1,5 +1,7 @@
 # Next version (unreleased)
 
+* Fix isolation of input files
+
 # Version 0.0.3
 _2024-09-03_
 
