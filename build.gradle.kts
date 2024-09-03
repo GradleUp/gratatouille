@@ -1,3 +1,5 @@
+import com.gradleup.librarian.gradle.librarianRoot
+
 buildscript {
     repositories {
         mavenCentral()
@@ -8,4 +10,4 @@ buildscript {
     }
 }
 
-configureRoot()
+librarianRoot()

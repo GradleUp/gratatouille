@@ -1,13 +1,11 @@
+import com.gradleup.librarian.gradle.librarianModule
+
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-configureLib {
-    create("default", MavenPublication::class.java) {
-        from(components["java"])
-    }
-}
+librarianModule()
 
 dependencies {
     implementation(libs.kotlin.test)
