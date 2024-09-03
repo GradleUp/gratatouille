@@ -19,7 +19,12 @@ internal class GTaskAction(
     val description: String?,
     val group: String?,
     val parameters: List<Property>,
-    val returnValues: List<Property>
+    val returnValues: List<Property>,
+    /**
+     * The coordinates where to find the implementation for this action
+     * May be null if the plugin is not isolated
+     */
+    val implementationCoordinates: String?
 )
 
 internal sealed interface Type
@@ -42,10 +47,10 @@ internal class Property(
 )
 
 
-internal fun KSFunctionDeclaration.toGTaskAction(): GTaskAction {
+internal fun KSFunctionDeclaration.toGTaskAction(implementationCoordinates: String?): GTaskAction {
     val parameters = mutableListOf<Property>()
     val returnValues = returnType.toReturnValues()
-    val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, extraClasspath, workerExecutor)
+    val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
     val returnValuesNames = returnValues.map { it.name }.toSet()
 
     this.parameters.forEach { valueParameter ->
@@ -116,12 +121,12 @@ internal fun KSFunctionDeclaration.toGTaskAction(): GTaskAction {
         )
     }
 
-    val GTaskActionAnnotation = annotations.first { it.shortName.asString() == "GTaskAction" }
-    val name = GTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "name" }
+    val gTaskActionAnnotation = annotations.first { it.shortName.asString() == "GTaskAction" }
+    val name = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "name" }
         ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
-    val description = GTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "description" }
+    val description = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "description" }
         ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
-    val group = GTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "group" }
+    val group = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "group" }
         ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
 
     return GTaskAction(
@@ -131,7 +136,8 @@ internal fun KSFunctionDeclaration.toGTaskAction(): GTaskAction {
         returnValues = returnValues,
         annotationName = name,
         description = description,
-        group = group
+        group = group,
+        implementationCoordinates = implementationCoordinates
     )
 }
 

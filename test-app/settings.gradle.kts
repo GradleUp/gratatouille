@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 
 includeBuild("../test-plugin")
+includeBuild("../test-plugin-isolated")

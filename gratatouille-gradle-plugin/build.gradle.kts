@@ -28,9 +28,13 @@ gradlePlugin {
             this.implementationClass = "gratatouille.gradle.GratatouilleImplementationPlugin"
             this.id = "com.gradleup.gratatouille.implementation"
         }
-        create("com.gradleup.gratatouille.plugin") {
-            this.implementationClass = "gratatouille.gradle.GratatouilleGradlePluginPlugin"
-            this.id = "com.gradleup.gratatouille.plugin"
+        create("com.gradleup.gratatouille.api") {
+            this.implementationClass = "gratatouille.gradle.GratatouilleApiPlugin"
+            this.id = "com.gradleup.gratatouille.api"
+        }
+        create("com.gradleup.gratatouille") {
+            this.implementationClass = "gratatouille.gradle.GratatouillePlugin"
+            this.id = "com.gradleup.gratatouille"
         }
     }
 }

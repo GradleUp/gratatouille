@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import javax.inject.Inject
 
-class GratatouilleGradlePluginPlugin : Plugin<Project> {
+class GratatouilleApiPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.configurations.create("gratatouille") {
             it.isTransitive = false
