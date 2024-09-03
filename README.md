@@ -376,3 +376,9 @@ gradlePlugin {
 ```
 
 In your plugin code, use `Project.register${TaskAction}Task()` to register the task
+
+## Limitations
+
+### Logging
+
+Because your task actions are called from a worker and possibly from a completely separate classloader, there is no way to use `logger`. A future version may transport logs over sockets. 

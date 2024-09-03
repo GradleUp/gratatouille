@@ -42,6 +42,7 @@ internal fun taskAction1(
         appendLine("fileInput.length(): ${fileInput.length()}")
         appendLine("optionalFileInput: ${optionalFileInput?.length()}")
         appendLine("filesInput.count(): ${filesInput.count()}")
+        appendLine("filesInput: ${filesInput.map { it.normalizedPath }}")
         appendLine("directoryInput.walk().count(): ${directoryInput.walk().count()}")
         appendLine("serializableInput: $serializableInput")
     }.let {

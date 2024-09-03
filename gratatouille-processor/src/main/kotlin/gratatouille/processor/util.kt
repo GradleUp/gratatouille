@@ -32,27 +32,15 @@ fun String.decapitalizeFirstLetter(): String {
     return builder.toString()
 }
 
-/**
- * Suppresses usage of internal symbols
- * @See https://publicobject.com/2024/01/30/internal-visibility/
- *
- * @Suppress(
- *     "CANNOT_OVERRIDE_INVISIBLE_MEMBER",
- *     "INVISIBLE_MEMBER",
- *     "INVISIBLE_REFERENCE",
- * )
- */
-internal val suppressInternalAnnotationSpec = AnnotationSpec.builder(ClassName("kotlin", "Suppress"))
-    .addMember("%S", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-    .addMember("%S", "INVISIBLE_MEMBER")
-    .addMember("%S", "INVISIBLE_REFERENCE")
-    .build()
-
 internal fun KSPropertyDeclaration.isPublic(): Boolean {
     return modifiers.none {
         it in setOf(Modifier.PRIVATE, Modifier.PROTECTED, Modifier.INTERNAL)
     }
 }
+
+internal val optInGratatouilleInternalAnnotationSpec = AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+    .addMember("%T::class", ClassName("gratatouille", "GratatouilleInternal"))
+    .build()
 
 internal fun TypeSpec.Builder.addConstructorProperties(properties: List<Property>) = apply {
     primaryConstructor(
