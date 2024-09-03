@@ -1,0 +1,317 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>gratatouille</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            gratatouille
+                    </a>            </div>
+            <div class="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;gratatouille/index.html&quot;}">0.0.3-SNAPSHOT</dokka-template-command>            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":gratatouille-core/main">jvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="gratatouille-core::gratatouille////PointingToDeclaration//387756423">
+  <div class="breadcrumbs"><a href="../index.html">gratatouille-core</a><span class="delimiter">/</span><span class="current">gratatouille</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="337360462%2FClasslikes%2F387756423" anchor-label="FileWithPath" id="337360462%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-file-with-path/index.html"><span>File</span><wbr><span>With</span><wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="337360462%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-file-with-path/index.html">FileWithPath</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>file<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>normalizedPath<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2063127805%2FClasslikes%2F387756423" anchor-label="GInputDirectory" id="-2063127805%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-input-directory/index.html"><span>GInput</span><wbr><span><span>Directory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2063127805%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-g-input-directory/index.html">GInputDirectory</a><span class="token operator"> = </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1942523446%2FClasslikes%2F387756423" anchor-label="GInputFile" id="1942523446%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-input-file/index.html"><span>GInput</span><wbr><span><span>File</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1942523446%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-g-input-file/index.html">GInputFile</a><span class="token operator"> = </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="7566777%2FClasslikes%2F387756423" anchor-label="GInputFiles" id="7566777%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-input-files/index.html"><span>GInput</span><wbr><span><span>Files</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="7566777%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-g-input-files/index.html">GInputFiles</a><span class="token operator"> = </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="-file-with-path/index.html">FileWithPath</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-94542071%2FClasslikes%2F387756423" anchor-label="GInternal" id="-94542071%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-internal/index.html"><span><span>GInternal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-94542071%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="-g-internal/index.html">GInternal</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1338982256%2FClasslikes%2F387756423" anchor-label="GManuallyWired" id="1338982256%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-manually-wired/index.html"><span>GManually</span><wbr><span><span>Wired</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1338982256%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="-g-manually-wired/index.html">GManuallyWired</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1119442256%2FClasslikes%2F387756423" anchor-label="GOutputDirectory" id="-1119442256%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-output-directory/index.html"><span>GOutput</span><wbr><span><span>Directory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1119442256%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-g-output-directory/index.html">GOutputDirectory</a><span class="token operator"> = </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1766246807%2FClasslikes%2F387756423" anchor-label="GOutputFile" id="-1766246807%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-output-file/index.html"><span>GOutput</span><wbr><span><span>File</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1766246807%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">typealias </span><a href="-g-output-file/index.html">GOutputFile</a><span class="token operator"> = </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1830886619%2FClasslikes%2F387756423" anchor-label="GratatouilleInternal" id="-1830886619%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-gratatouille-internal/index.html"><span>Gratatouille</span><wbr><span><span>Internal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1830886619%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="-gratatouille-internal/index.html">GratatouilleInternal</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1981627861%2FClasslikes%2F387756423" anchor-label="GTaskAction" id="-1981627861%2FClasslikes%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-g-task-action/index.html"><span>GTask</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1981627861%2FClasslikes%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="-g-task-action/index.html">GTaskAction</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1161920642%2FProperties%2F387756423" anchor-label="json" id="1161920642%2FProperties%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="json.html"><span><span>json</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1161920642%2FProperties%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="json.html">json</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.serialization.json/Json///PointingToDeclaration/">Json</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="EXTENSION_FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1505869764%2FFunctions%2F387756423" anchor-label="decodeJson" id="-1505869764%2FFunctions%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="decode-json.html"><span>decode</span><wbr><span><span>Json</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1505869764%2FFunctions%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="decode-json.html">T</a><span class="token operator">&gt; </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token punctuation">.</span><a href="decode-json.html"><span class="token function">decodeJson</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-json.html">T</a></div><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="decode-json.html">T</a><span class="token operator">&gt; </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token punctuation">.</span><a href="decode-json.html"><span class="token function">decodeJson</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clazz<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><a href="decode-json.html">T</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="decode-json.html">T</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-808265516%2FFunctions%2F387756423" anchor-label="encodeJson" id="-808265516%2FFunctions%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-json.html"><span>encode</span><wbr><span><span>Json</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-808265516%2FFunctions%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="encode-json.html">T</a><span class="token operator">&gt; </span><a href="encode-json.html">T</a><span class="token punctuation">.</span><a href="encode-json.html"><span class="token function">encodeJson</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1324603543%2FFunctions%2F387756423" anchor-label="encodeJsonTo" id="1324603543%2FFunctions%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="encode-json-to.html"><span>encode</span><wbr><span>Json</span><wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1324603543%2FFunctions%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="encode-json-to.html">T</a><span class="token operator">&gt; </span><a href="encode-json-to.html">T</a><span class="token punctuation">.</span><a href="encode-json-to.html"><span class="token function">encodeJsonTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">file<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1040709332%2FFunctions%2F387756423" anchor-label="toGInputFiles" id="-1040709332%2FFunctions%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-g-input-files.html"><span>to</span><wbr><span>GInput</span><wbr><span><span>Files</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1040709332%2FFunctions%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-g-input-files.html"><span class="token function">toGInputFiles</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-g-input-files/index.html">GInputFiles</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

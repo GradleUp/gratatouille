@@ -1,0 +1,9 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:gratatouille-core
+gratatouille
+module:gratatouille-gradle-plugin
+gratatouille.gradle
+module:gratatouille-processor
+gratatouille.processor
