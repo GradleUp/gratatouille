@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.buildkonfig)
     implementation(libs.ksp.gradle.plugin)
+    implementation(libs.librarian)
 }
 
 group = "build-logic"

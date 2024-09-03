@@ -1,0 +1,19 @@
+name: Publish snapshot
+
+on:
+  push:
+    branches: [ main ]
+jobs:
+  publish-snapshot:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
+      - run: |
+          ./gradlew librarianPublishToSnapshots
+        env:
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.OSSRH_USER }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}

@@ -1,0 +1,15 @@
+name: Build pull request
+
+on: pull_request
+
+jobs:
+  build-pull-request:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
+      - run: |
+          ./gradlew build 
+          ./gradlew -p test-app build
+          ./gradlew -p sample-app build
