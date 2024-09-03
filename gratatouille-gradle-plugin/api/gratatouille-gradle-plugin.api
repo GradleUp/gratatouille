@@ -1,0 +1,23 @@
+public abstract class gratatouille/gradle/ExtractGratatouilleSources : org/gradle/api/tasks/Copy {
+	public fun <init> ()V
+	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
+}
+
+public final class gratatouille/gradle/GratatouilleApiPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class gratatouille/gradle/GratatouilleImplementationPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+

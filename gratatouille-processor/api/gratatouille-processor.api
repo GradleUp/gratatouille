@@ -1,0 +1,15 @@
+public final class gratatouille/processor/GratatouilleProcessor : com/google/devtools/ksp/processing/SymbolProcessor {
+	public fun <init> (Lcom/google/devtools/ksp/processing/CodeGenerator;Lcom/google/devtools/ksp/processing/KSPLogger;Ljava/util/Map;)V
+	public fun process (Lcom/google/devtools/ksp/processing/Resolver;)Ljava/util/List;
+}
+
+public final class gratatouille/processor/GratatouilleProcessorProvider : com/google/devtools/ksp/processing/SymbolProcessorProvider {
+	public fun <init> ()V
+	public fun create (Lcom/google/devtools/ksp/processing/SymbolProcessorEnvironment;)Lcom/google/devtools/ksp/processing/SymbolProcessor;
+}
+
+public final class gratatouille/processor/UtilKt {
+	public static final fun capitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun decapitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
+}
+
