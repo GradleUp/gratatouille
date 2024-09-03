@@ -3,6 +3,7 @@ package gratatouille.processor
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
+
 internal fun GTaskAction.taskFile(): FileSpec {
   val className = taskClassName()
 
@@ -156,10 +157,14 @@ private fun GTaskAction.task(): TypeSpec {
         .build()
     )
     .addFunction(isolate())
+    .addFunction(isolate2())
     .addFunction(taskAction())
     .build()
 }
 
+/**
+ * This is hardwired because we don't want to add dependencies to the api module
+ */
 private fun isolate(): FunSpec {
   return FunSpec.builder("isolate")
     .addTypeVariable(TypeVariableName("T"))
@@ -168,25 +173,46 @@ private fun isolate(): FunSpec {
     .addCode(
       """
             @kotlin.Suppress("UNCHECKED_CAST")
-            when (this) {
+            return when (this) {
                 is Set<*> -> {
-                    return this.map { it.isolate() }.toSet() as T
+                    this.map { it.isolate() }.toSet() as T
                 }
         
                 is List<*> -> {
-                    return this.map { it.isolate() } as T
+                    this.map { it.isolate() } as T
                 }
         
                 is Map<*, *> -> {
-                    return entries.map { it.key.isolate() to it.value.isolate() }.toMap() as T
+                    entries.map { it.key.isolate() to it.value.isolate() }.toMap() as T
                 }
         
-                else -> {
-                    return this
+                else -> this
+            }
+            """.trimIndent(),
+      ClassName("org.gradle.api.file", "FileCollection")
+    )
+    .addModifiers(KModifier.PRIVATE)
+    .build()
+}
+
+/**
+ * This is hardwired because we don't want to add dependencies to the api module
+ */
+private fun isolate2(): FunSpec {
+  return FunSpec.builder("isolate2")
+    .receiver(ClassName("org.gradle.api.file", "FileCollection"))
+    .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "Any")))
+    .addCode(
+      """
+            return buildList {
+                asFileTree.visit { 
+                    add(it.name)
+                    add(it.file)
                 }
             }
-            """.trimIndent()
-    )
+            """.trimIndent(),
+
+      )
     .addModifiers(KModifier.PRIVATE)
     .build()
 }
@@ -198,46 +224,40 @@ private fun GTaskAction.taskAction(): FunSpec {
         .build()
     )
     .addCode(
-      CodeBlock.builder()
-        .add("$workerExecutor().noIsolation().submit(%T::class.java) {\n", workActionClassName())
-        .indent()
-        .apply {
-          (listOf(classpathProperty) + parameters + returnValues).forEach {
-            val extra = CodeBlock.builder()
-              .apply {
-                when (it.type) {
-                  InputDirectory,
-                  InputFile,
-                  is KotlinxSerializableInput,
-                  is KotlinxSerializableOutput,
-                  is OutputDirectory,
-                  is OutputFile
-                    -> {
-                    add(".asFile")
-                  }
-
-                  InputFiles -> {
-                    add(".files")
-                  }
-
-                  else -> Unit
+      buildCodeBlock {
+        add("$workerExecutor().noIsolation().submit(%T::class.java) {\n", workActionClassName())
+        withIndent {
+          add("it.$classpath = $classpath.files\n")
+          (parameters + returnValues).forEach {
+            val extra = buildCodeBlock {
+              when (it.type) {
+                InputDirectory,
+                InputFile,
+                is KotlinxSerializableInput -> {
+                  add(".asFile")
+                  add(if (it.optional) ".orNull" else ".get()")
                 }
-                if (it.type !is InputFiles) {
-                  if (it.optional) {
-                    add(".orNull?")
-                  } else {
-                    add(".get()")
-                  }
+                is KotlinxSerializableOutput,
+                is OutputDirectory,
+                is OutputFile -> {
+                  add(".asFile.get()")
                 }
-                add(".isolate()")
+
+                InputFiles -> {
+                  add(".isolate2()")
+                }
+
+                is JvmType -> {
+                  add(if (it.optional) ".orNull?" else ".get()")
+                  add(".isolate()")
+                }
               }
-              .build()
+            }
             add("it.%L = %L%L\n", it.name, it.name, extra)
           }
         }
-        .unindent()
-        .add("}\n")
-        .build()
+        add("}\n")
+      }
     )
     .build()
 }
@@ -373,30 +393,30 @@ private fun GTaskAction.workActionExecute(): FunSpec {
         add("with(parameters) {\n")
         withIndent {
           if (implementationCoordinates != null) {
-              add("%T(\n", ClassName("java.net", "URLClassLoader"))
-              withIndent {
-                  add("$classpath.map { it.toURI().toURL() }.toTypedArray(),\n")
-                  add("%T.getPlatformClassLoader()\n", ClassName("java.lang", "ClassLoader"))
+            add("%T(\n", ClassName("java.net", "URLClassLoader"))
+            withIndent {
+              add("$classpath.map { it.toURI().toURL() }.toTypedArray(),\n")
+              add("%T.getPlatformClassLoader()\n", ClassName("java.lang", "ClassLoader"))
+            }
+            add(")")
+            add(".loadClass(%S)\n", entryPointClassName().canonicalName)
+            add(".declaredMethods.single()\n")
+            add(".invoke(\n")
+            withIndent {
+              add("null,\n")
+              (parameters + returnValues).forEach {
+                add("%L,\n", it.name)
               }
-              add(")")
-              add(".loadClass(%S)\n", entryPointClassName().canonicalName)
-              add(".declaredMethods.single()\n")
-              add(".invoke(\n")
-              withIndent {
-                  add("null,\n")
-                  (parameters + returnValues).forEach {
-                      add("%L,\n", it.name)
-                  }
-              }
-              add(")\n")
+            }
+            add(")\n")
           } else {
-              add("%T.run(\n", entryPointClassName())
-              withIndent {
-                  (parameters + returnValues).forEach {
-                      add("%L,\n", it.name)
-                  }
+            add("%T.run(\n", entryPointClassName())
+            withIndent {
+              (parameters + returnValues).forEach {
+                add("%L,\n", it.name)
               }
-              add(")\n")
+            }
+            add(")\n")
           }
         }
         add("}\n")
