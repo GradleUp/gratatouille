@@ -25,7 +25,7 @@ Apply the `com.gradleup.gratatouille` plugin:
 ```kotlin
 plugins {
     id("java-gradle-plugin")
-    id("com.gradleup.gratatouille").version("0.0.3")
+    id("com.gradleup.gratatouille").version("0.0.4")
 }
 ```
 
@@ -311,7 +311,7 @@ Create an `implementation` module for your plugin implementation and apply the `
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille.implementation").version("0.0.3")
+    id("com.gradleup.gratatouille.implementation").version("0.0.4")
 }
 
 dependencies {
@@ -358,7 +358,7 @@ Apply the `com.gradleup.gratatouille.api` plugin in your `api` module:
 // gradle-plugin/build.gradle.kts
 plugins {
     id("java-gradle-plugin")
-    id("com.gradleup.gratatouille.api").version("0.0.3")
+    id("com.gradleup.gratatouille.api").version("0.0.4")
 }
 
 dependencies {
