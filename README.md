@@ -296,9 +296,11 @@ Gradle uses [multiple classloaders](https://dev.to/autonomousapps/build-compile-
 
 Especially, `buildSrc`/`build-logic` dependencies [leak in the main classpath](https://github.com/gradle/gradle/issues/4741) and override any dependencies from other plugin without conflict resolution. There are multiple workarounds such as declaring all plugins in `buildSrc` or in the top level `build.gradle[.kts]` file but the situation is confusing to Gradle newcomers and hard to debug.
 
-To guard against those issues, Gratatouille provides a "classloader isolation" mode where your task actions use a separate classloader.
+To guard against those issues, Gratatouille provides a classloader isolation mode where your task actions use a separate classloader.
 
 This means your plugin can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself.
+
+Furthermore, this classloader is managed by Gratatouille, working around metaspace leaks such as [gradle/18313](https://github.com/gradle/gradle/issues/18313).
 
 For classloader isolation to work, your plugin needs 2 modules:
 * The **implementation** module is where the task actions are defined and the work is done. This module can add dependencies. 
