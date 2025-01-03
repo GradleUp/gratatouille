@@ -62,7 +62,7 @@
   <div class="breadcrumbs"><a href="../../index.html">gratatouille-core</a><span class="delimiter">/</span><a href="../index.html">gratatouille</a><span class="delimiter">/</span><span class="current">GTaskAction</span></div>
   <div class="cover ">
     <h1 class="cover"><span>GTask</span><wbr><span><span>Action</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="index.html">GTaskAction</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span></span></span><span class="token punctuation">)</span></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">annotation class </span><a href="index.html">GTaskAction</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>group<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>description<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>pure<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>pure</span></span></u></div></span></div><div><div class="title"><p class="paragraph">whether the annotated function is <a href="https://en.wikipedia.org/wiki/Pure_function">pure</a>, i.e. its outputs only depends on the inputs.</p><p class="paragraph">Impure functions generate non-cacheable tasks that are never <a href="https://docs.gradle.org/current/userguide/incremental_build.html">up-to-date</a>.</p><p class="paragraph">In this context, a function can be considered pure even if it has side effects as long as those side effects do not impact other tasks and do not contribute the build outputs. For an example, writing logs to stdout may not make a function impure but publishing to a Maven Repository should.</p></div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -114,13 +114,28 @@
               </div>
             </div>
           </div>
+<a data-name="151830076%2FProperties%2F387756423" anchor-label="pure" id="151830076%2FProperties%2F387756423" data-filterable-set=":gratatouille-core/main"></a>
+          <div class="table-row" data-filterable-current=":gratatouille-core/main" data-filterable-set=":gratatouille-core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pure.html"><span><span>pure</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="151830076%2FProperties%2F387756423"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="pure.html">pure</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
             </div>
         </div>
