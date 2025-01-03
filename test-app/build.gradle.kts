@@ -1,11 +1,22 @@
+import testplugin.TestExtension
+import testplugin.isolated.TestExtensionIsolated
 import kotlin.test.assertFailsWith
 
-plugins {
-  id("testplugin")
-  id("testplugin.isolated")
+buildscript {
+  dependencies {
+    classpath("test-plugin:test-plugin")
+    classpath("test-plugin-isolated:api")
+  }
+  repositories {
+    mavenCentral()
+  }
 }
 
-testExtension {
+plugins.apply("testplugin")
+plugins.apply("testplugin.isolated")
+
+extensions.getByName("testExtension").apply {
+  this as TestExtension
   stringInput.set("input")
   internalInput.set("internalInput")
   //optionalInput.set()
@@ -26,7 +37,8 @@ testExtension {
   fileOutput3.set(file("build/output"))
 }
 
-testExtensionIsolated {
+extensions.getByName("testExtensionIsolated").apply {
+  this as TestExtensionIsolated
   stringInput.set("world")
 }
 

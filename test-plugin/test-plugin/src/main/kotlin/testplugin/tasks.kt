@@ -2,6 +2,7 @@ package testplugin
 
 import gratatouille.*
 import kotlinx.serialization.Serializable
+import java.util.Date
 
 @Serializable
 data class Input1(val value: String)
@@ -21,7 +22,8 @@ class TaskAction2Output(val output21: Output21, val output22: Output22)
 @GTaskAction
 internal fun taskAction1(
     stringInput: String,
-    @GInternal internalInput: String,
+    @GInternal
+    internalInput: String,
     optionalInput: String?,
     setInput: Set<Int>,
     listInput: List<Int>,
@@ -64,9 +66,18 @@ internal fun taskAction2(
 @GTaskAction
 internal fun taskAction3(
     input: String,
-    @GManuallyWired outputFile: GOutputFile,
+    @GManuallyWired
+    outputFile: GOutputFile,
     outputDirectory: GOutputDirectory,
 ) {
     outputFile.writeText("$input in file")
     outputDirectory.resolve("output.txt").writeText("$input in file in dir")
+}
+
+@GTaskAction(pure = false)
+internal fun taskAction4(
+    input: String,
+    outputFile: GOutputFile,
+) {
+    outputFile.writeText("${Date()}: $input in file")
 }

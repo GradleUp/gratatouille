@@ -20,6 +20,6 @@ group = "build-logic"
 
 /**
  * Ideally would use Runtime.version().feature() but the current Gradle still ships with Kotlin 1.9
- * that doesn't know about Java 22 🤷‍♂️
+ * that doesn't know about Java 22
  */
 configureJavaCompatibility(17)

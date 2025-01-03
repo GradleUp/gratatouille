@@ -3,6 +3,7 @@ package gratatouille.gradle
 import com.gradleup.gratatouille.gradle.BuildConfig
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
+import org.gradle.api.artifacts.component.ModuleComponentSelector
 
 
 internal fun Project.withRequiredPlugins(vararg ids: String, block: () -> Unit) {
@@ -26,7 +27,6 @@ internal fun Project.withRequiredPlugins(vararg ids: String, block: () -> Unit) 
 
 internal fun Project.configureDefaultVersionsResolutionStrategy() {
     configurations.configureEach { configuration ->
-        // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
         configuration.withDependencies { dependencySet ->
             val pluginVersion = VERSION
             dependencySet.filterIsInstance<ExternalDependency>()

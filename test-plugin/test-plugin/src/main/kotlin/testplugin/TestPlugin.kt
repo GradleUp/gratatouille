@@ -37,6 +37,10 @@ class TestPlugin : Plugin<Project> {
             input = extension.stringInput3,
             outputFile = extension.fileOutput3
         )
+
+        target.registerTaskAction4Task(
+            input = extension.stringInput
+        )
     }
 }
 

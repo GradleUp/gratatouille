@@ -24,7 +24,7 @@ class PluginSpec(private val id: String, private val project: Project) {
       // From https://github.com/gradle/gradle/blob/master/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/JavaGradlePluginPlugin.java#L253
       project.tasks.named("processResources", Copy::class.java) {
         val copyPluginDescriptors: CopySpec = it.rootSpec.addChild()
-        copyPluginDescriptors.into("META-INF/gradle-plugins")
+        copyPluginDescriptors.into("/")
         copyPluginDescriptors.from(connection.directory)
       }
     }
@@ -53,7 +53,7 @@ class PluginSpec(private val id: String, private val project: Project) {
    *
    * @param mainPublication the publication to redirect to.
    */
-  fun marker(mainPublication: MavenPublication) {
+  fun mainPublication(mainPublication: MavenPublication) {
     project.withRequiredPlugins("maven-publish") {
       project.extensions.getByType(PublishingExtension::class.java).apply {
         // https://github.com/gradle/gradle/blob/master/platforms/extensibility/plugin-development/src/main/java/org/gradle/plugin/devel/plugins/MavenPluginPublishPlugin.java#L88
@@ -82,9 +82,25 @@ class PluginSpec(private val id: String, private val project: Project) {
       }
     }
   }
+
+  fun mainPublication(mainPublication: String) {
+    project.withRequiredPlugins("maven-publish") {
+      project.extensions.getByType(PublishingExtension::class.java).apply {
+        val publication = publications.findByName(mainPublication)
+        check(publication != null) {
+          "Gratatouille: cannot find publication named '$mainPublication'"
+        }
+        check(publication is MavenPublication) {
+          "Gratatouille: publication '$mainPublication' is not an instance of MavenPublication"
+        }
+        mainPublication(publication)
+      }
+    }
+  }
 }
 
-private fun String.displayName() = this.split(".").joinToString(separator = "") { it.replaceFirstChar { it.uppercase() } }
+private fun String.displayName() =
+  this.split(".").joinToString(separator = "") { it.replaceFirstChar { it.uppercase() } }
 
 abstract class GratatouilleExtension(private val project: Project) {
   fun plugin(id: String, action: Action<PluginSpec>) {

@@ -9,12 +9,14 @@ import javax.inject.Inject
 
 class GratatouilleApiPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        target.extensions.create("gratatouille", GratatouilleExtension::class.java, target)
         target.configurations.create("gratatouille") {
             it.isTransitive = false
         }
-        target.withPlugins("org.jetbrains.kotlin.jvm") {
+        target.withRequiredPlugins("org.jetbrains.kotlin.jvm") {
             target.configure()
         }
+        target.configureDefaultVersionsResolutionStrategy()
     }
 
     private fun Project.configure() {

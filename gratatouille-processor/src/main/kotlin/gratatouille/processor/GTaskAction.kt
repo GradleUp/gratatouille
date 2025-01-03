@@ -12,7 +12,6 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import com.sun.org.apache.xpath.internal.operations.Bool
 
 internal class GTaskAction(
   val packageName: String,

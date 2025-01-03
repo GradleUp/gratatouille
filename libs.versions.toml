@@ -1,6 +1,6 @@
 [versions]
-ksp = "2.0.20-1.0.24"
-kotlin = "2.0.20"
+ksp = "2.0.21-1.0.26"
+kotlin = "2.0.21"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
 librarian = "0.0.6"
@@ -21,6 +21,7 @@ kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref 
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
+
 
 [plugins]
 librarian = { id = "com.gradleup.librarian", version.ref = "librarian"}

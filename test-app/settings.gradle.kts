@@ -3,6 +3,7 @@ pluginManagement {
         it.apply {
             mavenCentral()
             google()
+            maven("../build/m2")
         }
     }
 }

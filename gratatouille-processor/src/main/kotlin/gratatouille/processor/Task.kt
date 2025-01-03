@@ -9,11 +9,6 @@ internal fun GTaskAction.taskFile(): FileSpec {
 
   val fileSpec = FileSpec.builder(className)
     .addFunction(register())
-    .apply {
-      if (!pure) {
-        addBodyComment("This task is impure and not cacheable")
-      }
-    }
     .addType(task())
     .addType(workParameters())
     .addType(workAction())
@@ -146,7 +141,8 @@ private fun GTaskAction.task(): TypeSpec {
             .build()
         )
       } else {
-        addFunction(FunSpec.builder("init").addCode("outputs.upToDateWhen { false }").build())
+        addKdoc("This task is impure and not cacheable")
+        addInitializerBlock(CodeBlock.of("outputs.upToDateWhen { false }\n"))
       }
     }
     .addModifiers(KModifier.ABSTRACT, KModifier.INTERNAL)

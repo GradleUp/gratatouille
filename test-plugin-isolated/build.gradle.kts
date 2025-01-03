@@ -8,3 +8,4 @@ buildscript {
         classpath("com.gradleup.gratatouille:gratatouille-gradle-plugin")
     }
 }
+

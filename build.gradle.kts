@@ -11,3 +11,9 @@ buildscript {
 }
 
 librarianRoot()
+
+tasks.register("publishAllPublicationsToPluginTestRepository") {
+    subprojects {
+        dependsOn("$path:publishAllPublicationsToPluginTestRepository")
+    }
+}
