@@ -10,7 +10,17 @@ annotation class GratatouilleInternal
 
 annotation class GInternal
 annotation class GManuallyWired
-annotation class GTaskAction(val name: String = "", val group: String = "", val description: String = "")
+
+/**
+ * @param pure whether the annotated function is [pure](https://en.wikipedia.org/wiki/Pure_function), i.e. its outputs only depends
+ * on the inputs.
+ *
+ * Impure functions generate non-cacheable tasks that are never [up-to-date](https://docs.gradle.org/current/userguide/incremental_build.html).
+ *
+ * In this context, a function can be considered pure even if it has side effects as long as those side effects do not impact other tasks and do not contribute the build outputs.
+ * For an example, writing logs to stdout may not make a function impure but publishing to a Maven Repository should.
+ */
+annotation class GTaskAction(val name: String = "", val group: String = "", val description: String = "", val pure: Boolean = true)
 
 typealias GOutputFile = File
 typealias GOutputDirectory = File

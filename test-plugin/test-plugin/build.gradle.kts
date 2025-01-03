@@ -14,3 +14,9 @@ gradlePlugin {
         }
     }
 }
+
+gratatouille {
+    plugin("testplugin") {
+        implementationClass("testplugin.TestPlugin")
+    }
+}

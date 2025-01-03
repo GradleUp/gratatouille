@@ -9,6 +9,11 @@ internal fun GTaskAction.taskFile(): FileSpec {
 
   val fileSpec = FileSpec.builder(className)
     .addFunction(register())
+    .apply {
+      if (!pure) {
+        addBodyComment("This task is impure and not cacheable")
+      }
+    }
     .addType(task())
     .addType(workParameters())
     .addType(workAction())
@@ -134,10 +139,16 @@ private fun Type.toProviderType(): TypeName {
 
 private fun GTaskAction.task(): TypeSpec {
   return TypeSpec.classBuilder(taskClassName().simpleName)
-    .addAnnotation(
-      AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "CacheableTask"))
-        .build()
-    )
+    .apply {
+      if (pure) {
+        addAnnotation(
+          AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "CacheableTask"))
+            .build()
+        )
+      } else {
+        addFunction(FunSpec.builder("init").addCode("outputs.upToDateWhen { false }").build())
+      }
+    }
     .addModifiers(KModifier.ABSTRACT, KModifier.INTERNAL)
     .superclass(ClassName("org.gradle.api", "DefaultTask"))
     .apply {

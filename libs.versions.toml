@@ -20,6 +20,7 @@ kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotli
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
 okio = "com.squareup.okio:okio:3.9.0"
+cast = "net.mbonnin.cast:cast:0.0.1"
 
 [plugins]
 librarian = { id = "com.gradleup.librarian", version.ref = "librarian"}

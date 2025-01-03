@@ -1,12 +1,12 @@
 # Gratatouille 🐘🤝🐭👉🧑‍🍳 
 
-Gratatouille is an opinionated framework to build Gradle plugins. Write pure Kotlin functions and the Gratatouille KSP processor generates tasks, workers, and wiring code for you.
+Gratatouille is an opinionated framework to build Gradle plugins. Write Kotlin functions and the Gratatouille KSP processor generates tasks, workers, and wiring code for you.
 
 When used in classloader isolation mode, Gratatouille enforces a clear separation between your plugin logic (**implementation**) and your plugin wiring (**api**) making your plugin immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
 
 **Key Features**:
 
-* [Pure functions](#pure-functions)
+* [Functional programming style](#functions)
 * [Kotlinx serialization support](#built-in-kotlinxserialization-support)
 * [Comprehensive input/output types](#supported-input-and-output-types)
 * [Non overlapping task outputs](#non-overlapping-task-outputs-by-default)
@@ -186,11 +186,11 @@ No need to implement `DefaultTask`, no risk of forgetting `@Cacheable`, etc... G
 
 ## Features
 
-### Pure functions
+### Functional programming style
 
-Your task code is a side-effect-free function, making it easier to [parallelize](#parallel-task-execution-by-default) and reason about. 
+Your code is modeled as functions taking inputs and generating outputs. 
 
-Nullable parameters are generated as optional task properties. Calls to `Provider.get()` or `Provider.orNull` are automated.
+No need for stateful properties or classes. Nullable parameters are generated as optional task properties. Calls to `Provider.get()` or `Provider.orNull` are automated.
 
 ### Built-in kotlinx.serialization support
 
@@ -378,9 +378,3 @@ gradlePlugin {
 ```
 
 In your plugin code, use `Project.register${TaskAction}Task()` to register the task
-
-## Limitations
-
-### Logging
-
-Because your task actions are called from a worker and possibly from a completely separate classloader, there is no way to use `logger`. A future version may transport logs over sockets. 
