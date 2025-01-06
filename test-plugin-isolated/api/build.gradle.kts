@@ -35,8 +35,8 @@ dependencies {
 
 gratatouille {
     plugin("testplugin.isolated") {
-        implementationClass("testplugin.isolated.TestPluginIsolated")
-        mainPublication("default")
+        registerAndWireDescriptorTask("testplugin.isolated.TestPluginIsolated")
+        createMarkerPublication("default")
     }
 }
 

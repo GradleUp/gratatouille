@@ -35,3 +35,6 @@ internal fun Project.configureDefaultVersionsResolutionStrategy() {
         }
     }
 }
+
+internal fun String.displayName() =
+    this.split(".").joinToString(separator = "") { it.replaceFirstChar { it.uppercase() } }

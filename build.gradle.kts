@@ -17,3 +17,4 @@ tasks.register("publishAllPublicationsToPluginTestRepository") {
         dependsOn("$path:publishAllPublicationsToPluginTestRepository")
     }
 }
+

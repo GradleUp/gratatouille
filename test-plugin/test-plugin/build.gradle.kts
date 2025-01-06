@@ -30,8 +30,8 @@ dependencies {
 
 gratatouille {
   plugin("testplugin") {
-    implementationClass("testplugin.TestPlugin")
-    mainPublication("default")
+    registerAndWireDescriptorTask("testplugin.TestPlugin")
+    createMarkerPublication("default")
   }
 }
 

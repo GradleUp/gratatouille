@@ -12,8 +12,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
       - run: |
           ./gradlew librarianPublishToSnapshots
+          LIBRARIAN_VERSION_SHA1=$GITHUB_SHA ./gradlew librarianPublishToGcs
         env:
           LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.OSSRH_USER }}
           LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
           LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
+          LIBRARIAN_GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
