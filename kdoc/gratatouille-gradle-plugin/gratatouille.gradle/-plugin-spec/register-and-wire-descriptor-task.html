@@ -2,7 +2,7 @@
 <html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-    <title>DescriptorConnection</title>
+    <title>registerAndWireDescriptorTask</title>
 <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
     <script>document.documentElement.classList.replace("no-js","js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
@@ -42,7 +42,7 @@
                             gratatouille
                     </a>            </div>
             <div class="library-version">
-<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;gratatouille.gradle/-descriptor-connection/-descriptor-connection.html&quot;}">0.0.5-SNAPSHOT</dokka-template-command>            </div>
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;gratatouille.gradle/-plugin-spec/register-and-wire-descriptor-task.html&quot;}">0.0.5-SNAPSHOT</dokka-template-command>            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":gratatouille-gradle-plugin/main">jvm</button>
@@ -58,12 +58,12 @@
                 <div class="sidebar--inner" id="sideMenu"></div>
             </div>
             <div id="main">
-<div class="main-content" data-page-type="member" id="content" pageids="gratatouille-gradle-plugin::gratatouille.gradle/DescriptorConnection/DescriptorConnection/#org.gradle.api.provider.Provider[org.gradle.api.file.Directory]/PointingToDeclaration//-1360592001">
-  <div class="breadcrumbs"><a href="../../index.html">gratatouille-gradle-plugin</a><span class="delimiter">/</span><a href="../index.html">gratatouille.gradle</a><span class="delimiter">/</span><a href="index.html">DescriptorConnection</a><span class="delimiter">/</span><span class="current">DescriptorConnection</span></div>
+<div class="main-content" data-page-type="member" id="content" pageids="gratatouille-gradle-plugin::gratatouille.gradle/PluginSpec/registerAndWireDescriptorTask/#kotlin.String/PointingToDeclaration//-1360592001">
+  <div class="breadcrumbs"><a href="../../index.html">gratatouille-gradle-plugin</a><span class="delimiter">/</span><a href="../index.html">gratatouille.gradle</a><span class="delimiter">/</span><a href="index.html">PluginSpec</a><span class="delimiter">/</span><span class="current">registerAndWireDescriptorTask</span></div>
   <div class="cover ">
-    <h1 class="cover"><span>Descriptor</span><wbr><span><span>Connection</span></span></h1>
+    <h1 class="cover"><span>register</span><wbr><span>And</span><wbr><span>Wire</span><wbr><span>Descriptor</span><wbr><span><span>Task</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">directory<span class="token operator">: </span><span data-unresolved-link="org.gradle.api.provider/Provider///PointingToDeclaration/">Provider</span><span class="token operator">&lt;</span><span data-unresolved-link="org.gradle.api.file/Directory///PointingToDeclaration/">Directory</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="register-and-wire-descriptor-task.html"><span class="token function">registerAndWireDescriptorTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">implementationClass<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Registers a <code class="lang-kotlin">generate${pluginId}Descriptor</code> task that generates a <a href="https://docs.gradle.org/current/userguide/java_gradle_plugin.html#sec:gradle_plugin_dev_usage">plugin descriptor</a> for the plugin and wires it to the <code class="lang-kotlin">processResources</code> task.</p><p class="paragraph">The descriptor will be included in the .jar file making it possible to locate the plugin implementation from the plugin id.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>implementation</span><wbr><span><span>Class</span></span></u></div></span></div><div><div class="title"><p class="paragraph">the fully qualified class name for the plugin implementation. Example: <code class="lang-kotlin">com.example.ExamplePlugin</code>.</p></div></div></div></div></div><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="register-descriptor-task.html"><span>PluginSpec.</span><wbr><span>register</span><wbr><span>Descriptor</span><wbr><span><span>Task</span></span></a></div></span></div><div></div></div></div></div></div></div>
 </div>
       <div class="footer">
         <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
