@@ -1,23 +1,42 @@
-public abstract class gratatouille/gradle/ExtractGratatouilleSources : org/gradle/api/tasks/Copy {
+public final class gratatouille/gradle/CodeGenerationSpec {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public final fun classLoaderIsolation ()V
+	public final fun classLoaderIsolation (Ljava/lang/String;)V
+}
+
+public abstract class gratatouille/gradle/GratatouilleExtension {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public final fun codeGeneration ()V
+	public final fun codeGeneration (Lorg/gradle/api/Action;)V
+	public final fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
 	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
 }
 
-public final class gratatouille/gradle/GratatouilleApiPlugin : org/gradle/api/Plugin {
+public abstract class gratatouille/gradle/GratatouilleUnzip : org/gradle/api/DefaultTask {
 	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
+	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public final fun taskAction ()V
 }
 
-public final class gratatouille/gradle/GratatouilleImplementationPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
+public abstract interface class gratatouille/gradle/GratatouilleUsage : org/gradle/api/Named {
 }
 
-public final class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
+public abstract class gratatouille/gradle/GratatouilleZip : org/gradle/api/DefaultTask {
 	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
+	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun getOutputFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public final fun taskAction ()V
+}
+
+public final class gratatouille/gradle/VersionKt {
+	public static final field VERSION Ljava/lang/String;
 }
 

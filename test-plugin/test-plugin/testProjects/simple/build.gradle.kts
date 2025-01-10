@@ -8,7 +8,6 @@ testExtension {
   this.setInput.add(43)
   this.filesInput.from(file("inputs/file0.txt"), fileTree("inputs/subdir"))
   this.fileInput.set(file("inputs/file0.txt"))
-  this.directoryInput.set(file("inputs/subdir"))
   this.fileOutput3.set(file("build/file3.txt"))
   this.internalInput.set("internalInput")
   this.stringInput.set("stringInput")

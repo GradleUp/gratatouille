@@ -28,7 +28,6 @@ extensions.getByName("testExtension").apply {
   filesInput.from(fileTree("inputs/fileInputs"))
   //optionalFileInput.set()
   fileInput.set(file("inputs/fileInput"))
-  directoryInput.set(layout.projectDirectory.dir("inputs/directoryInput"))
   serializableInput.set(file("inputs/serializableInput"))
 
   stringInput2.set("input2")

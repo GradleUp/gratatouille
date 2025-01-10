@@ -1,4 +1,4 @@
-package gratatouille.processor
+package gratatouille.processor.ir
 
 import cast.cast
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -12,8 +12,15 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
+import gratatouille.processor.classpath
+import gratatouille.processor.isPublic
+import gratatouille.processor.outputFile
+import gratatouille.processor.taskDescription
+import gratatouille.processor.taskGroup
+import gratatouille.processor.taskName
+import gratatouille.processor.workerExecutor
 
-internal class GTaskAction(
+internal class IrTask(
   val packageName: String,
   val functionName: String,
   val annotationName: String?,
@@ -49,7 +56,7 @@ internal class Property(
 )
 
 
-internal fun KSFunctionDeclaration.toGTaskAction(implementationCoordinates: String?): GTaskAction {
+internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): IrTask {
   val parameters = mutableListOf<Property>()
   val returnValues = returnType.toReturnValues()
   val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
@@ -89,8 +96,7 @@ internal fun KSFunctionDeclaration.toGTaskAction(implementationCoordinates: Stri
         InputFiles
       }
 
-      rawTypename == ClassName("gratatouille", "GInputDirectory") -> InputDirectory
-      rawTypename.isSimpleJvmObject() -> JvmType(rawTypename)
+      rawTypename.isSimpleJvmType() -> JvmType(rawTypename)
       resolvedType.isSerializable() -> KotlinxSerializableInput(rawTypename)
       else -> error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
     }
@@ -123,17 +129,17 @@ internal fun KSFunctionDeclaration.toGTaskAction(implementationCoordinates: Stri
     )
   }
 
-  val gTaskActionAnnotation = annotations.first { it.shortName.asString() == "GTaskAction" }
-  val name = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "name" }
+  val taskAnnotation = annotations.first { it.shortName.asString() == "GTask" }
+  val name = taskAnnotation.arguments.firstOrNull { it.name?.asString() == "name" }
     ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
-  val description = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "description" }
+  val description = taskAnnotation.arguments.firstOrNull { it.name?.asString() == "description" }
     ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
-  val group = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "group" }
+  val group = taskAnnotation.arguments.firstOrNull { it.name?.asString() == "group" }
     ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
-  val pure = gTaskActionAnnotation.arguments.firstOrNull { it.name?.asString() == "pure" }
+  val pure = taskAnnotation.arguments.firstOrNull { it.name?.asString() == "pure" }
     ?.takeIf { it.origin != Origin.SYNTHETIC }?.value?.cast<Boolean>() != false
 
-  return GTaskAction(
+  return IrTask(
     packageName = this.packageName.asString(),
     functionName = this.simpleName.asString(),
     parameters = parameters,
@@ -164,7 +170,7 @@ private fun KSTypeReference?.toReturnValues(): List<Property> {
   if (resolvedType.isSerializable()) {
     return listOf(Property(KotlinxSerializableOutput(typename), outputFile, false, false, false))
   }
-//    if (typename.isSimpleJvmObject()) {
+//    if (typename.isSimpleJvmType()) {
 //        return listOf(ReturnValue(outputFile, JvmType(typename)))
 //    }
 
@@ -188,7 +194,7 @@ private fun KSPropertyDeclaration.toReturnValue(): Property {
   if (resolvedType.isSerializable()) {
     return Property(KotlinxSerializableOutput(typename), simpleName.asString(), false, false, false)
   }
-//    if (typename.isSimpleJvmObject()) {
+//    if (typename.isSimpleJvmType()) {
 //        return ReturnValue(outputFile, JvmType(typename))
 //    }
 
@@ -218,7 +224,7 @@ private fun Sequence<KSAnnotation>.containsManuallyWired(): Boolean {
   }
 }
 
-private fun TypeName.isSimpleJvmObject(): Boolean {
+private fun TypeName.isSimpleJvmType(): Boolean {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
       "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Boolean", "kotlin.Double" -> true
@@ -228,7 +234,7 @@ private fun TypeName.isSimpleJvmObject(): Boolean {
     is ParameterizedTypeName -> when (this.rawType.canonicalName) {
       "kotlin.collections.Set", "kotlin.collections.List", "kotlin.collections.Map" -> {
         this.typeArguments.all {
-          it.isSimpleJvmObject()
+          it.isSimpleJvmType()
         }
       }
 

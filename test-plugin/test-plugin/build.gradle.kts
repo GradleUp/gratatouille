@@ -1,8 +1,8 @@
 plugins {
   id("org.jetbrains.kotlin.jvm")
   id("org.jetbrains.kotlin.plugin.serialization")
-  id("com.google.devtools.ksp")
   id("com.gradleup.gratatouille")
+  id("com.google.devtools.ksp")
   id("maven-publish")
 }
 
@@ -29,10 +29,9 @@ dependencies {
 }
 
 gratatouille {
-  plugin("testplugin") {
-    registerAndWireDescriptorTask("testplugin.TestPlugin")
-    createMarkerPublication("default")
-  }
+  pluginMarker("testplugin", "default")
+  pluginMarker("testplugin2", "default")
+  codeGeneration()
 }
 
 tasks.withType(Test::class.java) {

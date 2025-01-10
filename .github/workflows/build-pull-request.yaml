@@ -14,4 +14,3 @@ jobs:
           ./gradlew -p test-plugin build
           ./gradlew -p test-plugin-isolated build
           ./gradlew -p test-app build
-          ./gradlew -p sample-app prepareIngredients

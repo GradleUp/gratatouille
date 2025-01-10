@@ -4,7 +4,7 @@ import gratatouille.*
 import okio.buffer
 import okio.sink
 
-@GTaskAction
+@GTask
 internal fun taskActionIsolated(
     stringInput: String,
     outputFile: GOutputFile

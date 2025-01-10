@@ -8,7 +8,8 @@ librarian = "0.0.7"
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "ksp" }
-kotlin-test.module = "org.jetbrains.kotlin:kotlin-test"
+
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 vespene = "net.mbonnin.vespene:vespene-lib:0.5"
 buildkonfig = "com.github.gmazzo.buildconfig:plugin:5.3.5"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -21,6 +22,8 @@ kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref 
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
+gratatouille-gradle-plugin = "com.gradleup.gratatouille:gratatouille-gradle-plugin:0.0.4"
+gratatouille-runtime = "com.gradleup.gratatouille:gratatouille-core:0.0.4"
 
 
 [plugins]

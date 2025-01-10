@@ -1,10 +1,22 @@
-package gratatouille.processor
+package gratatouille.processor.codegen
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import gratatouille.processor.*
+import gratatouille.processor.ir.IrTask
+import gratatouille.processor.ir.InputDirectory
+import gratatouille.processor.ir.InputFile
+import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.JvmType
+import gratatouille.processor.ir.KotlinxSerializableInput
+import gratatouille.processor.ir.KotlinxSerializableOutput
+import gratatouille.processor.ir.OutputDirectory
+import gratatouille.processor.ir.OutputFile
+import gratatouille.processor.ir.Property
+import gratatouille.processor.ir.Type
 
 
-internal fun GTaskAction.taskFile(): FileSpec {
+internal fun IrTask.taskFile(): FileSpec {
   val className = taskClassName()
 
   val fileSpec = FileSpec.builder(className)
@@ -17,7 +29,7 @@ internal fun GTaskAction.taskFile(): FileSpec {
   return fileSpec
 }
 
-private fun GTaskAction.register(): FunSpec {
+private fun IrTask.register(): FunSpec {
   val defaultTaskName = annotationName ?: taskName()
   return FunSpec.builder(registerName())
     .addModifiers(KModifier.INTERNAL)
@@ -65,11 +77,11 @@ private fun GTaskAction.register(): FunSpec {
         if (implementationCoordinates != null) {
           add("configuration.dependencies.add(dependencies.create(%S))\n", implementationCoordinates)
         }
-        add("return tasks.register($taskName,%T::class.java) {\n", taskClassName())
+        add("return tasks.register(${taskName},%T::class.java) {\n", taskClassName())
         withIndent {
-          add("it.description = $taskDescription\n")
-          add("it.group = $taskGroup\n")
-          add("it.$classpath.from(configuration)\n")
+          add("it.description = ${taskDescription}\n")
+          add("it.group = ${taskGroup}\n")
+          add("it.${classpath}.from(configuration)\n")
           add("// infrastructure\n")
           add("// inputs\n")
           this@register.parameters.filter { it.type.isInput() }.forEach {
@@ -98,7 +110,7 @@ private fun GTaskAction.register(): FunSpec {
                 "it.%L.set(this@%L.layout.buildDirectory.$method(%L))\n",
                 it.name,
                 registerName(),
-                "\"gtask/\${$taskName}/${it.name}\""
+                "\"gtask/\${${taskName}}/${it.name}\""
               )
             }
           }
@@ -132,7 +144,7 @@ private fun Type.toProviderType(): TypeName {
   }
 }
 
-private fun GTaskAction.task(): TypeSpec {
+private fun IrTask.task(): TypeSpec {
   return TypeSpec.classBuilder(taskClassName().simpleName)
     .apply {
       if (pure) {
@@ -155,7 +167,7 @@ private fun GTaskAction.task(): TypeSpec {
       }
     }
     .addFunction(
-      FunSpec.builder(workerExecutor)
+      FunSpec.Companion.builder(workerExecutor)
         .addModifiers(KModifier.ABSTRACT)
         .addAnnotation(
           AnnotationSpec.builder(ClassName("javax.inject", "Inject")).build()
@@ -224,7 +236,7 @@ private fun isolate2(): FunSpec {
     .build()
 }
 
-private fun GTaskAction.taskAction(): FunSpec {
+private fun IrTask.taskAction(): FunSpec {
   return FunSpec.builder("taskAction")
     .addAnnotation(
       AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "TaskAction"))
@@ -232,9 +244,9 @@ private fun GTaskAction.taskAction(): FunSpec {
     )
     .addCode(
       buildCodeBlock {
-        add("$workerExecutor().noIsolation().submit(%T::class.java) {\n", workActionClassName())
+        add("${workerExecutor}().noIsolation().submit(%T::class.java) {\n", workActionClassName())
         withIndent {
-          add("it.$classpath = $classpath.files\n")
+          add("it.${classpath} = ${classpath}.files\n")
           (parameters + returnValues).forEach {
             val extra = buildCodeBlock {
               when (it.type) {
@@ -383,7 +395,7 @@ private fun TypeName.toGradleProvider(): TypeName {
   return ClassName("org.gradle.api.provider", "Provider").parameterizedBy(this)
 }
 
-private fun GTaskAction.workAction(): TypeSpec {
+private fun IrTask.workAction(): TypeSpec {
   return TypeSpec.classBuilder(workActionClassName().simpleName)
     .addModifiers(KModifier.PRIVATE, KModifier.ABSTRACT)
     .addSuperinterface(ClassName("org.gradle.workers", "WorkAction").parameterizedBy(workParametersClassName()))
@@ -392,7 +404,7 @@ private fun GTaskAction.workAction(): TypeSpec {
     .build()
 }
 
-private fun GTaskAction.workActionExecute(): FunSpec {
+private fun IrTask.workActionExecute(): FunSpec {
   return FunSpec.builder("execute")
     .addModifiers(KModifier.OVERRIDE)
     .addCode(
@@ -402,7 +414,7 @@ private fun GTaskAction.workActionExecute(): FunSpec {
           if (implementationCoordinates != null) {
             add("%T(\n", ClassName("java.net", "URLClassLoader"))
             withIndent {
-              add("$classpath.map { it.toURI().toURL() }.toTypedArray(),\n")
+              add("${classpath}.map { it.toURI().toURL() }.toTypedArray(),\n")
               add("%T.getPlatformClassLoader()\n", ClassName("java.lang", "ClassLoader"))
             }
             add(")")
@@ -431,7 +443,7 @@ private fun GTaskAction.workActionExecute(): FunSpec {
     .build()
 }
 
-private fun GTaskAction.workParameters(): TypeSpec {
+private fun IrTask.workParameters(): TypeSpec {
   return TypeSpec.interfaceBuilder(workParametersClassName().simpleName)
     .addModifiers(KModifier.PRIVATE)
     .addSuperinterface(ClassName("org.gradle.workers", "WorkParameters"))
@@ -444,32 +456,32 @@ private fun GTaskAction.workParameters(): TypeSpec {
         ).mutable(true).build()
       )
       (parameters + returnValues).forEach {
-        addProperty(PropertySpec.builder(it.name, it.toTypeName()).mutable(true).build())
+        addProperty(PropertySpec.Companion.builder(it.name, it.toTypeName()).mutable(true).build())
       }
     }
     .build()
 }
 
-private fun GTaskAction.registerName(): String {
+private fun IrTask.registerName(): String {
   return "register" + this.functionName.capitalizeFirstLetter() + "Task"
 }
 
-private fun GTaskAction.taskName(): String {
+private fun IrTask.taskName(): String {
   return this.functionName.decapitalizeFirstLetter()
 }
 
-private fun GTaskAction.taskClassName(): ClassName {
+private fun IrTask.taskClassName(): ClassName {
   val simpleName = this.functionName.capitalizeFirstLetter() + "Task"
   return ClassName(this.packageName, simpleName)
 }
 
-internal fun GTaskAction.workParametersClassName(): ClassName {
+internal fun IrTask.workParametersClassName(): ClassName {
   val simpleName = this.functionName.capitalizeFirstLetter() + "WorkParameters"
   return ClassName(this.packageName, simpleName)
 }
 
 
-private fun GTaskAction.workActionClassName(): ClassName {
+private fun IrTask.workActionClassName(): ClassName {
   val simpleName = this.functionName.capitalizeFirstLetter() + "WorkAction"
   return ClassName(this.packageName, simpleName)
 }

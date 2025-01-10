@@ -29,10 +29,10 @@ plugins {
 }
 ```
 
-Define your task action using `@GTaskAction`:
+Define your task action using `@GTask`:
 
 ```kotlin
-@GTaskAction
+@GTask
 internal fun prepareIngredients(persons: Int): Ingredients {
     return Ingredients(
         tomatoes = (persons * 0.75).roundToInt(),
@@ -229,7 +229,7 @@ If you need to control the output location of an output, you can do so using `@G
 In your implementation:
 
 ```kotlin
-@GTaskAction
+@GTask
 internal fun cook(
     recipe: GInputFile,
     ingredients: Ingredients,
@@ -260,10 +260,10 @@ project.registerCookTask(
 
 ### Easy documentation
 
-`@GTaskAction` takes a `description` and a `group` argument making it easy to colocate your documentation with your implementation:
+`@GTask` takes a `description` and a `group` argument making it easy to colocate your documentation with your implementation:
 
 ```kotlin
-@GTaskAction(
+@GTask(
     description = "cooks the most delicious ratatouille with the help of the tiniest chef",
     group = "recipes"
 )
@@ -324,10 +324,10 @@ dependencies {
 }
 ```
 
-Write your task action as a pure top-level Kotlin function annotated with `@GTaskAction`:
+Write your task action as a pure top-level Kotlin function annotated with `@GTask`:
 
 ```kotlin
-@GTaskAction
+@GTask
 internal fun prepareIngredients(persons: Int): Ingredients {
     return Ingredients(
         tomatoes = (persons * 0.75).roundToInt(),

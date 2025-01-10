@@ -1,5 +1,5 @@
 public final class gratatouille/processor/GratatouilleProcessor : com/google/devtools/ksp/processing/SymbolProcessor {
-	public fun <init> (Lcom/google/devtools/ksp/processing/CodeGenerator;Lcom/google/devtools/ksp/processing/KSPLogger;Ljava/util/Map;)V
+	public fun <init> (Lcom/google/devtools/ksp/processing/CodeGenerator;Lcom/google/devtools/ksp/processing/KSPLogger;Ljava/lang/String;)V
 	public fun process (Lcom/google/devtools/ksp/processing/Resolver;)Ljava/util/List;
 }
 
@@ -11,5 +11,23 @@ public final class gratatouille/processor/GratatouilleProcessorProvider : com/go
 public final class gratatouille/processor/UtilKt {
 	public static final fun capitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun decapitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class gratatouille/processor/codegen/ClassNames {
+	public static final field INSTANCE Lgratatouille/processor/codegen/ClassNames;
+	public final fun getPlugin ()Lcom/squareup/kotlinpoet/ClassName;
+	public final fun getProject ()Lcom/squareup/kotlinpoet/ClassName;
+}
+
+public final class gratatouille/processor/codegen/PluginKt {
+	public static final fun plugin (Lgratatouille/processor/ir/IrPlugin;)Lcom/squareup/kotlinpoet/FileSpec;
+}
+
+public final class gratatouille/processor/ir/IrPlugin {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getExtensionName ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getSimpleName ()Ljava/lang/String;
 }
 

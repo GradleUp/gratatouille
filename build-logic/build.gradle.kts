@@ -12,7 +12,6 @@ dependencies {
     implementation(libs.vespene)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.buildkonfig)
-    implementation(libs.ksp.gradle.plugin)
     implementation(libs.librarian)
 }
 

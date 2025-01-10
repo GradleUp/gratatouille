@@ -1,4 +1,4 @@
-import com.gradleup.librarian.gradle.librarianRoot
+import com.gradleup.librarian.gradle.Librarian
 
 buildscript {
     repositories {
@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-librarianRoot()
+Librarian.root(project)
 
 tasks.register("publishAllPublicationsToPluginTestRepository") {
     subprojects {

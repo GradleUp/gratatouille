@@ -9,6 +9,9 @@ module()
 
 dependencies {
     implementation(libs.kotlin.test)
+    implementation(libs.gratatouille.runtime)
+    implementation(libs.ksp.api)
+    implementation(project(":gratatouille-processor"))
     compileOnly(gradleApi())
     compileOnly(libs.ksp.gradle.plugin)
     compileOnly(libs.kotlin.gradle.plugin)
@@ -18,20 +21,11 @@ buildConfig {
     useKotlinOutput()
     packageName("com.gradleup.gratatouille.gradle")
 
-    buildConfigField("version", version.toString())
     buildConfigField("group", group.toString())
 }
 
 gradlePlugin {
     plugins {
-        create("com.gradleup.gratatouille.implementation") {
-            this.implementationClass = "gratatouille.gradle.GratatouilleImplementationPlugin"
-            this.id = "com.gradleup.gratatouille.implementation"
-        }
-        create("com.gradleup.gratatouille.api") {
-            this.implementationClass = "gratatouille.gradle.GratatouilleApiPlugin"
-            this.id = "com.gradleup.gratatouille.api"
-        }
         create("com.gradleup.gratatouille") {
             this.implementationClass = "gratatouille.gradle.GratatouillePlugin"
             this.id = "com.gradleup.gratatouille"

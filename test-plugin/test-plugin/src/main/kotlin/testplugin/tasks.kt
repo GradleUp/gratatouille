@@ -19,7 +19,7 @@ data class Output22(val value: String)
 class TaskAction2Output(val output21: Output21, val output22: Output22)
 
 
-@GTaskAction
+@GTask
 internal fun taskAction1(
     stringInput: String,
     @GInternal
@@ -31,7 +31,6 @@ internal fun taskAction1(
     fileInput: GInputFile,
     optionalFileInput: GInputFile?,
     filesInput: GInputFiles,
-    directoryInput: GInputDirectory,
     serializableInput: Input1
 ): MyData {
     return buildString {
@@ -45,14 +44,13 @@ internal fun taskAction1(
         appendLine("optionalFileInput: ${optionalFileInput?.length()}")
         appendLine("filesInput.count(): ${filesInput.count()}")
         appendLine("filesInput: ${filesInput.map { it.normalizedPath }}")
-        appendLine("directoryInput.walk().count(): ${directoryInput.walk().count()}")
         appendLine("serializableInput: $serializableInput")
     }.let {
         MyData(it)
     }
 }
 
-@GTaskAction
+@GTask
 internal fun taskAction2(
     input: String,
     myData: MyData
@@ -63,7 +61,7 @@ internal fun taskAction2(
     )
 }
 
-@GTaskAction
+@GTask
 internal fun taskAction3(
     input: String,
     @GManuallyWired
@@ -74,10 +72,18 @@ internal fun taskAction3(
     outputDirectory.resolve("output.txt").writeText("$input in file in dir")
 }
 
-@GTaskAction(pure = false)
+@GTask(pure = false)
 internal fun taskAction4(
     input: String,
     outputFile: GOutputFile,
 ) {
     outputFile.writeText("${Date()}: $input in file")
+}
+
+@GTask
+internal fun taskAction5(
+    input: String,
+    outputFile: GOutputFile,
+) {
+    outputFile.writeText("$input in file")
 }

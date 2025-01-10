@@ -3,6 +3,8 @@ package gratatouille.processor
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.*
+import gratatouille.processor.codegen.toTypeName
+import gratatouille.processor.ir.Property
 
 fun String.capitalizeFirstLetter(): String {
     val builder = StringBuilder(length)

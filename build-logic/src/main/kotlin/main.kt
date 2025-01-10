@@ -1,9 +1,9 @@
-import com.gradleup.librarian.gradle.librarianModule
+import com.gradleup.librarian.gradle.Librarian
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 
 fun Project.module() {
-  librarianModule()
+  Librarian.module(this)
 
   val publishing = extensions.getByName("publishing") as PublishingExtension
 

@@ -1,9 +1,21 @@
-package gratatouille.processor
+package gratatouille.processor.codegen
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import gratatouille.processor.ir.IrTask
+import gratatouille.processor.ir.InputDirectory
+import gratatouille.processor.ir.InputFile
+import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.JvmType
+import gratatouille.processor.ir.KotlinxSerializableInput
+import gratatouille.processor.ir.KotlinxSerializableOutput
+import gratatouille.processor.ir.OutputDirectory
+import gratatouille.processor.ir.OutputFile
+import gratatouille.processor.ir.Property
+import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.optInGratatouilleInternalAnnotationSpec
 
-internal fun GTaskAction.entryPoint(): FileSpec {
+internal fun IrTask.entryPoint(): FileSpec {
   val className = entryPointClassName()
 
   val fileSpec = FileSpec.builder(className)
@@ -21,7 +33,7 @@ internal fun GTaskAction.entryPoint(): FileSpec {
   return fileSpec
 }
 
-internal fun GTaskAction.entryPointClassName(): ClassName {
+internal fun IrTask.entryPointClassName(): ClassName {
   val simpleName = this.functionName.capitalizeFirstLetter() + "EntryPoint"
   return ClassName(this.packageName, simpleName)
 }
@@ -39,7 +51,7 @@ internal fun Property.toTypeName(): TypeName {
 }
 
 
-private fun GTaskAction.funSpec(): FunSpec {
+private fun IrTask.funSpec(): FunSpec {
   return FunSpec.builder("run")
     .addAnnotation(AnnotationSpec.builder(ClassName("kotlin.jvm", "JvmStatic")).build())
     .apply {

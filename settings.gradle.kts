@@ -4,9 +4,10 @@ pluginManagement {
       mavenCentral()
       google()
       gradlePluginPortal()
+      maven("https://storage.googleapis.com/gradleup/m2")
     }
   }
 }
 
-include(":gratatouille-core", ":gratatouille-gradle-plugin", ":gratatouille-processor")
+include(":gratatouille-runtime", ":gratatouille-gradle-plugin", ":gratatouille-processor")
 includeBuild("build-logic")
