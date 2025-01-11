@@ -6,6 +6,7 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 
@@ -61,8 +62,4 @@ internal val Project.kspExtension: KspExtension
         return kotlin
     }
 
-interface GratatouilleUsage:  Named
-
 internal val USAGE_GRATATOUILLE = "gratatouille"
-internal val USAGE_POISON = "poison"
-internal val GratatouilleUsageAttribute = Attribute.of("com.gradleup.gratatouille.usage", GratatouilleUsage::class.java)

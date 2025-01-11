@@ -2,6 +2,7 @@ package gratatouille.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ArchiveOperations
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ abstract class GratatouillePlugin : Plugin<Project> {
       it.isCanBeConsumed = false
 
       it.attributes {
-        it.attribute(GratatouilleUsageAttribute, target.objects.named(GratatouilleUsage::class.java, USAGE_GRATATOUILLE))
+        it.attribute(Usage.USAGE_ATTRIBUTE, target.objects.named(Usage::class.java, USAGE_GRATATOUILLE))
       }
     }
 

@@ -3,6 +3,7 @@ package gratatouille.gradle
 import com.gradleup.gratatouille.gradle.BuildConfig
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
@@ -13,6 +14,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.konan.util.Named
 
 abstract class GratatouilleExtension(private val project: Project) {
   /**
@@ -162,21 +164,10 @@ class CodeGenerationSpec(private val project: Project) {
     val configuration = project.configurations.create("gratatouilleApiElements") {
       it.isCanBeConsumed = true
       it.isCanBeResolved = false
-    }
-    project.configurations.configureEach {
-      if (!it.isCanBeConsumed) {
-        return@configureEach
-      }
-      val usage = if (it === configuration) {
-        USAGE_GRATATOUILLE
-      } else {
-        USAGE_POISON
-      }
       it.attributes {
-        it.attribute(GratatouilleUsageAttribute, project.objects.named(GratatouilleUsage::class.java, usage))
+        it.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, USAGE_GRATATOUILLE))
       }
     }
-
 
     val exportedFiles = project.tasks.register("gratatouilleZipPluginSources", GratatouilleZip::class.java) {
       it.dependsOn("kspKotlin")
