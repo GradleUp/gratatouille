@@ -22,7 +22,9 @@ abstract class GratatouilleZip: DefaultTask() {
       inputFiles.asFileTree.visit {
         if (it.file.isFile) {
           zipOutputStream.putNextEntry(ZipEntry(it.path))
-          it.file.inputStream().copyTo(zipOutputStream)
+          it.file.inputStream().use {
+            it.copyTo(zipOutputStream)
+          }
         }
       }
     }
