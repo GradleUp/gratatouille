@@ -347,7 +347,7 @@ internal data class Ingredients(
 
 When using this mode, the plugin wiring code is generated as resources that are included by the `com.gradleup.gratatouille.api` plugin. 
 
-### Step 2/2 `com.gradleup.gratatouille.plugin`
+### Step 2/2 `com.gradleup.gratatouille.api`
 
 To use the generated code in your plugin, create an `api` module next to your `implementation` module.
 
