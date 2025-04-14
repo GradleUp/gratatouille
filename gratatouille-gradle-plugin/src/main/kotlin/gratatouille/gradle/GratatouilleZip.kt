@@ -6,8 +6,8 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.impldep.org.apache.tools.zip.ZipEntry
-import org.gradle.internal.impldep.org.apache.tools.zip.ZipOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 abstract class GratatouilleZip: DefaultTask() {
   @get:InputFiles
