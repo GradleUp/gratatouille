@@ -23,6 +23,7 @@ internal fun IrTask.taskFile(): FileSpec {
     .addFunction(register())
     .addType(task())
     .addType(workParameters())
+    .addFunction(invoke2())
     .addType(workAction())
     .build()
 
@@ -106,11 +107,18 @@ private fun IrTask.register(): FunSpec {
                 is KotlinxSerializableOutput, is OutputFile -> "file"
                 else -> error("Gratatouille: invalid output type for '${it.name}': ${it.type}")
               }
+              val fileName = when (it.type) {
+                is OutputDirectory -> it.type.fileName
+                is KotlinxSerializableOutput -> it.type.fileName
+                is OutputFile  -> it.type.fileName
+                else -> error("Gratatouille: invalid output type for '${it.name}': ${it.type}")
+              }
+
               add(
                 "it.%L.set(this@%L.layout.buildDirectory.$method(%L))\n",
                 it.name,
                 registerName(),
-                "\"gtask/\${${taskName}}/${it.name}\""
+                "\"gtask/\${${taskName}}/${fileName}\""
               )
             }
           }
@@ -232,6 +240,32 @@ private fun isolate2(): FunSpec {
             """.trimIndent(),
 
       )
+    .addModifiers(KModifier.PRIVATE)
+    .build()
+}
+
+/**
+ * This is hardwired because we don't want to add dependencies to the api module
+ */
+private fun invoke2(): FunSpec {
+  return FunSpec.builder("invoke2")
+    .receiver(ClassName("java.lang.reflect", "Method"))
+    .addParameter(ParameterSpec.builder("obj", ClassName("kotlin", "Any").copy(nullable = true)).build())
+    .addParameter(ParameterSpec.builder("args", ClassName("kotlin", "Any").copy(nullable = true)).addModifiers(KModifier.VARARG).build())
+    .returns(ClassName("kotlin", "Any").copy(nullable = true))
+    .addCode(
+      """
+          try {
+            return invoke(obj, *args)
+          } catch (e: %T) {
+            /**
+             * Unwrap the exception so it's displayed in Gradle error messages
+             */
+            throw e.cause!!
+          }
+      """.trimIndent(),
+      ClassName("java.lang.reflect", "InvocationTargetException")
+    )
     .addModifiers(KModifier.PRIVATE)
     .build()
 }
@@ -420,7 +454,7 @@ private fun IrTask.workActionExecute(): FunSpec {
             add(")")
             add(".loadClass(%S)\n", entryPointClassName().canonicalName)
             add(".declaredMethods.single()\n")
-            add(".invoke(\n")
+            add(".invoke2(\n")
             withIndent {
               add("null,\n")
               (parameters + returnValues).forEach {

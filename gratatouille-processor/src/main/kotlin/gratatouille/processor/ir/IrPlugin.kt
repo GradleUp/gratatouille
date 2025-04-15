@@ -6,13 +6,29 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.Origin
 import com.squareup.kotlinpoet.ksp.toClassName
+import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.decapitalizeFirstLetter
+
+class IrExtension(
+  val name: String,
+  val packageName: String,
+  val simpleName: String,
+  val hasProjectParameter: Boolean
+)
+
+class IrApplyFunction(
+  val packageName: String,
+  val simpleName: String,
+)
 
 class IrPlugin(
   val id: String,
   val packageName: String,
   val simpleName: String,
-  val extensionName: String?
+  val extension: IrExtension?,
+  val applyFunction: IrApplyFunction?
 )
+
 internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   val annotation = annotations.first { it.shortName.asString() == "GExtension" }
 
@@ -21,19 +37,36 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
     .takeIf { it.origin != Origin.SYNTHETIC }?.value?.toString()
 
   val constructor = getConstructors().singleOrNull()
-  if (constructor == null || !constructor.hasSingleProjectParameter()) {
-    logger.error("Gratatouille: @GPlugin classes must have a single constructor(Project).")
-    return null
+  var hasProjectParameter = false
+  if (constructor != null) {
+    constructor.parameters.forEach {
+      if (it.type.resolve().toClassName().toString() == "org.gradle.api.Project") {
+        if (!hasProjectParameter) {
+          hasProjectParameter = true
+        } else {
+          logger.error("Gratatouille: only one 'Project' constructor parameter is allowed in @GExtension classes.")
+        }
+      } else {
+        logger.error("Gratatouille: @GExtension classes only support one constructor parameter of 'org.gradle.apiProject' type.")
+      }
+    }
   }
 
   if (extensionName == null) {
-    extensionName = pluginId.split(".").last()
+    extensionName = simpleName.asString().removeSuffix("Extension").decapitalizeFirstLetter()
   }
 
+  val extension = IrExtension(
+    extensionName,
+    packageName.asString(),
+    simpleName.asString(),
+    hasProjectParameter
+  )
   return IrPlugin(
     pluginId,
     packageName.asString(),
-    simpleName.asString(),
+    "${extensionName.capitalizeFirstLetter()}Plugin",
+    extension,
     null
   )
 }
@@ -51,8 +84,9 @@ internal fun KSFunctionDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   return IrPlugin(
     pluginId,
     packageName.asString(),
-    simpleName.asString(),
-    null
+    simpleName.asString().capitalizeFirstLetter() + "Plugin",
+    null,
+    IrApplyFunction(packageName.asString(), simpleName.asString())
   )
 }
 

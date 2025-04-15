@@ -23,9 +23,24 @@ public final class gratatouille/processor/codegen/PluginKt {
 	public static final fun plugin (Lgratatouille/processor/ir/IrPlugin;)Lcom/squareup/kotlinpoet/FileSpec;
 }
 
+public final class gratatouille/processor/ir/IrApplyFunction {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getSimpleName ()Ljava/lang/String;
+}
+
+public final class gratatouille/processor/ir/IrExtension {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+	public final fun getHasProjectParameter ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getPackageName ()Ljava/lang/String;
+	public final fun getSimpleName ()Ljava/lang/String;
+}
+
 public final class gratatouille/processor/ir/IrPlugin {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public final fun getExtensionName ()Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lgratatouille/processor/ir/IrExtension;Lgratatouille/processor/ir/IrApplyFunction;)V
+	public final fun getApplyFunction ()Lgratatouille/processor/ir/IrApplyFunction;
+	public final fun getExtension ()Lgratatouille/processor/ir/IrExtension;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getPackageName ()Ljava/lang/String;
 	public final fun getSimpleName ()Ljava/lang/String;

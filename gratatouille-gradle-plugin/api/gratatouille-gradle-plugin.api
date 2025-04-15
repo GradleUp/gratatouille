@@ -26,9 +26,6 @@ public abstract class gratatouille/gradle/GratatouilleUnzip : org/gradle/api/Def
 	public final fun taskAction ()V
 }
 
-public abstract interface class gratatouille/gradle/GratatouilleUsage : org/gradle/api/Named {
-}
-
 public abstract class gratatouille/gradle/GratatouilleZip : org/gradle/api/DefaultTask {
 	public fun <init> ()V
 	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;

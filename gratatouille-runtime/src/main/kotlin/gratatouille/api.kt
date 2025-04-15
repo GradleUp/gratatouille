@@ -81,10 +81,15 @@ annotation class GTask(val name: String = "", val group: String = "", val descri
 annotation class GPlugin(val id: String)
 
 /**
- * Generates a plugin class creating the target class, registering it in extensions and creating a plugin descriptor for that plugin.
+ * Generates a simple plugin class that registers an instance of the annotated class.
  *
- * @param pluginId the plugin id to use for this plugin
- * @param extensionName the name of the extension.
+ * The annotated class may have an `org.gradle.api.Project` constructor parameter.
+ *
+ * @param pluginId the plugin id to use for this plugin.
+ * @param extensionName the name of the extension. By default, the name of the class with any 'Extension' suffix removes and decapitalized.
+ * The generated plugin also uses [extensionName] with a 'Plugin' suffix.
+ *
+ * @see GPlugin
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
@@ -104,6 +109,13 @@ annotation class GInternal
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.SOURCE)
 annotation class GManuallyWired
+
+/**
+ * Customizes the name of an output file or directory. By default, the name of the parameter is used.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.SOURCE)
+annotation class GFileName(val name: String)
 
 /**
  * An input file. The contents of the file as well as the relative path of the file are used for snapshotting.

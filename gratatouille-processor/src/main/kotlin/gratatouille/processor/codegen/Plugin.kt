@@ -1,30 +1,20 @@
 package gratatouille.processor.codegen
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.buildCodeBlock
-import com.squareup.kotlinpoet.withIndent
-import gratatouille.processor.capitalizeFirstLetter
 import gratatouille.processor.ir.IrPlugin
 
 fun IrPlugin.plugin(): FileSpec {
   return FileSpec.builder(
     packageName = packageName,
-    fileName = simpleName.capitalizeFirstLetter() + "Plugin",
+    fileName = simpleName,
   )
     .addType(typeSpec())
     .apply {
-      if (extensionName != null) {
+      if (extension != null) {
+        // A Kotlin function for Kotlin callers that don't want to go through the plugin ceremony
         addProperty(
-          PropertySpec.builder(extensionName, ClassName(packageName, simpleName))
+          PropertySpec.builder(extension.name, ClassName(packageName, simpleName))
             .receiver(ClassNames.Project)
             .getter(
               FunSpec.getterBuilder()
@@ -33,7 +23,7 @@ fun IrPlugin.plugin(): FileSpec {
                   buildCodeBlock {
                     add(
                       "val existing = extensions.getByName(%S) as %T?\n",
-                      extensionName,
+                      extension.name,
                       ClassName(packageName, simpleName)
                     )
                     add("return if (existing != null) {\n")
@@ -44,7 +34,7 @@ fun IrPlugin.plugin(): FileSpec {
                     withIndent {
                       add(
                         "extensions.create(%S, %T::class.java, this)\n",
-                        extensionName,
+                        extension.name,
                         ClassName(packageName, simpleName)
                       )
                     }
@@ -59,21 +49,26 @@ fun IrPlugin.plugin(): FileSpec {
 }
 
 private fun IrPlugin.typeSpec(): TypeSpec {
-  return TypeSpec.classBuilder(simpleName.capitalizeFirstLetter() + "Plugin")
+  return TypeSpec.classBuilder(simpleName)
     .addSuperinterface(ClassNames.Plugin.parameterizedBy(ClassNames.Project)).addModifiers(KModifier.ABSTRACT)
     .addFunction(
       FunSpec.builder("apply")
         .addParameter(ParameterSpec("target", ClassNames.Project))
         .addModifiers(KModifier.OVERRIDE)
         .addCode(buildCodeBlock {
-          if (extensionName != null) {
+          if (extension != null) {
             add(
-              "target.extensions.create(%S, %T::class.java, target)",
-              extensionName,
-              ClassName(packageName, simpleName)
+              "target.extensions.create(%S, %T::class.java",
+              extension.name,
+              ClassName(extension.packageName, extension.simpleName)
             )
-          } else {
-            add("%M(target)", MemberName(packageName, simpleName))
+            if (extension.hasProjectParameter) {
+              add(", target")
+            }
+            add(")")
+          }
+          if (applyFunction != null) {
+            add("%M(target)", MemberName(applyFunction.packageName, applyFunction.simpleName))
           }
         })
         .build()

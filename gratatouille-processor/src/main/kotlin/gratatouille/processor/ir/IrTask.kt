@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Origin
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -19,6 +20,7 @@ import gratatouille.processor.taskDescription
 import gratatouille.processor.taskGroup
 import gratatouille.processor.taskName
 import gratatouille.processor.workerExecutor
+import kotlin.sequences.any
 
 internal class IrTask(
   val packageName: String,
@@ -42,10 +44,10 @@ internal object InputFile : Type
 internal object InputFiles : Type
 internal object InputDirectory : Type
 internal class KotlinxSerializableInput(val typename: TypeName) : Type
-internal class KotlinxSerializableOutput(val typename: TypeName) : Type
+internal class KotlinxSerializableOutput(val typename: TypeName, val fileName: String) : Type
 internal class JvmType(val typename: TypeName) : Type
-internal class OutputFile : Type
-internal class OutputDirectory : Type
+internal class OutputFile(val fileName: String) : Type
+internal class OutputDirectory(val fileName: String) : Type
 
 internal class Property(
   val type: Type,
@@ -71,7 +73,6 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): 
     val name = valueParameter.name?.asString()
       ?: error("Gratatouille: anonymous parameters are not supported at ${valueParameter.location}")
 
-    val manuallyWired = valueParameter.annotations.containsManuallyWired()
     check(!reservedNames.contains(name)) {
       "Gratatouille: parameter name '${name}' is reserved for internal uses. Please use another name at ${valueParameter.location}."
     }
@@ -81,11 +82,11 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): 
 
     val parameterType: Type = when {
       rawTypename == ClassName("gratatouille", "GOutputFile") -> {
-        OutputFile()
+        OutputFile(valueParameter.fileName())
       }
 
       rawTypename == ClassName("gratatouille", "GOutputDirectory") -> {
-        OutputDirectory()
+        OutputDirectory(valueParameter.fileName())
       }
 
       rawTypename == ClassName("gratatouille", "GInputFile") -> InputFile
@@ -101,6 +102,7 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): 
       else -> error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
     }
 
+    val manuallyWired = valueParameter.annotations.containsManuallyWired()
     when (parameterType) {
       is OutputDirectory, is OutputFile -> {
         check(!internal) {
@@ -112,6 +114,7 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): 
       }
 
       else -> {
+
         check(!manuallyWired) {
           "Gratatouille: inputs cannot be annotated with @GManuallyWired at ${valueParameter.location}"
         }
@@ -168,11 +171,8 @@ private fun KSTypeReference?.toReturnValues(): List<Property> {
 
   val resolvedType = this.resolve()
   if (resolvedType.isSerializable()) {
-    return listOf(Property(KotlinxSerializableOutput(typename), outputFile, false, false, false))
+    return listOf(Property(KotlinxSerializableOutput(typename, outputFile), outputFile, false, false, false))
   }
-//    if (typename.isSimpleJvmType()) {
-//        return listOf(ReturnValue(outputFile, JvmType(typename)))
-//    }
 
   val declaration = resolvedType.declaration
   check(declaration is KSClassDeclaration) {
@@ -192,7 +192,7 @@ private fun KSPropertyDeclaration.toReturnValue(): Property {
     "Gratatouille: optional outputs are not supported $location"
   }
   if (resolvedType.isSerializable()) {
-    return Property(KotlinxSerializableOutput(typename), simpleName.asString(), false, false, false)
+    return Property(KotlinxSerializableOutput(typename, fileName()), simpleName.asString(), false, false, false)
   }
 //    if (typename.isSimpleJvmType()) {
 //        return ReturnValue(outputFile, JvmType(typename))
@@ -210,6 +210,23 @@ private fun KSType.isSerializable(): Boolean {
   return declaration.annotations.any {
     it.annotationType.toTypeName() == ClassName("kotlinx.serialization", "Serializable")
   }
+}
+
+private fun Sequence<KSAnnotation>.fileName(): String? {
+  return firstOrNull {
+    it.annotationType.toTypeName() == ClassName("gratatouille", "GFileName")
+  }?.arguments
+    ?.firstOrNull { it.name?.asString() == "name" }
+    ?.value
+    ?.toString()
+}
+
+private fun KSValueParameter.fileName(): String {
+  return annotations.fileName() ?: name!!.asString()
+}
+
+private fun KSPropertyDeclaration.fileName(): String {
+  return annotations.fileName() ?: simpleName.asString()
 }
 
 private fun Sequence<KSAnnotation>.containsGInternal(): Boolean {

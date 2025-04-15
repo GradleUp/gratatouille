@@ -9,6 +9,10 @@ public abstract interface annotation class gratatouille/GExtension : java/lang/a
 	public abstract fun pluginId ()Ljava/lang/String;
 }
 
+public abstract interface annotation class gratatouille/GFileName : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
 public abstract interface annotation class gratatouille/GInternal : java/lang/annotation/Annotation {
 }
 
@@ -29,9 +33,14 @@ public abstract interface annotation class gratatouille/GTask : java/lang/annota
 public abstract interface annotation class gratatouille/GratatouilleInternal : java/lang/annotation/Annotation {
 }
 
-public final class gratatouille/RuntimeKt {
+public final class gratatouille/Used_by_generated_codeKt {
 	public static final fun decodeJson (Ljava/io/File;Ljava/lang/Class;)Ljava/lang/Object;
 	public static final fun getJson ()Lkotlinx/serialization/json/Json;
 	public static final fun toGInputFiles (Ljava/util/List;)Ljava/util/List;
+}
+
+public final class gratatouille/UtilsKt {
+	public static final fun capitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
+	public static final fun decapitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
 }
 

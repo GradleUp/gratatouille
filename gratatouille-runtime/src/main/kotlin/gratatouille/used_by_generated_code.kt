@@ -5,10 +5,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.File
 
-/**
- * Code in this file is meant to be used by generated code only
- */
-
 @RequiresOptIn(message = "This symbol is only to be used by Gratatouille generated code")
 annotation class GratatouilleInternal
 
