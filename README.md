@@ -19,6 +19,8 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 
 Check out the [Apollo Faker Gradle Plugin](https://github.com/apollographql/apollo-kotlin-faker/blob/main/gradle-plugin/build.gradle.kts) for a real life example or [test-app](test-app) for integration tests.
 
+Gratatouille also uses Gratatouille to build its plugin, check [gratatouille-gradle-plugin/build.gradle.kts](gratatouille-gradle-plugin/build.gradle.kts) for more details. 
+
 ## Quick Start
 
 Apply the `com.gradleup.gratatouille` plugin:
