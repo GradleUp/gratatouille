@@ -3,6 +3,7 @@ $dokka.linkExtension:html
 
 module:gratatouille-gradle-plugin
 gratatouille.gradle
+gratatouille.gradle.tasks
 module:gratatouille-processor
 gratatouille.processor
 gratatouille.processor.codegen
