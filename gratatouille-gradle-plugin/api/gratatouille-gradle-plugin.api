@@ -14,28 +14,55 @@ public abstract class gratatouille/gradle/GratatouilleExtension {
 	public final fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public abstract class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
+public abstract class gratatouille/gradle/GratatouillePluginPlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
-	public abstract fun getArchiveOperations ()Lorg/gradle/api/file/ArchiveOperations;
-}
-
-public abstract class gratatouille/gradle/GratatouilleUnzip : org/gradle/api/DefaultTask {
-	public fun <init> ()V
-	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
-	public final fun taskAction ()V
-}
-
-public abstract class gratatouille/gradle/GratatouilleZip : org/gradle/api/DefaultTask {
-	public fun <init> ()V
-	public abstract fun getInputFiles ()Lorg/gradle/api/file/ConfigurableFileCollection;
-	public abstract fun getOutputFile ()Lorg/gradle/api/file/RegularFileProperty;
-	public final fun taskAction ()V
 }
 
 public final class gratatouille/gradle/VersionKt {
 	public static final field VERSION Ljava/lang/String;
+}
+
+public final class gratatouille/gradle/tasks/GenerateDescriptorEntryPoint {
+	public static final field Companion Lgratatouille/gradle/tasks/GenerateDescriptorEntryPoint$Companion;
+	public fun <init> ()V
+	public static final fun run (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/GenerateDescriptorEntryPoint$Companion {
+	public final fun run (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/GenerateDescriptorKt {
+	public static final fun generateDescriptor (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/UnzipFilesEntryPoint {
+	public static final field Companion Lgratatouille/gradle/tasks/UnzipFilesEntryPoint$Companion;
+	public fun <init> ()V
+	public static final fun run (Ljava/util/List;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/UnzipFilesEntryPoint$Companion {
+	public final fun run (Ljava/util/List;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/UnzipKt {
+	public static final fun unzipFiles (Ljava/util/List;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/ZipFilesEntryPoint {
+	public static final field Companion Lgratatouille/gradle/tasks/ZipFilesEntryPoint$Companion;
+	public fun <init> ()V
+	public static final fun run (Ljava/util/List;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/ZipFilesEntryPoint$Companion {
+	public final fun run (Ljava/util/List;Ljava/io/File;)V
+}
+
+public final class gratatouille/gradle/tasks/ZipKt {
+	public static final fun zipFiles (Ljava/util/List;Ljava/io/File;)V
 }
 

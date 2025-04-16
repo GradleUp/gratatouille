@@ -1,13 +1,14 @@
 package gratatouille.gradle
 
 import com.gradleup.gratatouille.gradle.BuildConfig
+import gratatouille.gradle.tasks.registerGenerateDescriptorTask
+import gratatouille.gradle.tasks.registerZipFilesTask
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -120,12 +121,11 @@ abstract class GratatouilleExtension(private val project: Project) {
   }
 
   private fun registerDescriptorTask(id: String, implementationClass: String): Provider<Directory> {
-    val task = project.tasks.register("generate${id.displayName()}Descriptor", GenerateDescriptorTask::class.java) {
-      it.id.set(id)
-      it.implementationClass.set(implementationClass)
-
-      it.output.set(project.layout.buildDirectory.dir("gratatouille/descriptor/$id"))
-    }
+    val task = project.registerGenerateDescriptorTask(
+      taskName = "generate${id.displayName()}Descriptor",
+      id = project.provider { id },
+      implementationClass = project.provider { implementationClass }
+    )
 
     return task.flatMap { it.output }
   }
@@ -197,11 +197,14 @@ class CodeGenerationSpec(private val project: Project) {
       }
     }
 
-    val exportedFiles = project.tasks.register("gratatouilleZipPluginSources", GratatouilleZip::class.java) {
-      it.dependsOn("kspKotlin")
-      it.outputFile.set(project.layout.buildDirectory.file("gratatouille/sources.zip"))
+    val exportedFiles = project.registerZipFilesTask(
+      taskName = "gratatouilleZipPluginSources",
       // TODO: is there a way to not hardcode the destination here?
-      it.inputFiles.from(project.fileTree("build/generated/ksp/main/resources/META-INF/gratatouille/"))
+      inputFiles = project.fileTree("build/generated/ksp/main/resources/META-INF/gratatouille/")
+    )
+    exportedFiles.configure {
+      // TODO: is there a way to wire this automagically
+      it.dependsOn("kspKotlin")
     }
 
     project.artifacts.add(configuration.name, exportedFiles)

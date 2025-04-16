@@ -9,6 +9,7 @@ buildscript {
   }
   repositories {
     mavenCentral()
+    maven("https://storage.googleapis.com/gradleup/m2")
   }
 }
 

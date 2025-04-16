@@ -2,7 +2,8 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.github.gmazzo.buildconfig")
-    id("java-gradle-plugin")
+    id("com.google.devtools.ksp")
+    id("com.gradleup.gratatouille")
 }
 
 module()
@@ -23,11 +24,7 @@ buildConfig {
     buildConfigField("group", group.toString())
 }
 
-gradlePlugin {
-    plugins {
-        create("com.gradleup.gratatouille") {
-            this.implementationClass = "gratatouille.gradle.GratatouillePlugin"
-            this.id = "com.gradleup.gratatouille"
-        }
-    }
+gratatouille {
+    pluginMarker("com.gradleup.gratatouille")
+    codeGeneration()
 }

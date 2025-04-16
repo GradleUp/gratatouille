@@ -1,10 +1,9 @@
 import com.gradleup.librarian.gradle.Librarian
 
+plugins {
+    id("base")
+}
 buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
     dependencies {
         classpath("build-logic:build-logic")
     }

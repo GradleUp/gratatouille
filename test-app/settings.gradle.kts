@@ -4,6 +4,7 @@ pluginManagement {
             mavenCentral()
             google()
             maven("../build/m2")
+            maven("https://storage.googleapis.com/gradleup/m2")
         }
     }
 }

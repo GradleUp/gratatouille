@@ -1,9 +1,10 @@
 [versions]
-ksp = "2.0.21-1.0.26"
-kotlin = "2.0.21"
+ksp = "2.1.20-2.0.0"
+kotlin = "2.1.20"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
-librarian = "0.0.7"
+librarian = "0.0.8-SNAPSHOT-cd822254de75426f8f047a50bae467da872cc912"
+gratatouille = "0.0.6-SNAPSHOT-1615449a08578131cd3bbc4ba6c280e6bcad3e98"
 
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
@@ -11,7 +12,7 @@ ksp-gradle-plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 vespene = "net.mbonnin.vespene:vespene-lib:0.5"
-buildkonfig = "com.github.gmazzo.buildconfig:plugin:5.3.5"
+buildkonfig = "com.github.gmazzo.buildconfig:plugin:5.6.2"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -22,9 +23,11 @@ kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref 
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
-gratatouille-gradle-plugin = "com.gradleup.gratatouille:gratatouille-gradle-plugin:0.0.4"
-gratatouille-runtime = "com.gradleup.gratatouille:gratatouille-core:0.0.4"
+gratatouille-gradle-plugin = { module = "com.gradleup.gratatouille:gratatouille-gradle-plugin", version.ref = "gratatouille" }
+gratatouille-runtime = { module = "com.gradleup.gratatouille:gratatouille-core", version.ref = "gratatouille" }
 
 
 [plugins]
-librarian = { id = "com.gradleup.librarian", version.ref = "librarian"}
+librarian = { id = "com.gradleup.librarian", version.ref = "librarian" }
+kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compat-patrouille = { id = "com.gradleup.compat.patrouille", version = "0.0.0" }

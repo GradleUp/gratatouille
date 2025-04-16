@@ -1,7 +1,8 @@
 buildscript {
     repositories {
         mavenCentral()
-        gradlePluginPortal()
+
+        maven("https://storage.googleapis.com/gradleup/m2")
     }
     dependencies {
         classpath("build-logic:build-logic")
