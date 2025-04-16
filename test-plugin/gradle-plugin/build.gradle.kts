@@ -31,7 +31,9 @@ dependencies {
 gratatouille {
   pluginMarker("testplugin", "default")
   pluginMarker("testplugin2", "default")
-  codeGeneration()
+  codeGeneration {
+    enableKotlinxSerialization.set(true)
+  }
 }
 
 tasks.withType(Test::class.java) {

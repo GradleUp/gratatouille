@@ -2,6 +2,7 @@ public final class gratatouille/gradle/CodeGenerationSpec {
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public final fun classLoaderIsolation ()V
 	public final fun classLoaderIsolation (Ljava/lang/String;)V
+	public final fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract class gratatouille/gradle/GratatouilleExtension {
@@ -9,6 +10,7 @@ public abstract class gratatouille/gradle/GratatouilleExtension {
 	public final fun codeGeneration ()V
 	public final fun codeGeneration (Lorg/gradle/api/Action;)V
 	public final fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun pluginMarker (Ljava/lang/String;)V
 	public final fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
 }
 

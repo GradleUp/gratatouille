@@ -2,21 +2,22 @@
 
 Gratatouille is an opinionated framework to build Gradle plugins. Write Kotlin functions and the Gratatouille KSP processor generates tasks, workers, and wiring code for you.
 
-When used in classloader isolation mode, Gratatouille enforces a clear separation between your plugin logic (**implementation**) and your plugin wiring (**api**) making your plugin immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
+When used in classloader isolation mode, Gratatouille enforces a clear separation between your plugin implementation (**tasks**) and your plugin wiring (**plugin**) making your plugin immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
 
 **Key Features**:
 
-* [Functional programming style](#functions)
-* [Kotlinx serialization support](#built-in-kotlinxserialization-support)
+* [Tasks Generation](#functions)
 * [Comprehensive input/output types](#supported-input-and-output-types)
-* [Non overlapping task outputs](#non-overlapping-task-outputs-by-default)
-* [Build cache](#build-cache-by-default)
-* [Documentation](#easy-documentation)
-* [Parallel execution](#parallel-task-execution-by-default)
+* [Non overlapping task outputs by default](#non-overlapping-task-outputs-by-default)
+* [Build cache by default](#build-cache-by-default)
+* [Easy documentation](#easy-documentation)
+* [Parallel execution by default](#parallel-task-execution-by-default)
 * [Compile-time task wiring](#compile-time-task-wiring)
+* [Plugin descriptors and markers without java-gradle-plugin](#descriptors-and-markers)
 * [Classloader isolation](#classloader-isolation-optional) (optional)
+* [kotlinx serialization support](#built-in-kotlinxserialization-support) (experimental)
 
-Check out the [sample-plugin](sample-plugin) and [sample-app](sample-app).
+Check out the [Apollo Faker Gradle Plugin](https://github.com/apollographql/apollo-kotlin-faker/blob/main/gradle-plugin/build.gradle.kts) for a real life example or [test-app](test-app) for integration tests.
 
 ## Quick Start
 
@@ -24,8 +25,18 @@ Apply the `com.gradleup.gratatouille` plugin:
 
 ```kotlin
 plugins {
-    id("java-gradle-plugin")
-    id("com.gradleup.gratatouille").version("0.0.4")
+  id("org.jetbrains.kotlin.jvm")
+  // KSP is required for code generation
+  id("com.google.devtools.ksp")
+  // No need to add the 'java-gradle-plugin' plugin.
+  id("com.gradleup.gratatouille").version("0.0.5")
+}
+
+gratatouille {
+  // Configure the plugin marker
+  pluginMarker("com.example.myplugin")
+  // Enable code generation
+  codeGeneration()
 }
 ```
 
@@ -33,26 +44,19 @@ Define your task action using `@GTask`:
 
 ```kotlin
 @GTask
-internal fun prepareIngredients(persons: Int): Ingredients {
-    return Ingredients(
-        tomatoes = (persons * 0.75).roundToInt(),
-        zucchinis = (persons * 0.3).roundToInt(),
-        eggplants = (persons * 0.3).roundToInt(),
-    )
+internal fun prepareIngredients(persons: Int, ingredients: GOutputFile) {
+  ingrediens.writeText("""
+  {
+    "tomatoes": ${persons * 0.75}.roundToInt(),
+    "zucchinis": ${persons * 0.3}.roundToInt(),
+    "eggplants": ${persons * 0.3}.roundToInt()
+  }
+  """.trimIndent())  
 }
-
-// kotlinx.serialization is supported out of the box
-@Serializable
-internal data class Ingredients(
-    val tomatoes: Int,
-    val zucchinis: Int,
-    val eggplants: Int,
-)
 ```
+Gratatouille automatically maps function parameters to Gradle inputs and outputs(more on outputs [below](#non-overlapping-task-outputs-by-default)).
 
-Gratatouille automatically maps function parameters to Gradle inputs and the return value to a Gradle output (more on outputs [below](#non-overlapping-task-outputs-by-default)).
-
-Gratatouille generates entry points, tasks, workers and Gradle wiring code that you can then use to cook your plugin.
+Gratatouille generates entry points, tasks, workers and the rest of the owl (someone please send the link to that nice Gradle meme, I can't find it anymore). 
 
 <details>
 <summary>Generated code</summary>
@@ -74,7 +78,7 @@ internal fun Project.registerPrepareIngredientsTask(
     // inputs
     it.persons.set(persons)
     // outputs
-    it.outputFile.set(this@registerPrepareIngredientsTask.layout.buildDirectory.file("gtask/${taskName}/outputFile"))
+    it.outputFile.set(this@registerPrepareIngredientsTask.layout.buildDirectory.file("gtask/${taskName}/ingredients"))
   }
 }
 
@@ -119,7 +123,7 @@ internal abstract class PrepareIngredientsTask : DefaultTask() {
     getWorkerExecutor().noIsolation().submit(PrepareIngredientsWorkAction::class.java) {
       it.classpath = classpath.files.isolate()
       it.persons = persons.get().isolate()
-      it.outputFile = outputFile.asFile.get().isolate()
+      it.ingredients = ingredients.asFile.get().isolate()
     }
   }
 }
@@ -129,7 +133,7 @@ private interface PrepareIngredientsWorkParameters : WorkParameters {
 
   public var persons: Int
 
-  public var outputFile: File
+  public var ingredients: File
 }
 
 private abstract class PrepareIngredientsWorkAction : WorkAction<PrepareIngredientsWorkParameters> {
@@ -143,7 +147,7 @@ private abstract class PrepareIngredientsWorkAction : WorkAction<PrepareIngredie
       .invoke(
         null,
         persons,
-        outputFile,
+        ingredients,
       )
     }
   }
@@ -152,32 +156,36 @@ private abstract class PrepareIngredientsWorkAction : WorkAction<PrepareIngredie
 public class PrepareIngredientsEntryPoint {
   public companion object {
     @JvmStatic
-    public fun run(persons: Int, outputFile: File) {
+    public fun run(persons: Int, ingredients: File) {
       prepareIngredients(
         persons = persons,
-      ).encodeJsonTo(outputFile)
+        ingredients = ingredients,
+      )
     }
   }
 }
 ```
 </details> 
 
-In your plugin code, use `Project.register${TaskAction}Task()` to register the task:
+Use `@GPlugin` to create a plugin and call `Project.register${TaskAction}Task()` to register the task:
 
 ```kotlin
-override fun apply(project: Project) {
+// GPlugin generates a plugin and descriptor automatically
+@GPlugin(id = "com.example.myplugin")
+fun myPlugin(project: Project) {
     val extension = project.extensions.create("recipes", RecipesExtension::class.java)
 
     // Register your "PrepareIngredients" task
     val prepareIngredients = project.registerPrepareIngredientsTask(
         persons = extension.persons
+        // no need to set the outputs, they are configured automatically 
     )
     
     // Register other tasks
     project.registerCookTask(
         recipe = extension.recipe,
         // Wire tasks together
-        ingredients = prepareIngredients.flatMap { it.outputFile }
+        ingredients = prepareIngredients.flatMap { it.ingredients }
     )
 }
 ```
@@ -192,10 +200,6 @@ Your code is modeled as functions taking inputs and generating outputs.
 
 No need for stateful properties or classes. Nullable parameters are generated as optional task properties. Calls to `Provider.get()` or `Provider.orNull` are automated.
 
-### Built-in kotlinx.serialization support
-
-Gratatouille has builtin support for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization). Models are serialized and deserialized as needed.
-
 ### Supported input and output types
 
 Inputs:
@@ -207,7 +211,6 @@ Inputs:
 * Directory using the `GInputDirectory` typealias
 
 Outputs:
-* Any type annotated with `@Serializable` (serialized to a File)
 * Single File using the `GOutputFile` typealias
 * Directory using the `GOutputDirectory` typealias
 
@@ -278,9 +281,9 @@ internal fun cook(
 
 ### Parallel task execution by default
 
-By default, [Gradle tasks execute serially in a single module](https://docs.gradle.org/current/userguide/performance.html#parallel_execution) (unless using the [configuration cache](https://docs.gradle.org/current/userguide/performance.html#additional_configuration_cache_benefits)).
+By default, [Gradle tasks execute serially in a single project](https://docs.gradle.org/current/userguide/performance.html#parallel_execution) (unless using the [configuration cache](https://docs.gradle.org/current/userguide/performance.html#additional_configuration_cache_benefits)).
 
-Because your task actions are pure Kotlin function, no state is shared, making them perfect candidates for parallelization. 
+Because your task actions are Kotlin functions, no state is shared, making them perfect candidates for parallelization. 
 
 Gratatouille uses the [Worker API](https://docs.gradle.org/current/userguide/worker_api.html) to allow parallel execution making your build faster overall. Use `org.gradle.workers.max` to control the maximum number of workers.
 
@@ -290,41 +293,139 @@ Finally, Gratatouille encourages exposing extensions to users instead of task cl
 
 When a task has a high number of inputs, it can become hard to track which ones have been wired and which ones haven't. By using a central registration point, Gratatouille enforces at build time that all inputs/outputs have been properly wired.
 
+## Descriptors and markers
+
+In order to map a plugin id to a jar file and a specific implementation class, Gradle uses [plugin markers](https://docs.gradle.org/current/userguide/plugins.html#sec:plugin_markers) and descriptors.
+
+The markers and descriptors are typically added by the [`java-gradle-plugin`](https://docs.gradle.org/current/userguide/java_gradle_plugin.html) plugin. This plugin also adds the `gradleApi()` dependency as an `api` dependency to your project, which is rarely needed.
+
+For simplicity, Gratatouille, generates plugin descriptors automatically from the `@GPlugin` and `GExtension` annotations. 
+
+For markers, Gratatouille exposes a simple function:
+
+```kotlin
+gratatouille {
+  // Configure the plugin marker
+  pluginMarker("com.example.myplugin")
+}
+
+dependencies {
+  // You can add use the Gradle API of your choice here 
+  compileOnly("dev.gradleplugins:gradle-api:8.0")
+}
+```
+
 ## Classloader isolation (optional)
 
 Gradle uses [multiple classloaders](https://dev.to/autonomousapps/build-compile-run-a-crash-course-in-classpaths-f4g), and it's notoriously really hard to understand where a given class is loaded from.
 
 Especially, `buildSrc`/`build-logic` dependencies [leak in the main classpath](https://github.com/gradle/gradle/issues/4741) and override any dependencies from other plugin without conflict resolution. There are multiple workarounds such as declaring all plugins in `buildSrc` or in the top level `build.gradle[.kts]` file but the situation is confusing to Gradle newcomers and hard to debug.
 
-To guard against those issues, Gratatouille provides a classloader isolation mode where your task actions use a separate classloader.
+To guard against those issues, Gratatouille provides a classloader isolation mode where your tasks use a separate classloader.
 
-This means your plugin can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself.
+This means your tasks can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself.
 
-Furthermore, this classloader is managed by Gratatouille, working around metaspace leaks such as [gradle/18313](https://github.com/gradle/gradle/issues/18313).
+For classloader isolation to work, your plugin needs 2 projects:
+* The **tasks** project is where the task actions are defined and the work is done. This project can add dependencies. 
+* The **plugin** project contains the glue code and Gradle API that calls the **tasks** project through reflection. This project must not add dependencies besides the compileOnly Gradle API.
 
-For classloader isolation to work, your plugin needs 2 modules:
-* The **implementation** module is where the task actions are defined and the work is done. This module can add dependencies. 
-* The **api** module contains the glue code and Gradle API that calls the **implementation** module through reflection. This module must not add dependencies.
+### Step 1/2: gradle-tasks
 
-### Step 1/2: `com.gradleup.gratatouille.implementation`
-
-Create an `implementation` module for your plugin implementation and apply the `com.gradleup.gratatouille.implementation` plugin:
+Create a `gradle-tasks` project for your plugin tasks and apply the `com.gradleup.gratatouille` plugin:
 
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille.implementation").version("0.0.4")
+  id("org.jetbrains.kotlin.jvm")
+  id("com.google.devtools.ksp")
+  id("com.gradleup.gratatouille.implementation").version("0.0.5")
 }
 
 dependencies {
-    // Add other dependencies
+    // Add dependencies needed to do your task work
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("org.ow2.asm:asm-commons:9.6")
     // do **not** add gradleApi() here
 }
+
+gratatouille {
+  // Enable code generation
+  codeGeneration {
+    // Enables classloader isolation
+    classLoaderIsolation()
+  }
+}
 ```
 
-Write your task action as a pure top-level Kotlin function annotated with `@GTask`:
+Write your task actions as top-level Kotlin functions annotated with `@GTask`:
+
+```kotlin
+@GTask
+internal fun prepareIngredients(persons: Int, ingredients: GOutputFile) {
+  ingrediens.writeText("""
+  {
+    "tomatoes": ${persons * 0.75}.roundToInt(),
+    "zucchinis": ${persons * 0.3}.roundToInt(),
+    "eggplants": ${persons * 0.3}.roundToInt()
+  }
+  """.trimIndent())
+}
+```
+
+When using this mode, the plugin wiring code is generated as resources that are included by the `gradle-plugin` project. 
+
+### Step 2/2 gradle-plugin
+
+To use the generated code in your plugin, create an `gradle-plugin` project next to your `gradle-tasks` project.
+
+> [!IMPORTANT]
+> By using two different projects, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
+
+Apply the `com.gradleup.gratatouille` plugin in your `api` project:
+
+```kotlin
+// gradle-plugin/build.gradle.kts
+plugins {
+    id("com.gradleup.gratatouille").version("0.0.5")
+}
+
+gratatouille {
+  // Configure the plugin marker
+  pluginMarker("com.example.myplugin")
+  // Optional: you may still use code generation for `@GTask` and `GExtension` helpers
+  codeGeneration()
+}
+
+dependencies {
+  // Add your implementation project to the "gratatouille" configuration.
+  // This does not add `:implementation` to your plugin classpath.
+  // Instead, the generated code uses reflection and a separate classloader to run
+  // your implementation
+  gratatouille(project(":implementation"))
+  
+  // Add the version of Gradle you want to compile against 
+  compileOnly("dev.gradleplugins:gradle-api:8.0")
+}
+
+```
+
+In your plugin code, use `Project.register${TaskAction}Task()` to register the task
+
+### Experimental kotlinx.serialization support
+
+Gratatouille has builtin support for [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization). Models are serialized and deserialized as needed.
+
+To opt-in support for kotlinx.serialization, add `enableKotlinxSerialization.set(true)` to your configuration:
+
+```kotlin
+gratatouille {
+  enableKotlinxSerialization.set(true)
+  codeGeneration()
+  // ...
+}
+```
+
+With `kotlinx.serialization` support, you can write your funtions as pure functions and the output will be serialized on the fly:
 
 ```kotlin
 @GTask
@@ -344,37 +445,3 @@ internal data class Ingredients(
     val eggplants: Int,
 )
 ```
-
-When using this mode, the plugin wiring code is generated as resources that are included by the `com.gradleup.gratatouille.api` plugin. 
-
-### Step 2/2 `com.gradleup.gratatouille.api`
-
-To use the generated code in your plugin, create an `api` module next to your `implementation` module.
-
-> [!IMPORTANT]
-> By using two different modules, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
-
-Apply the `com.gradleup.gratatouille.api` plugin in your `api` module:
-
-```kotlin
-// gradle-plugin/build.gradle.kts
-plugins {
-    id("java-gradle-plugin")
-    id("com.gradleup.gratatouille.api").version("0.0.4")
-}
-
-dependencies {
-    // Add your implementation module to the "gratatouille" configuration.
-    // This does not add `:implementation` to your plugin classpath.
-    // Instead, the generated code uses reflection and a separate classloader to run
-    // your implementation
-    gratatouille(project(":implementation"))
-}
-
-// Create your plugin as usual, see https://docs.gradle.org/current/userguide/java_gradle_plugin.html 
-gradlePlugin {
-    // ... 
-}
-```
-
-In your plugin code, use `Project.register${TaskAction}Task()` to register the task

@@ -21,6 +21,7 @@ class GratatouilleProcessor(
   private val codeGenerator: CodeGenerator,
   private val logger: KSPLogger,
   private val implementationCoordinates: String?,
+  private val enableKotlinxSerialization: Boolean,
 ) : SymbolProcessor {
   override fun process(resolver: Resolver): List<KSAnnotated> {
     processTasks(resolver.getSymbolsWithAnnotation("gratatouille.GTask"))
@@ -106,7 +107,7 @@ class GratatouilleProcessor(
       when (it) {
         is KSFunctionDeclaration -> {
           val dependencies = it.asIsolatingDependencies()
-          it.toGTask(implementationCoordinates).apply {
+          it.toGTask(implementationCoordinates, enableKotlinxSerialization).apply {
             entryPoint().writeToKotlinDirectory(dependencies)
             taskFile().writeToKotlinOrResourcesDirectory(dependencies)
           }
@@ -133,7 +134,8 @@ class GratatouilleProcessorProvider : SymbolProcessorProvider {
     return GratatouilleProcessor(
       environment.codeGenerator,
       environment.logger,
-      environment.options.get("implementationCoordinates")
+      environment.options.get("implementationCoordinates"),
+      environment.options.get("enableKotlinxSerialization").toBoolean()
     )
   }
 }

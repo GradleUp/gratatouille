@@ -4,8 +4,8 @@ import kotlin.test.assertFailsWith
 
 buildscript {
   dependencies {
-    classpath("test-plugin:test-plugin")
-    classpath("test-plugin-isolated:api")
+    classpath("test-plugin:gradle-plugin")
+    classpath("test-plugin-isolated:gradle-plugin")
   }
   repositories {
     mavenCentral()

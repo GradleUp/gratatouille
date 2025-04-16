@@ -8,13 +8,12 @@ plugins {
 module()
 
 dependencies {
-    implementation(libs.kotlin.test)
-    implementation(libs.gratatouille.runtime)
-    implementation(libs.ksp.api)
-    implementation(project(":gratatouille-processor"))
-    compileOnly(gradleApi())
+    compileOnly(libs.ksp.api)
+    compileOnly(libs.gradle.api)
     compileOnly(libs.ksp.gradle.plugin)
     compileOnly(libs.kotlin.gradle.plugin)
+
+    testImplementation(libs.kotlin.test)
 }
 
 buildConfig {

@@ -7,14 +7,13 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.konan.util.Named
 
 abstract class GratatouilleExtension(private val project: Project) {
   /**
@@ -46,6 +45,7 @@ abstract class GratatouilleExtension(private val project: Project) {
     if (codeGenerationSpec.publishedCoordinates != null) {
       project.kspExtension.arg("implementationCoordinates", codeGenerationSpec.publishedCoordinates!!)
     }
+    project.kspExtension.arg("enableKotlinxSerialization", codeGenerationSpec.enableKotlinxSerialization.orElse(false).get().toString())
 
     project.configurations.getByName("implementation").dependencies.add(
       project.dependencies.create("${BuildConfig.group}:gratatouille-runtime")
@@ -69,6 +69,32 @@ abstract class GratatouilleExtension(private val project: Project) {
       val copyPluginDescriptors: CopySpec = it.rootSpec.addChild()
       copyPluginDescriptors.into("/")
       copyPluginDescriptors.from(directory)
+    }
+  }
+
+  /**
+   * Creates a new `${pluginId}PluginMarkerMaven` publication allowing to locate the implementation coordinates from the plugin id.
+   * This method requires that only a single publication is present in this project. See other overloads if you need more control over publications.
+   *
+   * @throws IllegalStateException if there are more
+   */
+  fun pluginMarker(id: String) {
+    require(project.pluginManager.hasPlugin("maven-publish")) {
+      "Gratatouille: calling createMarkerPublication() requires the `maven-publish` plugin"
+    }
+    project.extensions.getByType(PublishingExtension::class.java).apply {
+      val publications = this.publications.toList()
+      check(publications.isNotEmpty()) {
+        "Gratatouille: the project does not contain any publications. Create a publication before calling 'pluginMarker()'."
+      }
+      check(publications.size == 1) {
+        "Gratatouille: the project contains multiple publications (${publications.joinToString(", ") { it.name }}). Use 'pluginMarker(String, String)' to specify the publication to use."
+      }
+      val publication = publications.single()
+      check (publication is MavenPublication) {
+        "Gratatouille: the publication is not an instance of MavenPublication."
+      }
+      createMarkerPublication(id, publication)
     }
   }
 
@@ -137,6 +163,8 @@ abstract class GratatouilleExtension(private val project: Project) {
 
 class CodeGenerationSpec(private val project: Project) {
   internal var publishedCoordinates: String? = null
+
+  val enableKotlinxSerialization = project.objects.property(Boolean::class.java)
 
   /**
    * Enables ClassLoader isolation mode using the project group, name and version as published coordinates

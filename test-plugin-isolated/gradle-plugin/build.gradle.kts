@@ -23,7 +23,7 @@ publishing {
 }
 
 dependencies {
-    gratatouille(project(":implementation"))
+    gratatouille(project(":gradle-tasks"))
 }
 
 dependencies {
@@ -42,6 +42,6 @@ gratatouille {
 
 tasks.withType(Test::class.java) {
     dependsOn("publishAllPublicationsToPluginTestRepository")
-    dependsOn(":implementation:publishAllPublicationsToPluginTestRepository")
+    dependsOn(":gradle-tasks:publishAllPublicationsToPluginTestRepository")
     dependsOn(gradle.includedBuild("gratatouille").task(":publishAllPublicationsToPluginTestRepository"))
 }

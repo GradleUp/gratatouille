@@ -58,9 +58,9 @@ internal class Property(
 )
 
 
-internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): IrTask {
+internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
   val parameters = mutableListOf<Property>()
-  val returnValues = returnType.toReturnValues()
+  val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
   val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
   val returnValuesNames = returnValues.map { it.name }.toSet()
 
@@ -155,7 +155,7 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?): 
   )
 }
 
-private fun KSTypeReference?.toReturnValues(): List<Property> {
+private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean): List<Property> {
   if (this == null) {
     return emptyList()
   }
@@ -167,6 +167,10 @@ private fun KSTypeReference?.toReturnValues(): List<Property> {
 
   if (typename == ClassName("kotlin", "Unit")) {
     return emptyList()
+  }
+
+  if (!enableKotlinxSerialization) {
+    error("Gratatouille: return values are not enabled, use enableKotlinxSerialization.set(true) to opt-in experimental support.")
   }
 
   val resolvedType = this.resolve()

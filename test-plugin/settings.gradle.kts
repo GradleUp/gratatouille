@@ -18,4 +18,4 @@ dependencyResolutionManagement {
 
 includeBuild("..")
 includeBuild("../build-logic")
-include(":test-plugin")
+include(":gradle-plugin")
