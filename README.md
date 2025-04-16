@@ -31,6 +31,7 @@ plugins {
   // KSP is required for code generation
   id("com.google.devtools.ksp")
   // No need to add the 'java-gradle-plugin' plugin.
+  // Add the Gratatouille plugin
   id("com.gradleup.gratatouille").version("0.0.5")
 }
 
