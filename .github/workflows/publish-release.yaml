@@ -15,7 +15,6 @@ jobs:
       - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
       - run: |
           ./gradlew librarianPublishToMavenCentral
-          gh release create $GITHUB_REF_NAME --title $GITHUB_REF_NAME --verify-tag --notes-from-tag
         env:
           LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.OSSRH_USER }}
           LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
