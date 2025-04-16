@@ -60,12 +60,7 @@ import java.io.File
  * @param group the group of the task. If empty, defaults to no group. Tasks without a group are not displayed in `./gradlew --tasks` by default.
  * @param description the description of the task. If empty, defaults to no description.
  * @param pure whether the annotated function is [pure](https://en.wikipedia.org/wiki/Pure_function), i.e. its outputs only depends
- * on the inputs.
- *
- * Impure functions generate non-cacheable tasks that are never [up-to-date](https://docs.gradle.org/current/userguide/incremental_build.html).
- *
- * In this context, a function can be considered pure even if it has side effects as long as those side effects do not impact other tasks and do not contribute the build outputs.
- * For an example, writing logs to stdout may not make a function impure but publishing to a Maven Repository should.
+ * on the inputs. Impure functions are marked as non-cacheable and never [up-to-date](https://docs.gradle.org/current/userguide/incremental_build.html).
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
