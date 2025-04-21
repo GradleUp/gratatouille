@@ -11,9 +11,12 @@ import gratatouille.processor.ir.KotlinxSerializableInput
 import gratatouille.processor.ir.KotlinxSerializableOutput
 import gratatouille.processor.ir.OutputDirectory
 import gratatouille.processor.ir.OutputFile
-import gratatouille.processor.ir.Property
+import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.ir.IrPropertyParameter
+import gratatouille.processor.ir.IrLoggerParameter
 import gratatouille.processor.optInGratatouilleInternalAnnotationSpec
+import gratatouille.processor.stringConsumer
 
 internal fun IrTask.entryPoint(): FileSpec {
   val className = entryPointClassName()
@@ -38,7 +41,7 @@ internal fun IrTask.entryPointClassName(): ClassName {
   return ClassName(this.packageName, simpleName)
 }
 
-internal fun Property.toTypeName(): TypeName {
+internal fun IrTaskProperty.toTypeName(): TypeName {
   return when (type) {
     InputDirectory -> ClassName("java.io", "File")
     InputFile -> ClassName("java.io", "File")
@@ -56,7 +59,20 @@ private fun IrTask.funSpec(): FunSpec {
     .addAnnotation(AnnotationSpec.builder(ClassName("kotlin.jvm", "JvmStatic")).build())
     .apply {
       this@funSpec.parameters.forEach { parameter ->
-        addParameter(ParameterSpec.builder(parameter.name, parameter.toTypeName()).build())
+        when (parameter) {
+          is IrPropertyParameter -> {
+            addParameter(ParameterSpec.builder(parameter.property.name, parameter.property.toTypeName()).build())
+          }
+          is IrLoggerParameter -> {
+            addParameter(
+              ParameterSpec.builder(
+                parameter.name,
+                stringConsumer
+              ).build()
+            )
+          }
+        }
+
       }
       this@funSpec.returnValues.forEach {
         addParameter(ParameterSpec.builder(it.name, it.toTypeName()).build())
@@ -68,20 +84,27 @@ private fun IrTask.funSpec(): FunSpec {
         .indent()
         .apply {
           this@funSpec.parameters.forEach {
-            val extra = when (it.type) {
-              is KotlinxSerializableInput -> {
-                CodeBlock.of(".%M()", MemberName("gratatouille", "decodeJson"))
-              }
+            when (it) {
+              is IrPropertyParameter -> {
+                val extra = when (it.property.type) {
+                  is KotlinxSerializableInput -> {
+                    CodeBlock.of(".%M()", MemberName("gratatouille", "decodeJson"))
+                  }
 
-              is InputFiles -> {
-                CodeBlock.of(".%M()", MemberName("gratatouille", "toGInputFiles"))
-              }
+                  is InputFiles -> {
+                    CodeBlock.of(".%M()", MemberName("gratatouille", "toGInputFiles"))
+                  }
 
-              else -> {
-                CodeBlock.of("")
+                  else -> {
+                    CodeBlock.of("")
+                  }
+                }
+                add("%L = %L%L,\n", it.property.name, it.property.name, extra)
+              }
+              is IrLoggerParameter -> {
+                add("%L = %T(%L),\n", it.name, ClassName("gratatouille", "DefaultGLogger"), it.name)
               }
             }
-            add("%L = %L%L,\n", it.name, it.name, extra)
           }
         }
         .unindent()

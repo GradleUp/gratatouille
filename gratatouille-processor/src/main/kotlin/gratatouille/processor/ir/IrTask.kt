@@ -1,26 +1,12 @@
 package gratatouille.processor.ir
 
 import cast.cast
-import com.google.devtools.ksp.symbol.KSAnnotation
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeReference
-import com.google.devtools.ksp.symbol.KSValueParameter
-import com.google.devtools.ksp.symbol.Origin
+import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.ksp.toTypeName
-import gratatouille.processor.classpath
-import gratatouille.processor.isPublic
-import gratatouille.processor.outputFile
-import gratatouille.processor.taskDescription
-import gratatouille.processor.taskGroup
-import gratatouille.processor.taskName
-import gratatouille.processor.workerExecutor
-import kotlin.sequences.any
+import gratatouille.processor.*
 
 internal class IrTask(
   val packageName: String,
@@ -28,8 +14,8 @@ internal class IrTask(
   val annotationName: String?,
   val description: String?,
   val group: String?,
-  val parameters: List<Property>,
-  val returnValues: List<Property>,
+  val parameters: List<IrParameter>,
+  val returnValues: List<IrTaskProperty>,
   /**
    * The coordinates where to find the implementation for this action
    * May be null if the plugin is not isolated
@@ -37,6 +23,23 @@ internal class IrTask(
   val implementationCoordinates: String?,
   val pure: Boolean
 )
+
+internal val List<IrParameter>.properties: List<IrTaskProperty> get() {
+  return filterIsInstance<IrPropertyParameter>().map { it.property }
+}
+internal fun List<IrParameter>.iterate(
+  onProperty: (IrTaskProperty) -> Unit,
+  onLoggerParameter: (IrLoggerParameter) -> Unit)
+{
+  forEach {
+    when (it) {
+      is IrPropertyParameter -> onProperty(it.property)
+      is IrLoggerParameter -> onLoggerParameter(it)
+    }
+  }
+}
+internal val List<IrTaskProperty>.inputs: List<IrTaskProperty> get() = filter { it.type.isInput() }
+internal val List<IrTaskProperty>.outputs: List<IrTaskProperty> get() = filter { !it.type.isInput() }
 
 internal sealed interface Type
 
@@ -49,7 +52,10 @@ internal class JvmType(val typename: TypeName) : Type
 internal class OutputFile(val fileName: String) : Type
 internal class OutputDirectory(val fileName: String) : Type
 
-internal class Property(
+/**
+ * Something that is annotated with one of Gradle's input/output annotations.
+ */
+internal class IrTaskProperty(
   val type: Type,
   val name: String,
   val internal: Boolean,
@@ -57,9 +63,25 @@ internal class Property(
   val manuallyWired: Boolean
 )
 
+internal fun Type.isInput(): Boolean {
+  return when (this) {
+    is OutputDirectory, is OutputFile -> false
+    else -> true
+  }
+}
+
+internal class IrPropertyParameter(val property: IrTaskProperty): IrParameter
+internal class IrLoggerParameter(val name: String): IrParameter
+
+/**
+ * A parameter in the task action function.
+ *
+ * Parameters may either be task properties or injected parameters.
+ */
+internal sealed interface IrParameter
 
 internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
-  val parameters = mutableListOf<Property>()
+  val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
   val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
   val returnValuesNames = returnValues.map { it.name }.toSet()
@@ -81,6 +103,14 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     }
 
     val parameterType: Type = when {
+      rawTypename == ClassName("gratatouille", "GLogger") -> {
+        check(!optional) {
+          "Gratatouille: The logger parameter may not be nullable."
+        }
+        parameters.add(IrLoggerParameter(name))
+        return@forEach
+      }
+
       rawTypename == ClassName("gratatouille", "GOutputFile") -> {
         OutputFile(valueParameter.fileName())
       }
@@ -122,12 +152,14 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     }
 
     parameters.add(
-      Property(
-        name = name,
-        type = parameterType,
-        internal = internal,
-        optional = optional,
-        manuallyWired = manuallyWired
+      IrPropertyParameter(
+        IrTaskProperty(
+          name = name,
+          type = parameterType,
+          internal = internal,
+          optional = optional,
+          manuallyWired = manuallyWired
+        )
       )
     )
   }
@@ -155,7 +187,7 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
   )
 }
 
-private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean): List<Property> {
+private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean): List<IrTaskProperty> {
   if (this == null) {
     return emptyList()
   }
@@ -175,7 +207,7 @@ private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean)
 
   val resolvedType = this.resolve()
   if (resolvedType.isSerializable()) {
-    return listOf(Property(KotlinxSerializableOutput(typename, outputFile), outputFile, false, false, false))
+    return listOf(IrTaskProperty(KotlinxSerializableOutput(typename, outputFile), outputFile, false, false, false))
   }
 
   val declaration = resolvedType.declaration
@@ -188,7 +220,7 @@ private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean)
   }
 }
 
-private fun KSPropertyDeclaration.toReturnValue(): Property {
+private fun KSPropertyDeclaration.toReturnValue(): IrTaskProperty {
   val typename = type.toTypeName()
   val resolvedType = type.resolve()
 
@@ -196,7 +228,7 @@ private fun KSPropertyDeclaration.toReturnValue(): Property {
     "Gratatouille: optional outputs are not supported $location"
   }
   if (resolvedType.isSerializable()) {
-    return Property(KotlinxSerializableOutput(typename, fileName()), simpleName.asString(), false, false, false)
+    return IrTaskProperty(KotlinxSerializableOutput(typename, fileName()), simpleName.asString(), false, false, false)
   }
 //    if (typename.isSimpleJvmType()) {
 //        return ReturnValue(outputFile, JvmType(typename))
@@ -248,7 +280,7 @@ private fun Sequence<KSAnnotation>.containsManuallyWired(): Boolean {
 private fun TypeName.isSimpleJvmType(): Boolean {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
-      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Boolean", "kotlin.Double" -> true
+      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double" -> true
       else -> false
     }
 
