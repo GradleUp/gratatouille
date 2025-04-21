@@ -7,13 +7,20 @@ import gratatouille.processor.ir.IrTask
 import gratatouille.processor.ir.InputDirectory
 import gratatouille.processor.ir.InputFile
 import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.IrLoggerParameter
+import gratatouille.processor.ir.IrPropertyParameter
 import gratatouille.processor.ir.JvmType
 import gratatouille.processor.ir.KotlinxSerializableInput
 import gratatouille.processor.ir.KotlinxSerializableOutput
 import gratatouille.processor.ir.OutputDirectory
 import gratatouille.processor.ir.OutputFile
-import gratatouille.processor.ir.Property
+import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.Type
+import gratatouille.processor.ir.inputs
+import gratatouille.processor.ir.isInput
+import gratatouille.processor.ir.iterate
+import gratatouille.processor.ir.outputs
+import gratatouille.processor.ir.properties
 
 
 internal fun IrTask.taskFile(): FileSpec {
@@ -32,6 +39,8 @@ internal fun IrTask.taskFile(): FileSpec {
 
 private fun IrTask.register(): FunSpec {
   val defaultTaskName = annotationName ?: taskName()
+  val properties = parameters.properties
+
   return FunSpec.builder(registerName())
     .addModifiers(KModifier.INTERNAL)
     .receiver(ClassName("org.gradle.api", "Project"))
@@ -52,7 +61,7 @@ private fun IrTask.register(): FunSpec {
         .build()
     )
     .apply {
-      this@register.parameters.filter { it.type.isInput() }.forEach {
+      properties.filter { it.type.isInput() }.forEach {
 
         addParameter(
           ParameterSpec.builder(it.name, it.type.toProviderType())
@@ -60,7 +69,7 @@ private fun IrTask.register(): FunSpec {
         )
       }
 
-      (this@register.parameters.filter { !it.type.isInput() } + this@register.returnValues).forEach {
+      (properties.outputs + this@register.returnValues).forEach {
         if (it.manuallyWired) {
           addParameter(
             ParameterSpec.builder(it.name, it.type.toProviderType())
@@ -85,7 +94,7 @@ private fun IrTask.register(): FunSpec {
           add("it.${classpath}.from(configuration)\n")
           add("// infrastructure\n")
           add("// inputs\n")
-          this@register.parameters.filter { it.type.isInput() }.forEach {
+          properties.inputs.forEach {
             when (it.type) {
               is InputFiles -> {
                 add("it.%L.from(%L)\n", it.name, it.name)
@@ -98,7 +107,7 @@ private fun IrTask.register(): FunSpec {
           }
 
           add("// outputs\n")
-          (this@register.parameters.filter { !it.type.isInput() } + this@register.returnValues).forEach {
+          (properties.outputs + this@register.returnValues).forEach {
             if (it.manuallyWired) {
               add("it.%L.set(%L)\n", it.name, it.name)
             } else {
@@ -129,12 +138,6 @@ private fun IrTask.register(): FunSpec {
     .build()
 }
 
-private fun Type.isInput(): Boolean {
-  return when (this) {
-    is OutputDirectory, is OutputFile -> false
-    else -> true
-  }
-}
 
 private fun Type.toProviderType(): TypeName {
   return when (this) {
@@ -168,7 +171,7 @@ private fun IrTask.task(): TypeSpec {
     .addModifiers(KModifier.ABSTRACT, KModifier.INTERNAL)
     .superclass(ClassName("org.gradle.api", "DefaultTask"))
     .apply {
-      (listOf(classpathProperty) + parameters + returnValues).forEach {
+      (listOf(classpathParameter) + parameters.properties + returnValues).forEach {
         addProperty(
           it.toPropertySpec()
         )
@@ -281,38 +284,45 @@ private fun IrTask.taskAction(): FunSpec {
         add("${workerExecutor}().noIsolation().submit(%T::class.java) {\n", workActionClassName())
         withIndent {
           add("it.${classpath} = ${classpath}.files\n")
-          (parameters + returnValues).forEach {
-            val extra = buildCodeBlock {
-              when (it.type) {
-                InputDirectory,
-                InputFile,
-                is KotlinxSerializableInput -> {
-                  add(".asFile")
-                  add(if (it.optional) ".orNull" else ".get()")
-                }
-                is KotlinxSerializableOutput,
-                is OutputDirectory,
-                is OutputFile -> {
-                  add(".asFile.get()")
-                }
-
-                InputFiles -> {
-                  add(".isolate2()")
-                }
-
-                is JvmType -> {
-                  add(if (it.optional) ".orNull?" else ".get()")
-                  add(".isolate()")
-                }
-              }
-            }
-            add("it.%L = %L%L\n", it.name, it.name, extra)
+          parameters.properties.forEach {
+            workActionProperty(it)
+          }
+          returnValues.forEach {
+            workActionProperty(it)
           }
         }
         add("}\n")
       }
     )
     .build()
+}
+
+private fun CodeBlock.Builder.workActionProperty(property: IrTaskProperty) {
+  val extra = buildCodeBlock {
+    when (property.type) {
+      InputDirectory,
+      InputFile,
+      is KotlinxSerializableInput -> {
+        add(".asFile")
+        add(if (property.optional) ".orNull" else ".get()")
+      }
+      is KotlinxSerializableOutput,
+      is OutputDirectory,
+      is OutputFile -> {
+        add(".asFile.get()")
+      }
+
+      InputFiles -> {
+        add(".isolate2()")
+      }
+
+      is JvmType -> {
+        add(if (property.optional) ".orNull?" else ".get()")
+        add(".isolate()")
+      }
+    }
+  }
+  add("it.%L = %L%L\n", property.name, property.name, extra)
 }
 
 private fun PropertySpec.Builder.annotateInput(
@@ -343,7 +353,7 @@ private fun PropertySpec.Builder.annotateInput(
   }
 }
 
-private fun Property.toPropertySpec(): PropertySpec {
+private fun IrTaskProperty.toPropertySpec(): PropertySpec {
   val builder = when (type) {
     is InputDirectory -> {
       PropertySpec.builder(name, ClassName("org.gradle.api.file", "DirectoryProperty"))
@@ -457,17 +467,13 @@ private fun IrTask.workActionExecute(): FunSpec {
             add(".invoke2(\n")
             withIndent {
               add("null,\n")
-              (parameters + returnValues).forEach {
-                add("%L,\n", it.name)
-              }
+              addRunArguments(this@workActionExecute)
             }
             add(")\n")
           } else {
             add("%T.run(\n", entryPointClassName())
             withIndent {
-              (parameters + returnValues).forEach {
-                add("%L,\n", it.name)
-              }
+              addRunArguments(this@workActionExecute)
             }
             add(")\n")
           }
@@ -477,6 +483,31 @@ private fun IrTask.workActionExecute(): FunSpec {
     .build()
 }
 
+private fun CodeBlock.Builder.addRunArguments(irTask: IrTask) {
+  with (irTask) {
+    parameters.iterate(
+      onProperty = {
+        add("%L,\n", it.name)
+      },
+      onLoggerParameter = {
+        add("object: %T{\n", stringConsumer)
+        withIndent {
+          // Sadly, there is no way to inject logging yet: https://github.com/gradle/gradle/issues/16991
+          add("val logger = %T.getLogger(%S)\n", ClassName("org.gradle.api.logging", "Logging"), irTask.functionName)
+          add("override fun accept(t: String) {\n")
+          withIndent {
+            add("logger.lifecycle(t)\n")
+          }
+          add("}\n")
+        }
+        add("},\n")
+      }
+    )
+    returnValues.forEach {
+      add("%L,\n", it.name)
+    }
+  }
+}
 private fun IrTask.workParameters(): TypeSpec {
   return TypeSpec.interfaceBuilder(workParametersClassName().simpleName)
     .addModifiers(KModifier.PRIVATE)
@@ -485,12 +516,14 @@ private fun IrTask.workParameters(): TypeSpec {
       addProperty(
         PropertySpec.builder(
           classpath,
-          ClassName("kotlin.collections", "Set")
-            .parameterizedBy(ClassName("java.io", "File"))
+          ClassName("kotlin.collections", "Set").parameterizedBy(ClassName("java.io", "File"))
         ).mutable(true).build()
       )
-      (parameters + returnValues).forEach {
-        addProperty(PropertySpec.Companion.builder(it.name, it.toTypeName()).mutable(true).build())
+      parameters.properties.forEach {
+        addProperty(PropertySpec.builder(it.name, it.toTypeName()).mutable(true).build())
+      }
+      returnValues.forEach {
+        addProperty(PropertySpec.builder(it.name, it.toTypeName()).mutable(true).build())
       }
     }
     .build()

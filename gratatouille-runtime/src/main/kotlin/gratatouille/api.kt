@@ -158,3 +158,6 @@ typealias GOutputFile = File
  */
 typealias GOutputDirectory = File
 
+interface GLogger {
+  fun lifecycle(message: String)
+}

@@ -4,7 +4,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.*
 import gratatouille.processor.codegen.toTypeName
-import gratatouille.processor.ir.Property
+import gratatouille.processor.ir.IrTaskProperty
 
 fun String.capitalizeFirstLetter(): String {
     val builder = StringBuilder(length)
@@ -44,7 +44,7 @@ internal val optInGratatouilleInternalAnnotationSpec = AnnotationSpec.builder(Cl
     .addMember("%T::class", ClassName("gratatouille", "GratatouilleInternal"))
     .build()
 
-internal fun TypeSpec.Builder.addConstructorProperties(properties: List<Property>) = apply {
+internal fun TypeSpec.Builder.addConstructorProperties(properties: List<IrTaskProperty>) = apply {
     primaryConstructor(
         FunSpec.constructorBuilder()
             .apply {

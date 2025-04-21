@@ -4,6 +4,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.File
+import java.util.function.Consumer
 
 @RequiresOptIn(message = "This symbol is only to be used by Gratatouille generated code")
 annotation class GratatouilleInternal
@@ -38,5 +39,12 @@ inline fun <reified T> T.encodeJsonTo(file: File) {
 fun List<Any>.toGInputFiles(): GInputFiles {
   return chunked(2).map {
     FileWithPath(it.get(0) as File, it.get(1) as String)
+  }
+}
+
+@GratatouilleInternal
+class DefaultGLogger(private val callback: Consumer<String>): GLogger {
+  override fun lifecycle(message: String) {
+    callback.accept(message)
   }
 }

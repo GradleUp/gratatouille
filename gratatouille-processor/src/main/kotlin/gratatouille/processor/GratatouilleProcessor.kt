@@ -12,7 +12,7 @@ import gratatouille.processor.codegen.plugin
 import gratatouille.processor.codegen.taskFile
 import gratatouille.processor.ir.InputFiles
 import gratatouille.processor.ir.IrPlugin
-import gratatouille.processor.ir.Property
+import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.toGTask
 import gratatouille.processor.ir.toIrPlugin
 import java.util.Properties
@@ -140,4 +140,4 @@ class GratatouilleProcessorProvider : SymbolProcessorProvider {
   }
 }
 
-internal val classpathProperty = Property(InputFiles, classpath, false, false, false)
+internal val classpathParameter = IrTaskProperty(InputFiles, classpath, false, false, false)
