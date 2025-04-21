@@ -1,3 +1,8 @@
+public final class gratatouille/DefaultGLogger : gratatouille/GLogger {
+	public fun <init> (Ljava/util/function/Consumer;)V
+	public fun lifecycle (Ljava/lang/String;)V
+}
+
 public final class gratatouille/FileWithPath {
 	public fun <init> (Ljava/io/File;Ljava/lang/String;)V
 	public final fun getFile ()Ljava/io/File;
@@ -14,6 +19,10 @@ public abstract interface annotation class gratatouille/GFileName : java/lang/an
 }
 
 public abstract interface annotation class gratatouille/GInternal : java/lang/annotation/Annotation {
+}
+
+public abstract interface class gratatouille/GLogger {
+	public abstract fun lifecycle (Ljava/lang/String;)V
 }
 
 public abstract interface annotation class gratatouille/GManuallyWired : java/lang/annotation/Annotation {
