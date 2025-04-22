@@ -3,6 +3,7 @@ package gratatouille.processor.codegen
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import gratatouille.processor.*
+import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.IrTask
 import gratatouille.processor.ir.InputDirectory
 import gratatouille.processor.ir.InputFile
@@ -96,7 +97,7 @@ private fun IrTask.register(): FunSpec {
           add("// inputs\n")
           properties.inputs.forEach {
             when (it.type) {
-              is InputFiles -> {
+              is InputFiles, Classpath -> {
                 add("it.%L.from(%L)\n", it.name, it.name)
               }
 
@@ -150,7 +151,7 @@ private fun Type.toProviderType(): TypeName {
     )
       .parameterizedBy(ClassName("org.gradle.api.file", "RegularFile"))
 
-    InputFiles -> ClassName("org.gradle.api.file", "FileCollection")
+    InputFiles, Classpath -> ClassName("org.gradle.api.file", "FileCollection")
     is JvmType -> typename.toGradleProvider()
   }
 }
@@ -312,7 +313,7 @@ private fun CodeBlock.Builder.workActionProperty(property: IrTaskProperty) {
         add(".asFile.get()")
       }
 
-      InputFiles -> {
+      InputFiles, Classpath -> {
         add(".isolate2()")
       }
 
@@ -377,9 +378,15 @@ private fun IrTaskProperty.toPropertySpec(): PropertySpec {
         )
     }
 
-    is InputFiles -> {
+    is InputFiles, Classpath -> {
       PropertySpec.builder(name, ClassName("org.gradle.api.file", "ConfigurableFileCollection"))
-        .annotateInput("org.gradle.api.tasks", "InputFiles", internal, optional)
+        .apply {
+          if (type is InputFiles) {
+            annotateInput("org.gradle.api.tasks", "InputFiles", internal, optional)
+          } else {
+            annotateInput("org.gradle.api.tasks", "Classpath", internal, optional)
+          }
+        }
         .addAnnotation(
           AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
             .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))

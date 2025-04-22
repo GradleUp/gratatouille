@@ -45,6 +45,7 @@ internal sealed interface Type
 
 internal object InputFile : Type
 internal object InputFiles : Type
+internal object Classpath : Type
 internal object InputDirectory : Type
 internal class KotlinxSerializableInput(val typename: TypeName) : Type
 internal class KotlinxSerializableOutput(val typename: TypeName, val fileName: String) : Type

@@ -10,6 +10,7 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import gratatouille.processor.codegen.entryPoint
 import gratatouille.processor.codegen.plugin
 import gratatouille.processor.codegen.taskFile
+import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.InputFiles
 import gratatouille.processor.ir.IrPlugin
 import gratatouille.processor.ir.IrTaskProperty
@@ -140,4 +141,4 @@ class GratatouilleProcessorProvider : SymbolProcessorProvider {
   }
 }
 
-internal val classpathParameter = IrTaskProperty(InputFiles, classpath, false, false, false)
+internal val classpathParameter = IrTaskProperty(Classpath, classpath, false, false, false)

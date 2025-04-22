@@ -13,6 +13,7 @@ import gratatouille.processor.ir.OutputDirectory
 import gratatouille.processor.ir.OutputFile
 import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.IrPropertyParameter
 import gratatouille.processor.ir.IrLoggerParameter
 import gratatouille.processor.optInGratatouilleInternalAnnotationSpec
@@ -45,7 +46,7 @@ internal fun IrTaskProperty.toTypeName(): TypeName {
   return when (type) {
     InputDirectory -> ClassName("java.io", "File")
     InputFile -> ClassName("java.io", "File")
-    InputFiles -> ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "Any"))
+    InputFiles, Classpath -> ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "Any"))
     is OutputFile -> ClassName("java.io", "File")
     is OutputDirectory -> ClassName("java.io", "File")
     is JvmType -> type.typename
