@@ -383,16 +383,16 @@ private fun IrTaskProperty.toPropertySpec(): PropertySpec {
         .apply {
           if (type is InputFiles) {
             annotateInput("org.gradle.api.tasks", "InputFiles", internal, optional)
+            addAnnotation(
+              AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
+                .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
+                .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
+                .build()
+            )
           } else {
             annotateInput("org.gradle.api.tasks", "Classpath", internal, optional)
           }
         }
-        .addAnnotation(
-          AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
-            .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
-            .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
-            .build()
-        )
     }
 
     is JvmType -> {
