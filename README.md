@@ -87,8 +87,7 @@ internal fun Project.registerPrepareIngredientsTask(
 
 @CacheableTask
 internal abstract class PrepareIngredientsTask : DefaultTask() {
-  @get:InputFiles
-  @get:PathSensitive(PathSensitivity.RELATIVE)
+  @get:Classpath
   public abstract val classpath: ConfigurableFileCollection
 
   @get:Input
