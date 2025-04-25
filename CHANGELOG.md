@@ -1,5 +1,10 @@
 # Next version (unreleased)
 
+# Version 0.0.7
+_2025-04-25_
+
+* Technical release to remove dependency on SNAPSHOT artifacts
+
 # Version 0.0.6
 _2025-04-25_
 

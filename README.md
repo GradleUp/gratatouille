@@ -32,7 +32,7 @@ plugins {
   id("com.google.devtools.ksp")
   // No need to add the 'java-gradle-plugin' plugin.
   // Add the Gratatouille plugin
-  id("com.gradleup.gratatouille").version("0.0.6")
+  id("com.gradleup.gratatouille").version("0.0.7")
 }
 
 gratatouille {
@@ -340,7 +340,7 @@ Create a `gradle-tasks` project for your plugin tasks and apply the `com.gradleu
 plugins {
   id("org.jetbrains.kotlin.jvm")
   id("com.google.devtools.ksp")
-  id("com.gradleup.gratatouille.implementation").version("0.0.6")
+  id("com.gradleup.gratatouille.implementation").version("0.0.7")
 }
 
 dependencies {
@@ -388,7 +388,7 @@ Apply the `com.gradleup.gratatouille` plugin in your `api` project:
 ```kotlin
 // gradle-plugin/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille").version("0.0.6")
+    id("com.gradleup.gratatouille").version("0.0.7")
 }
 
 gratatouille {
