@@ -3,9 +3,15 @@
 # Version 0.0.6
 _2025-04-25_
 
-* 
+* Use `@Classpath` for classpath properties (#29)
+* Add support for injecting logger in task actions (#28)
+
 # Version 0.0.5
 _2025-04-16_
+
+* Added `@GPlugin`, `@GExtension` and `@GFileName`
+* Made kotlinx.serialization support opt-in
+* Simplify Gradle configuration with only one plugin
 
 # Version 0.0.4
 _2024-09-03_
