@@ -1,5 +1,9 @@
 # Next version (unreleased)
 
+# Version 0.0.6
+_2025-04-25_
+
+* 
 # Version 0.0.5
 _2025-04-16_
 
