@@ -84,7 +84,10 @@ abstract class GratatouilleExtension(private val project: Project) {
       "Gratatouille: calling createMarkerPublication() requires the `maven-publish` plugin"
     }
     project.extensions.getByType(PublishingExtension::class.java).apply {
-      val publications = this.publications.toList()
+      val publications = this.publications.filter {
+        // Filter out our own publications in case there are several plugin ids in the same jar
+        !it.name.endsWith("PluginMarkerMaven")
+      }.toList()
       check(publications.isNotEmpty()) {
         "Gratatouille: the project does not contain any publications. Create a publication before calling 'pluginMarker()'."
       }
