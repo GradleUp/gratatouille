@@ -10,41 +10,6 @@ fun IrPlugin.plugin(): FileSpec {
     fileName = simpleName,
   )
     .addType(typeSpec())
-    .apply {
-      if (extension != null) {
-        // A Kotlin function for Kotlin callers that don't want to go through the plugin ceremony
-        addProperty(
-          PropertySpec.builder(extension.name, ClassName(packageName, simpleName))
-            .receiver(ClassNames.Project)
-            .getter(
-              FunSpec.getterBuilder()
-                .addAnnotation(AnnotationSpec.builder(ClassName("kotlin.jvm", "Synchronized")).build())
-                .addCode(
-                  buildCodeBlock {
-                    add(
-                      "val existing = extensions.getByName(%S) as %T?\n",
-                      extension.name,
-                      ClassName(packageName, simpleName)
-                    )
-                    add("return if (existing != null) {\n")
-                    withIndent {
-                      add("existing\n")
-                    }
-                    add("} else {\n")
-                    withIndent {
-                      add(
-                        "extensions.create(%S, %T::class.java, this)\n",
-                        extension.name,
-                        ClassName(packageName, simpleName)
-                      )
-                    }
-                    add("}\n")
-                  }).build()
-            )
-            .build()
-        )
-      }
-    }
     .build()
 }
 
