@@ -11,11 +11,11 @@ jobs:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
       - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
       - run: |
-          ./gradlew librarianPublishToSnapshots
           LIBRARIAN_VERSION_SHA1=$GITHUB_SHA ./gradlew librarianPublishToGcs
+          ./gradlew librarianPublishToSnapshots
         env:
-          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.OSSRH_USER }}
-          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
           LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
           LIBRARIAN_GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}

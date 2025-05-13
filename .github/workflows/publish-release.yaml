@@ -16,8 +16,8 @@ jobs:
       - run: |
           ./gradlew librarianPublishToMavenCentral
         env:
-          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.OSSRH_USER }}
-          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
           LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
           LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
           GH_TOKEN: ${{ github.token }}
