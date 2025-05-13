@@ -17,5 +17,5 @@ dependencyResolutionManagement {
 }
 
 includeBuild("..")
-includeBuild("../build-logic")
+includeBuild("../gratatouille-build-logic")
 include(":gradle-plugin")
