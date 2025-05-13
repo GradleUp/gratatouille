@@ -30,6 +30,7 @@ dependencies {
     compileOnly(libs.gradle.api)
     testImplementation(gradleTestKit())
     testImplementation(libs.kotlin.test)
+    compileOnly("com.gradleup.gratatouille:gratatouille-runtime")
 }
 
 

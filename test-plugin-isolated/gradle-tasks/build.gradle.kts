@@ -24,6 +24,7 @@ publishing {
 
 dependencies {
     implementation(libs.okio)
+    implementation("com.gradleup.gratatouille:gratatouille-runtime")
 }
 
 gratatouille {
