@@ -84,7 +84,7 @@ internal sealed interface IrParameter
 internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
   val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
-  val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
+  val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor, extraClasspath)
   val returnValuesNames = returnValues.map { it.name }.toSet()
 
   this.parameters.forEach { valueParameter ->
@@ -98,6 +98,12 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
 
     check(!reservedNames.contains(name)) {
       "Gratatouille: parameter name '${name}' is reserved for internal uses. Please use another name at ${valueParameter.location}."
+    }
+    check(!name.startsWith("is")) {
+      // See somewhere around there https://github.com/gradle/gradle/blob/b3169d65b2d6fbf273930cade0fa41ac8303f8be/platforms/core-configuration/model-core/src/main/java/org/gradle/internal/instantiation/generator/AbstractClassGenerator.java#L338
+      // Gradle fails in those cases with:
+      // Caused by: java.lang.IllegalArgumentException: Cannot have abstract method ApolloGenerateSourcesTask.isFoo(): DirectoryProperty.
+      "Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name."
     }
     check(!returnValuesNames.contains(name)) {
       "Gratatouille: parameter name '${name}' is already used as return value. Please use another name at ${valueParameter.location}."
@@ -129,6 +135,12 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
       }
 
       rawTypename.isSimpleJvmType() -> JvmType(rawTypename)
+      rawTypename.isFile() -> {
+        check(internal) {
+          "Gratatouille: using java.io.File is only allowed with @GInternal at ${valueParameter.location}. Use @GInputFile or @GOutputFile for input or output files."
+        }
+        JvmType(rawTypename)
+      }
       resolvedType.isSerializable() -> KotlinxSerializableInput(rawTypename)
       else -> error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
     }
@@ -282,6 +294,7 @@ private fun TypeName.isSimpleJvmType(): Boolean {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
       "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double" -> true
+      "gratatouille.GAny" -> true
       else -> false
     }
 
@@ -298,4 +311,15 @@ private fun TypeName.isSimpleJvmType(): Boolean {
     else -> false
   }
 }
+
+private fun TypeName.isFile(): Boolean {
+  return when (this) {
+    is ClassName -> when (this.canonicalName) {
+      "java.io.File" -> true
+      else -> false
+    }
+    else -> false
+  }
+}
+
 

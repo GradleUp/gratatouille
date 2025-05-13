@@ -19,5 +19,5 @@ dependencies {
     implementation(libs.gratatouille.gradle.plugin)
 }
 
-group = "build-logic"
+group = "gratatouille-build-logic"
 

@@ -9,4 +9,4 @@ pluginManagement {
 }
 
 include(":gratatouille-runtime", ":gratatouille-gradle-plugin", ":gratatouille-processor")
-includeBuild("build-logic")
+includeBuild("gratatouille-build-logic")

@@ -7,7 +7,9 @@ import gratatouille.processor.ir.IrPlugin
 fun IrPlugin.plugin(): FileSpec {
   return FileSpec.builder(
     packageName = packageName,
-    fileName = simpleName,
+    // prefix with 'Generated' to avoid having duplicate source files when building the sources jar
+    // This typically happens if the users declare their @GPlugin function in a file having the same name
+    fileName = "Generated$simpleName",
   )
     .addType(typeSpec())
     .build()

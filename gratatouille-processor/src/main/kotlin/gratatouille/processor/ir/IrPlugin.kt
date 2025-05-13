@@ -65,12 +65,15 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   return IrPlugin(
     pluginId,
     packageName.asString(),
-    "${extensionName.capitalizeFirstLetter()}Plugin",
+    extensionName.capitalizeFirstLetter().maybeAddPluginSuffix(),
     extension,
     null
   )
 }
 
+internal fun String.maybeAddPluginSuffix():  String {
+  return if (endsWith("Plugin")) this else this + "Plugin"
+}
 internal fun KSFunctionDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   val annotation = annotations.first { it.shortName.asString() == "GPlugin" }
 
@@ -84,7 +87,7 @@ internal fun KSFunctionDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   return IrPlugin(
     pluginId,
     packageName.asString(),
-    simpleName.asString().capitalizeFirstLetter() + "Plugin",
+    simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
     null,
     IrApplyFunction(packageName.asString(), simpleName.asString())
   )

@@ -4,7 +4,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.File
-import java.util.function.Consumer
+import java.util.function.BiConsumer
 
 @RequiresOptIn(message = "This symbol is only to be used by Gratatouille generated code")
 annotation class GratatouilleInternal
@@ -43,8 +43,16 @@ fun List<Any>.toGInputFiles(): GInputFiles {
 }
 
 @GratatouilleInternal
-class DefaultGLogger(private val callback: Consumer<String>): GLogger {
+class DefaultGLogger(private val callback: BiConsumer<Int, String>): GLogger {
+  override fun debug(message: String) {
+    callback.accept(0 /* LogLevel.DEBUG.ordinal */, message)
+  }
+
   override fun lifecycle(message: String) {
-    callback.accept(message)
+    callback.accept(2 /* LogLevel.LIFECYCLE.ordinal */, message)
+  }
+
+  override fun warn(message: String) {
+    callback.accept(3 /* LogLevel.WARN.ordinal */, message)
   }
 }
