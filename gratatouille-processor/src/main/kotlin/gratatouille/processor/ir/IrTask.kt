@@ -84,7 +84,7 @@ internal sealed interface IrParameter
 internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
   val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
-  val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor)
+  val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor, extraClasspath)
   val returnValuesNames = returnValues.map { it.name }.toSet()
 
   this.parameters.forEach { valueParameter ->
@@ -129,6 +129,12 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
       }
 
       rawTypename.isSimpleJvmType() -> JvmType(rawTypename)
+      rawTypename.isFile() -> {
+        check(internal) {
+          "Gratatouille: using java.io.File is only allowed with @GInternal at ${valueParameter.location}. Use @GInputFile or @GOutputFile for input or output files."
+        }
+        JvmType(rawTypename)
+      }
       resolvedType.isSerializable() -> KotlinxSerializableInput(rawTypename)
       else -> error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
     }
@@ -282,6 +288,7 @@ private fun TypeName.isSimpleJvmType(): Boolean {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
       "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double" -> true
+      "gratatouille.GAny" -> true
       else -> false
     }
 
@@ -298,4 +305,15 @@ private fun TypeName.isSimpleJvmType(): Boolean {
     else -> false
   }
 }
+
+private fun TypeName.isFile(): Boolean {
+  return when (this) {
+    is ClassName -> when (this.canonicalName) {
+      "java.io.File" -> true
+      else -> false
+    }
+    else -> false
+  }
+}
+
 

@@ -158,6 +158,15 @@ typealias GOutputFile = File
  */
 typealias GOutputDirectory = File
 
+/**
+ * A typealias for a simple serializable type like simple types (String, Int, List, Map, etc...).
+ *
+ * For Gradle to be able to snapshot this properly, any value passed must implement `Serializable`.
+ */
+typealias GAny = Any
+
 interface GLogger {
+  fun debug(message: String)
   fun lifecycle(message: String)
+  fun warn(message: String)
 }

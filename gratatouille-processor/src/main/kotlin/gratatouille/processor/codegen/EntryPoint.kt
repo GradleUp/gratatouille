@@ -17,7 +17,7 @@ import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.IrPropertyParameter
 import gratatouille.processor.ir.IrLoggerParameter
 import gratatouille.processor.optInGratatouilleInternalAnnotationSpec
-import gratatouille.processor.stringConsumer
+import gratatouille.processor.biConsumer
 
 internal fun IrTask.entryPoint(): FileSpec {
   val className = entryPointClassName()
@@ -68,7 +68,7 @@ private fun IrTask.funSpec(): FunSpec {
             addParameter(
               ParameterSpec.builder(
                 parameter.name,
-                stringConsumer
+                biConsumer
               ).build()
             )
           }
