@@ -47,10 +47,6 @@ abstract class GratatouilleExtension(private val project: Project) {
       project.kspExtension.arg("implementationCoordinates", codeGenerationSpec.publishedCoordinates!!)
     }
     project.kspExtension.arg("enableKotlinxSerialization", codeGenerationSpec.enableKotlinxSerialization.orElse(false).get().toString())
-
-    project.configurations.getByName("implementation").dependencies.add(
-      project.dependencies.create("${BuildConfig.group}:gratatouille-runtime")
-    )
   }
 
   /**
