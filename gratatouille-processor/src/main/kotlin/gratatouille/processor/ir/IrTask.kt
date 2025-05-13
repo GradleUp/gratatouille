@@ -99,6 +99,12 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     check(!reservedNames.contains(name)) {
       "Gratatouille: parameter name '${name}' is reserved for internal uses. Please use another name at ${valueParameter.location}."
     }
+    check(!name.startsWith("is")) {
+      // See somewhere around there https://github.com/gradle/gradle/blob/b3169d65b2d6fbf273930cade0fa41ac8303f8be/platforms/core-configuration/model-core/src/main/java/org/gradle/internal/instantiation/generator/AbstractClassGenerator.java#L338
+      // Gradle fails in those cases with:
+      // Caused by: java.lang.IllegalArgumentException: Cannot have abstract method ApolloGenerateSourcesTask.isFoo(): DirectoryProperty.
+      "Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name."
+    }
     check(!returnValuesNames.contains(name)) {
       "Gratatouille: parameter name '${name}' is already used as return value. Please use another name at ${valueParameter.location}."
     }
