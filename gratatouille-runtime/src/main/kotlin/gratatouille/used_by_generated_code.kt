@@ -48,11 +48,19 @@ class DefaultGLogger(private val callback: BiConsumer<Int, String>): GLogger {
     callback.accept(0 /* LogLevel.DEBUG.ordinal */, message)
   }
 
+  override fun info(message: String) {
+    callback.accept(1 /* LogLevel.INFO.ordinal */, message)
+  }
+
   override fun lifecycle(message: String) {
     callback.accept(2 /* LogLevel.LIFECYCLE.ordinal */, message)
   }
 
   override fun warn(message: String) {
     callback.accept(3 /* LogLevel.WARN.ordinal */, message)
+  }
+
+  override fun error(message: String) {
+    callback.accept(5 /* LogLevel.ERROR.ordinal */, message)
   }
 }
