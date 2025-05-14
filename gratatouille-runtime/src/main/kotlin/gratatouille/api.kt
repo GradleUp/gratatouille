@@ -167,6 +167,8 @@ typealias GAny = Any
 
 interface GLogger {
   fun debug(message: String)
+  fun info(message: String)
   fun lifecycle(message: String)
   fun warn(message: String)
+  fun error(message: String)
 }
