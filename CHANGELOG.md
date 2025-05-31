@@ -1,5 +1,18 @@
 # Next version (unreleased)
 
+# Version 0.0.9
+_2025-05-31_
+
+* Add more log levels (#36)
+* Add GClasspath (#37)
+
+# Version 0.0.8
+_2025-05-14_
+
+* Remove kotlin top-level property by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/32
+* Multiple QOL improvements from trying to integrate Gratatouille in Apollo Kotlin by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/34
+* update publication to use the central portal by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/35
+
 # Version 0.0.7
 _2025-04-25_
 
