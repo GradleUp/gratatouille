@@ -135,6 +135,12 @@ class FileWithPath(val file: File, val normalizedPath: String)
  */
 typealias GInputFiles = List<FileWithPath>
 
+/**
+ * This is like [GInputFiles] but annotates the input with `@Classpath` so that only the public API is snapshotted.
+ * See https://blog.gradle.org/compilation-avoidance.
+ */
+typealias GClasspath = List<FileWithPath>
+
 @Deprecated(
   "Gratatouille has no input directories. Tasks work with files, not directories. Use GInputFiles instead, this ensures that the " +
       "filtering/normalization done inside the task is the same as the filtering/normalization done for snapshotting.",
