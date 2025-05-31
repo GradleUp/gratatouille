@@ -92,7 +92,7 @@ private fun IrTask.funSpec(): FunSpec {
                     CodeBlock.of(".%M()", MemberName("gratatouille", "decodeJson"))
                   }
 
-                  is InputFiles -> {
+                  is InputFiles, is Classpath -> {
                     CodeBlock.of(".%M()", MemberName("gratatouille", "toGInputFiles"))
                   }
 

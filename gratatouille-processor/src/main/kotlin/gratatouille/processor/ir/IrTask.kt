@@ -127,6 +127,12 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
       }
 
       rawTypename == ClassName("gratatouille", "GInputFile") -> InputFile
+      rawTypename == ClassName("gratatouille", "GClasspath") -> {
+        check(!optional) {
+          "Gratatouille: optional GClasspath are not supported ${valueParameter.location}"
+        }
+        Classpath
+      }
       rawTypename == ClassName("gratatouille", "GInputFiles") -> {
         check(!optional) {
           "Gratatouille: optional GInputFiles are not supported ${valueParameter.location}"
