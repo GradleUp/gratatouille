@@ -1,1 +1,1 @@
-sourceset_dependencies = '{":gratatouille-gradle-plugin/main":[],":gratatouille-processor/main":[],":gratatouille-runtime/main":[]}'
+sourceset_dependencies = '{":gratatouille-gradle-plugin/main":[],":gratatouille-wiring-runtime/main":[],":gratatouille-processor/main":[],":gratatouille-tasks-runtime/main":[]}'

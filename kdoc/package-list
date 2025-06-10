@@ -3,10 +3,13 @@ $dokka.linkExtension:html
 
 module:gratatouille-gradle-plugin
 gratatouille.gradle
+gratatouille.gradle.internal
 gratatouille.gradle.tasks
 module:gratatouille-processor
 gratatouille.processor
 gratatouille.processor.codegen
 gratatouille.processor.ir
-module:gratatouille-runtime
-gratatouille
+module:gratatouille-tasks-runtime
+gratatouille.tasks
+module:gratatouille-wiring-runtime
+gratatouille.wiring
