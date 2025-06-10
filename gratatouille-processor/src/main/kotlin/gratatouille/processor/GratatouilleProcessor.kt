@@ -11,7 +11,6 @@ import gratatouille.processor.codegen.entryPoint
 import gratatouille.processor.codegen.plugin
 import gratatouille.processor.codegen.taskFile
 import gratatouille.processor.ir.Classpath
-import gratatouille.processor.ir.InputFiles
 import gratatouille.processor.ir.IrPlugin
 import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.toGTask
@@ -25,9 +24,9 @@ class GratatouilleProcessor(
   private val enableKotlinxSerialization: Boolean,
 ) : SymbolProcessor {
   override fun process(resolver: Resolver): List<KSAnnotated> {
-    processTasks(resolver.getSymbolsWithAnnotation("gratatouille.GTask"))
-    processPlugins(resolver.getSymbolsWithAnnotation("gratatouille.GPlugin"))
-    processExtensions(resolver.getSymbolsWithAnnotation("gratatouille.GExtension"))
+    processTasks(resolver.getSymbolsWithAnnotation("$gratatouilleTasksPackageName.GTask"))
+    processPlugins(resolver.getSymbolsWithAnnotation("$gratatouilleWiringPackageName.GPlugin"))
+    processExtensions(resolver.getSymbolsWithAnnotation("$gratatouilleWiringPackageName.GExtension"))
 
     return emptyList()
   }

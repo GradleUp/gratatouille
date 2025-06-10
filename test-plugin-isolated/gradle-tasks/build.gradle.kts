@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
-    id("com.gradleup.gratatouille")
+    id("com.gradleup.gratatouille.tasks")
     id("maven-publish")
 }
 
@@ -24,10 +24,9 @@ publishing {
 
 dependencies {
     implementation(libs.okio)
-    implementation("com.gradleup.gratatouille:gratatouille-runtime")
 }
 
-gratatouille {
+gratatouille2 {
     codeGeneration {
         classLoaderIsolation()
     }

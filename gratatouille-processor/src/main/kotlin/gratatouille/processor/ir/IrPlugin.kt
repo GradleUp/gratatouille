@@ -65,7 +65,7 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   return IrPlugin(
     pluginId,
     packageName.asString(),
-    extensionName.capitalizeFirstLetter().maybeAddPluginSuffix(),
+    simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
     extension,
     null
   )

@@ -8,5 +8,5 @@ pluginManagement {
   }
 }
 
-include(":gratatouille-runtime", ":gratatouille-gradle-plugin", ":gratatouille-processor")
+include(":gratatouille-wiring-runtime", ":gratatouille-tasks-runtime", ":gratatouille-gradle-plugin", ":gratatouille-processor")
 includeBuild("gratatouille-build-logic")

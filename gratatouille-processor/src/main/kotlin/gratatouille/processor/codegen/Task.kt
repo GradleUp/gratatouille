@@ -1,35 +1,63 @@
 package gratatouille.processor.codegen
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import gratatouille.processor.*
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.buildCodeBlock
+import com.squareup.kotlinpoet.withIndent
+import gratatouille.processor.biConsumer
+import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.classpath
+import gratatouille.processor.classpathParameter
+import gratatouille.processor.decapitalizeFirstLetter
+import gratatouille.processor.extraClasspath
+import gratatouille.processor.gratatouilleBuildService
+import gratatouille.processor.gratatouilleWiringPackageName
 import gratatouille.processor.ir.Classpath
-import gratatouille.processor.ir.IrTask
 import gratatouille.processor.ir.InputDirectory
 import gratatouille.processor.ir.InputFile
 import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.IrTask
+import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.JvmType
 import gratatouille.processor.ir.KotlinxSerializableInput
 import gratatouille.processor.ir.KotlinxSerializableOutput
 import gratatouille.processor.ir.OutputDirectory
 import gratatouille.processor.ir.OutputFile
-import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.Type
 import gratatouille.processor.ir.inputs
 import gratatouille.processor.ir.isInput
 import gratatouille.processor.ir.iterate
 import gratatouille.processor.ir.outputs
 import gratatouille.processor.ir.properties
+import gratatouille.processor.taskDescription
+import gratatouille.processor.taskGroup
+import gratatouille.processor.taskName
+import gratatouille.processor.toCodeBlock
+import gratatouille.processor.workerExecutor
 
 
 internal fun IrTask.taskFile(): FileSpec {
   val className = taskClassName()
 
   val fileSpec = FileSpec.builder(className)
+      .addAnnotation(AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+          .addMember("%T::class", ClassName(gratatouilleWiringPackageName, "GratatouilleWiringInternal"))
+          .build()
+      )
       .addFunction(register())
       .addType(task())
       .addType(workParameters())
-      .addFunction(invoke2())
       .addType(workAction())
       .build()
 
@@ -66,7 +94,6 @@ private fun IrTask.register(): FunSpec {
       )
       .apply {
         properties.filter { it.type.isInput() }.forEach {
-
           addParameter(
               ParameterSpec.builder(it.name, it.type.toProviderType())
                   .build()
@@ -90,6 +117,8 @@ private fun IrTask.register(): FunSpec {
             )
             if (implementationCoordinates != null) {
               add("configuration.dependencies.add(dependencies.create(%S))\n", implementationCoordinates)
+
+              add("gradle.sharedServices.registerIfAbsent(\"gratatouille\", %T::class.java) {}\n", ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService"))
             }
             add("return tasks.register(${taskName},%T::class.java) {\n", taskClassName())
             withIndent {
@@ -189,9 +218,22 @@ private fun IrTask.task(): TypeSpec {
               it.toPropertySpec()
           )
         }
+        if (implementationCoordinates != null) {
+          addFunction(
+              FunSpec.builder("getGratatouilleBuildService")
+                  .addModifiers(KModifier.ABSTRACT)
+                  .addAnnotation(
+                      AnnotationSpec.builder(ClassName("org.gradle.api.services", "ServiceReference"))
+                          .addMember("%S", "gratatouille")
+                          .build()
+                  )
+                  .returns(ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService").toGradleProperty())
+                  .build()
+          )
+        }
       }
       .addFunction(
-          FunSpec.Companion.builder(workerExecutor)
+          FunSpec.builder(workerExecutor)
               .addModifiers(KModifier.ABSTRACT)
               .addAnnotation(
                   AnnotationSpec.builder(ClassName("javax.inject", "Inject")).build()
@@ -199,90 +241,7 @@ private fun IrTask.task(): TypeSpec {
               .returns(ClassName("org.gradle.workers", "WorkerExecutor"))
               .build()
       )
-      .addFunction(isolate())
-      .addFunction(isolate2())
       .addFunction(taskAction())
-      .build()
-}
-
-/**
- * This is hardwired because we don't want to add dependencies to the api module
- */
-private fun isolate(): FunSpec {
-  return FunSpec.builder("isolate")
-      .addTypeVariable(TypeVariableName("T"))
-      .receiver(TypeVariableName("T"))
-      .returns(TypeVariableName("T"))
-      .addCode(
-          """
-            @kotlin.Suppress("UNCHECKED_CAST")
-            return when (this) {
-                is Set<*> -> {
-                    this.map { it.isolate() }.toSet() as T
-                }
-        
-                is List<*> -> {
-                    this.map { it.isolate() } as T
-                }
-        
-                is Map<*, *> -> {
-                    entries.map { it.key.isolate() to it.value.isolate() }.toMap() as T
-                }
-        
-                else -> this
-            }
-            """.trimIndent(),
-          ClassName("org.gradle.api.file", "FileCollection")
-      )
-      .addModifiers(KModifier.PRIVATE)
-      .build()
-}
-
-/**
- * This is hardwired because we don't want to add dependencies to the api module
- */
-private fun isolate2(): FunSpec {
-  return FunSpec.builder("isolate2")
-      .receiver(ClassName("org.gradle.api.file", "FileCollection"))
-      .returns(ClassName("kotlin.collections", "List").parameterizedBy(ClassName("kotlin", "Any")))
-      .addCode(
-          """
-            return buildList {
-                asFileTree.visit { 
-                    add(it.file)
-                    add(it.path)
-                }
-            }
-            """.trimIndent(),
-
-          )
-      .addModifiers(KModifier.PRIVATE)
-      .build()
-}
-
-/**
- * This is hardwired because we don't want to add dependencies to the api module
- */
-private fun invoke2(): FunSpec {
-  return FunSpec.builder("invoke2")
-      .receiver(ClassName("java.lang.reflect", "Method"))
-      .addParameter(ParameterSpec.builder("obj", ClassName("kotlin", "Any").copy(nullable = true)).build())
-      .addParameter(ParameterSpec.builder("args", ClassName("kotlin", "Any").copy(nullable = true)).addModifiers(KModifier.VARARG).build())
-      .returns(ClassName("kotlin", "Any").copy(nullable = true))
-      .addCode(
-          """
-          try {
-            return invoke(obj, *args)
-          } catch (e: %T) {
-            /**
-             * Unwrap the exception so it's displayed in Gradle error messages
-             */
-            throw e.cause!!
-          }
-      """.trimIndent(),
-          ClassName("java.lang.reflect", "InvocationTargetException")
-      )
-      .addModifiers(KModifier.PRIVATE)
       .build()
 }
 
@@ -296,6 +255,9 @@ private fun IrTask.taskAction(): FunSpec {
           buildCodeBlock {
             add("${workerExecutor}().noIsolation().submit(%T::class.java) {\n", workActionClassName())
             withIndent {
+              if (implementationCoordinates != null) {
+                add("it.$gratatouilleBuildService.set(getGratatouilleBuildService())\n")
+              }
               add("it.${classpath} = ${classpath}.files\n")
               parameters.properties.forEach {
                 workActionProperty(it)
@@ -329,12 +291,12 @@ private fun CodeBlock.Builder.workActionProperty(property: IrTaskProperty) {
       }
 
       InputFiles, Classpath -> {
-        add(".isolate2()")
+        add(".%M()", MemberName(gratatouilleWiringPackageName, "isolateFileCollection"))
       }
 
       is JvmType -> {
         add(if (property.optional) ".orNull?" else ".get()")
-        add(".isolate()")
+        add(".%M()", MemberName(gratatouilleWiringPackageName, "isolate"))
       }
     }
   }
@@ -478,15 +440,10 @@ private fun IrTask.workActionExecute(): FunSpec {
             add("with(parameters) {\n")
             withIndent {
               if (implementationCoordinates != null) {
-                add("%T(\n", ClassName("java.net", "URLClassLoader"))
-                withIndent {
-                  add("${classpath}.map { it.toURI().toURL() }.toTypedArray(),\n")
-                  add("%T.getPlatformClassLoader()\n", ClassName("java.lang", "ClassLoader"))
-                }
-                add(")")
+                add("$gratatouilleBuildService.get().classloader($classpath)")
                 add(".loadClass(%S)\n", entryPointClassName().canonicalName)
                 add(".declaredMethods.single()\n")
-                add(".invoke2(\n")
+                add(".%M(\n", MemberName(gratatouilleWiringPackageName, "invokeOrUnwrap"))
                 withIndent {
                   add("null,\n")
                   addRunArguments(this@workActionExecute)
@@ -541,6 +498,12 @@ private fun IrTask.workParameters(): TypeSpec {
                 classpath,
                 ClassName("kotlin.collections", "Set").parameterizedBy(ClassName("java.io", "File"))
             ).mutable(true).build()
+        )
+        addProperty(
+            PropertySpec.builder(
+                gratatouilleBuildService,
+                ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService").toGradleProperty()
+            ).build()
         )
         parameters.properties.forEach {
           addProperty(PropertySpec.builder(it.name, it.toTypeName()).mutable(true).build())

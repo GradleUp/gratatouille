@@ -1,27 +1,94 @@
-public final class gratatouille/gradle/CodeGenerationSpec {
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public final fun classLoaderIsolation ()V
-	public final fun classLoaderIsolation (Ljava/lang/String;)V
-	public final fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
+public abstract interface class gratatouille/gradle/CodeGenerationSpec {
+	public abstract fun classLoaderIsolation ()V
+	public abstract fun classLoaderIsolation (Ljava/lang/String;)V
+	public abstract fun getAddDependencies ()Lorg/gradle/api/provider/Property;
+	public abstract fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract class gratatouille/gradle/GratatouilleExtension {
-	public fun <init> (Lorg/gradle/api/Project;)V
-	public final fun codeGeneration ()V
-	public final fun codeGeneration (Lorg/gradle/api/Action;)V
-	public final fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun pluginMarker (Ljava/lang/String;)V
-	public final fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+public abstract interface class gratatouille/gradle/CodeGeneratorExtension {
+	public abstract fun codeGeneration ()V
+	public abstract fun codeGeneration (Lorg/gradle/api/Action;)V
 }
 
-public abstract class gratatouille/gradle/GratatouillePluginPlugin : org/gradle/api/Plugin {
+public abstract class gratatouille/gradle/DefaultGratatouilleExtension : gratatouille/gradle/GratatouilleExtension {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun codeGeneration ()V
+	public fun codeGeneration (Lorg/gradle/api/Action;)V
+	public fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
+	public fun pluginMarker (Ljava/lang/String;)V
+	public fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract class gratatouille/gradle/DefaultGratatouilleTasksExtension : gratatouille/gradle/GratatouilleTasksExtension {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun codeGeneration ()V
+	public fun codeGeneration (Lorg/gradle/api/Action;)V
+}
+
+public abstract class gratatouille/gradle/DefaultGratatouilleWiringExtension : gratatouille/gradle/GratatouilleWiringExtension {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun codeGeneration ()V
+	public fun codeGeneration (Lorg/gradle/api/Action;)V
+	public fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
+	public fun pluginMarker (Ljava/lang/String;)V
+	public fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract class gratatouille/gradle/Gratatouille1Plugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 }
 
+public final class gratatouille/gradle/Gratatouille1PluginKt {
+	public static final fun getGratatouille1 (Lorg/gradle/api/Project;)Lgratatouille/gradle/Gratatouille1Plugin;
+}
+
+public abstract class gratatouille/gradle/Gratatouille2Plugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class gratatouille/gradle/Gratatouille2PluginKt {
+	public static final fun getGratatouille2 (Lorg/gradle/api/Project;)Lgratatouille/gradle/Gratatouille2Plugin;
+}
+
+public abstract interface class gratatouille/gradle/GratatouilleExtension : gratatouille/gradle/CodeGeneratorExtension, gratatouille/gradle/WiringExtension {
+}
+
+public abstract class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class gratatouille/gradle/GratatouillePluginKt {
+	public static final fun getGratatouille (Lorg/gradle/api/Project;)Lgratatouille/gradle/GratatouillePlugin;
+}
+
+public abstract interface class gratatouille/gradle/GratatouilleTasksExtension : gratatouille/gradle/CodeGeneratorExtension {
+}
+
+public abstract interface class gratatouille/gradle/GratatouilleWiringExtension : gratatouille/gradle/CodeGeneratorExtension, gratatouille/gradle/WiringExtension {
+}
+
 public final class gratatouille/gradle/VersionKt {
 	public static final field VERSION Ljava/lang/String;
+}
+
+public abstract interface class gratatouille/gradle/WiringExtension {
+	public abstract fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
+	public abstract fun pluginMarker (Ljava/lang/String;)V
+	public abstract fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class gratatouille/gradle/internal/DefaultCodeGenerationSpec : gratatouille/gradle/CodeGenerationSpec {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun classLoaderIsolation ()V
+	public fun classLoaderIsolation (Ljava/lang/String;)V
+	public fun getAddDependencies ()Lorg/gradle/api/provider/Property;
+	public fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
 }
 
 public final class gratatouille/gradle/tasks/GenerateDescriptorEntryPoint {
