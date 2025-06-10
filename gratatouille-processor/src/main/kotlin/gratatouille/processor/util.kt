@@ -40,8 +40,8 @@ internal fun KSPropertyDeclaration.isPublic(): Boolean {
     }
 }
 
-internal val optInGratatouilleInternalAnnotationSpec = AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
-    .addMember("%T::class", ClassName("gratatouille", "GratatouilleInternal"))
+internal val optInGratatouilleTaskInternalAnnotationSpec = AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+    .addMember("%T::class", ClassName(gratatouilleTasksPackageName, "GratatouilleTaskInternal"))
     .build()
 
 internal fun TypeSpec.Builder.addConstructorProperties(properties: List<IrTaskProperty>) = apply {

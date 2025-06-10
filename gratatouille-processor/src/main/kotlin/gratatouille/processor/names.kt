@@ -7,3 +7,7 @@ internal val outputFile = "outputFile"
 internal val classpath = "classpath"
 internal val workerExecutor = "getWorkerExecutor"
 internal val extraClasspath = "extraClasspath"
+internal val gratatouilleBuildService = "gratatouilleBuildService"
+
+internal val gratatouilleWiringPackageName = "gratatouille.wiring"
+internal val gratatouilleTasksPackageName = "gratatouille.tasks"

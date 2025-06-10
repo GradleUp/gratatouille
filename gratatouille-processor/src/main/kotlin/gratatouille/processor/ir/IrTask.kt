@@ -110,7 +110,7 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     }
 
     val parameterType: Type = when {
-      rawTypename == ClassName("gratatouille", "GLogger") -> {
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GLogger") -> {
         check(!optional) {
           "Gratatouille: The logger parameter may not be nullable."
         }
@@ -118,29 +118,28 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
         return@forEach
       }
 
-      rawTypename == ClassName("gratatouille", "GOutputFile") -> {
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GOutputFile") -> {
         OutputFile(valueParameter.fileName())
       }
 
-      rawTypename == ClassName("gratatouille", "GOutputDirectory") -> {
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GOutputDirectory") -> {
         OutputDirectory(valueParameter.fileName())
       }
 
-      rawTypename == ClassName("gratatouille", "GInputFile") -> InputFile
-      rawTypename == ClassName("gratatouille", "GClasspath") -> {
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFile") -> InputFile
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GClasspath") -> {
         check(!optional) {
           "Gratatouille: optional GClasspath are not supported ${valueParameter.location}"
         }
         Classpath
       }
-      rawTypename == ClassName("gratatouille", "GInputFiles") -> {
+      rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFiles") -> {
         check(!optional) {
           "Gratatouille: optional GInputFiles are not supported ${valueParameter.location}"
         }
         InputFiles
       }
 
-      rawTypename.isSimpleJvmType() -> JvmType(rawTypename)
       rawTypename.isFile() -> {
         check(internal) {
           "Gratatouille: using java.io.File is only allowed with @GInternal at ${valueParameter.location}. Use @GInputFile or @GOutputFile for input or output files."
@@ -148,7 +147,14 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
         JvmType(rawTypename)
       }
       resolvedType.isSerializable() -> KotlinxSerializableInput(rawTypename)
-      else -> error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
+      else -> {
+        val typename = rawTypename.toSimpleJvmType()
+        if (typename != null) {
+          JvmType(typename)
+        } else {
+          error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
+        }
+      }
     }
 
     val manuallyWired = valueParameter.annotations.containsManuallyWired()
@@ -269,7 +275,7 @@ private fun KSType.isSerializable(): Boolean {
 
 private fun Sequence<KSAnnotation>.fileName(): String? {
   return firstOrNull {
-    it.annotationType.toTypeName() == ClassName("gratatouille", "GFileName")
+    it.annotationType.toTypeName() == ClassName(gratatouilleTasksPackageName, "GFileName")
   }?.arguments
     ?.firstOrNull { it.name?.asString() == "name" }
     ?.value
@@ -286,35 +292,42 @@ private fun KSPropertyDeclaration.fileName(): String {
 
 private fun Sequence<KSAnnotation>.containsGInternal(): Boolean {
   return any {
-    it.annotationType.toTypeName() == ClassName("gratatouille", "GInternal")
+    it.annotationType.toTypeName() == ClassName(gratatouilleTasksPackageName, "GInternal")
   }
 }
 
 private fun Sequence<KSAnnotation>.containsManuallyWired(): Boolean {
   return any {
-    it.annotationType.toTypeName() == ClassName("gratatouille", "GManuallyWired")
+    it.annotationType.toTypeName() == ClassName(gratatouilleTasksPackageName, "GManuallyWired")
   }
 }
 
-private fun TypeName.isSimpleJvmType(): Boolean {
+private fun TypeName.toSimpleJvmType(): TypeName? {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
-      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double" -> true
-      "gratatouille.GAny" -> true
-      else -> false
+      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double", -> this
+      "$gratatouilleTasksPackageName.GAny" -> ClassName("kotlin", "Any").copy(nullable = this.isNullable)
+      else -> null
     }
 
     is ParameterizedTypeName -> when (this.rawType.canonicalName) {
       "kotlin.collections.Set", "kotlin.collections.List", "kotlin.collections.Map" -> {
-        this.typeArguments.all {
-          it.isSimpleJvmType()
+        val typeArguments = typeArguments.map {
+          val arg = it.toSimpleJvmType()
+          if (arg == null) {
+            return null
+          }
+          arg
         }
+        this.copy(
+            typeArguments = typeArguments
+        )
       }
 
-      else -> false
+      else -> null
     }
 
-    else -> false
+    else -> null
   }
 }
 

@@ -1,0 +1,49 @@
+public final class gratatouille/tasks/DefaultGLogger : gratatouille/tasks/GLogger {
+	public fun <init> (Ljava/util/function/BiConsumer;)V
+	public fun debug (Ljava/lang/String;)V
+	public fun error (Ljava/lang/String;)V
+	public fun info (Ljava/lang/String;)V
+	public fun lifecycle (Ljava/lang/String;)V
+	public fun warn (Ljava/lang/String;)V
+}
+
+public final class gratatouille/tasks/FileWithPath {
+	public fun <init> (Ljava/io/File;Ljava/lang/String;)V
+	public final fun getFile ()Ljava/io/File;
+	public final fun getNormalizedPath ()Ljava/lang/String;
+}
+
+public abstract interface annotation class gratatouille/tasks/GFileName : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public abstract interface annotation class gratatouille/tasks/GInternal : java/lang/annotation/Annotation {
+}
+
+public abstract interface class gratatouille/tasks/GLogger {
+	public abstract fun debug (Ljava/lang/String;)V
+	public abstract fun error (Ljava/lang/String;)V
+	public abstract fun info (Ljava/lang/String;)V
+	public abstract fun lifecycle (Ljava/lang/String;)V
+	public abstract fun warn (Ljava/lang/String;)V
+}
+
+public abstract interface annotation class gratatouille/tasks/GManuallyWired : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class gratatouille/tasks/GTask : java/lang/annotation/Annotation {
+	public abstract fun description ()Ljava/lang/String;
+	public abstract fun group ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun pure ()Z
+}
+
+public abstract interface annotation class gratatouille/tasks/GratatouilleTaskInternal : java/lang/annotation/Annotation {
+}
+
+public final class gratatouille/tasks/InternalKt {
+	public static final fun decodeJson (Ljava/io/File;Ljava/lang/Class;)Ljava/lang/Object;
+	public static final fun getJson ()Lkotlinx/serialization/json/Json;
+	public static final fun toGInputFiles (Ljava/util/List;)Ljava/util/List;
+}
+

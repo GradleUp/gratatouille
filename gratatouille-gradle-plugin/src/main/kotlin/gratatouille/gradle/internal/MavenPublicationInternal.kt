@@ -1,4 +1,4 @@
-package gratatouille.gradle
+package gratatouille.gradle.internal
 
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal

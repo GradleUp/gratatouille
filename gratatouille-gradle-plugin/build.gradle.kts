@@ -26,5 +26,14 @@ buildConfig {
 
 gratatouille {
     pluginMarker("com.gradleup.gratatouille")
+//    pluginMarker("com.gradleup.gratatouille.tasks")
+//    pluginMarker("com.gradleup.gratatouille.wiring")
     codeGeneration()
+}
+
+// When used in an included build, use the remote coordinates
+configurations.all {
+    resolutionStrategy {
+        useGlobalDependencySubstitutionRules.set(false)
+    }
 }

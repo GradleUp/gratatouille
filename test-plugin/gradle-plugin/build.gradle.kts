@@ -24,7 +24,8 @@ publishing {
 
 dependencies {
   compileOnly(libs.gradle.api)
-  implementation("com.gradleup.gratatouille:gratatouille-runtime")
+  implementation("com.gradleup.gratatouille:gratatouille-tasks-runtime")
+  implementation("com.gradleup.gratatouille:gratatouille-wiring-runtime")
   testImplementation(gradleTestKit())
   testImplementation(libs.kotlin.test)
 }

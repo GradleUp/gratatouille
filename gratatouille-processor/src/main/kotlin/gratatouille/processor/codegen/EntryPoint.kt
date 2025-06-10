@@ -1,29 +1,38 @@
 package gratatouille.processor.codegen
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import gratatouille.processor.ir.IrTask
+import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeSpec
+import gratatouille.processor.biConsumer
+import gratatouille.processor.capitalizeFirstLetter
+import gratatouille.processor.gratatouilleTasksPackageName
+import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.InputDirectory
 import gratatouille.processor.ir.InputFile
 import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.IrLoggerParameter
+import gratatouille.processor.ir.IrPropertyParameter
+import gratatouille.processor.ir.IrTask
+import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.JvmType
 import gratatouille.processor.ir.KotlinxSerializableInput
 import gratatouille.processor.ir.KotlinxSerializableOutput
 import gratatouille.processor.ir.OutputDirectory
 import gratatouille.processor.ir.OutputFile
-import gratatouille.processor.ir.IrTaskProperty
-import gratatouille.processor.capitalizeFirstLetter
-import gratatouille.processor.ir.Classpath
-import gratatouille.processor.ir.IrPropertyParameter
-import gratatouille.processor.ir.IrLoggerParameter
-import gratatouille.processor.optInGratatouilleInternalAnnotationSpec
-import gratatouille.processor.biConsumer
+import gratatouille.processor.optInGratatouilleTaskInternalAnnotationSpec
 
 internal fun IrTask.entryPoint(): FileSpec {
   val className = entryPointClassName()
 
   val fileSpec = FileSpec.builder(className)
-    .addAnnotation(optInGratatouilleInternalAnnotationSpec)
+    .addAnnotation(optInGratatouilleTaskInternalAnnotationSpec)
     .addType(
       TypeSpec.classBuilder(className.simpleName)
         .addType(
@@ -89,11 +98,11 @@ private fun IrTask.funSpec(): FunSpec {
               is IrPropertyParameter -> {
                 val extra = when (it.property.type) {
                   is KotlinxSerializableInput -> {
-                    CodeBlock.of(".%M()", MemberName("gratatouille", "decodeJson"))
+                    CodeBlock.of(".%M()", MemberName(gratatouilleTasksPackageName, "decodeJson"))
                   }
 
                   is InputFiles, is Classpath -> {
-                    CodeBlock.of(".%M()", MemberName("gratatouille", "toGInputFiles"))
+                    CodeBlock.of(".%M()", MemberName(gratatouilleTasksPackageName, "toGInputFiles"))
                   }
 
                   else -> {
@@ -103,7 +112,7 @@ private fun IrTask.funSpec(): FunSpec {
                 add("%L = %L%L,\n", it.property.name, it.property.name, extra)
               }
               is IrLoggerParameter -> {
-                add("%L = %T(%L),\n", it.name, ClassName("gratatouille", "DefaultGLogger"), it.name)
+                add("%L = %T(%L),\n", it.name, ClassName(gratatouilleTasksPackageName, "DefaultGLogger"), it.name)
               }
             }
           }
@@ -117,14 +126,14 @@ private fun IrTask.funSpec(): FunSpec {
             }
 
             returnValues.size == 1 -> {
-              add(".%M(%L)", MemberName("gratatouille", "encodeJsonTo"), returnValues.single().name)
+              add(".%M(%L)", MemberName(gratatouilleTasksPackageName, "encodeJsonTo"), returnValues.single().name)
             }
 
             else -> {
               add(".let {\n")
               indent()
               returnValues.forEach {
-                add("it.%L.%M(%L)\n", it.name, MemberName("gratatouille", "encodeJsonTo"), it.name)
+                add("it.%L.%M(%L)\n", it.name, MemberName(gratatouilleTasksPackageName, "encodeJsonTo"), it.name)
               }
               unindent()
               add("}\n")

@@ -1,6 +1,6 @@
 package testplugin
 
-import gratatouille.*
+import gratatouille.tasks.*
 import kotlinx.serialization.Serializable
 import java.util.Date
 

@@ -1,7 +1,6 @@
 package testplugin
 
-import gratatouille.GExtension
-import gratatouille.GPlugin
+import gratatouille.wiring.GExtension
 import org.gradle.api.Project
 
 

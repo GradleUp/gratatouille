@@ -1,6 +1,6 @@
 package testplugin.isolated
 
-import gratatouille.*
+import gratatouille.tasks.*
 import okio.buffer
 import okio.sink
 
