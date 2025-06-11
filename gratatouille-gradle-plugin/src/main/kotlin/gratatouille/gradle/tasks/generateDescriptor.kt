@@ -1,7 +1,7 @@
 package gratatouille.gradle.tasks
 
-import gratatouille.GOutputDirectory
-import gratatouille.GTask
+import gratatouille.tasks.GOutputDirectory
+import gratatouille.tasks.GTask
 import java.util.*
 
 @GTask

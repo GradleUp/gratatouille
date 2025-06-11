@@ -1,8 +1,8 @@
 package gratatouille.gradle.tasks
 
-import gratatouille.GInputFiles
-import gratatouille.GOutputFile
-import gratatouille.GTask
+import gratatouille.tasks.GInputFiles
+import gratatouille.tasks.GOutputFile
+import gratatouille.tasks.GTask
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
