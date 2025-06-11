@@ -26,8 +26,8 @@ buildConfig {
 
 gratatouille {
     pluginMarker("com.gradleup.gratatouille")
-//    pluginMarker("com.gradleup.gratatouille.tasks")
-//    pluginMarker("com.gradleup.gratatouille.wiring")
+    pluginMarker("com.gradleup.gratatouille.tasks", "default")
+    pluginMarker("com.gradleup.gratatouille.wiring", "default")
     codeGeneration()
 }
 

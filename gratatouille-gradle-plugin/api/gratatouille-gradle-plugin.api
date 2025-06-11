@@ -34,43 +34,31 @@ public abstract class gratatouille/gradle/DefaultGratatouilleWiringExtension : g
 	public fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public abstract class gratatouille/gradle/Gratatouille1Plugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public final class gratatouille/gradle/Gratatouille1PluginKt {
-	public static final fun getGratatouille1 (Lorg/gradle/api/Project;)Lgratatouille/gradle/Gratatouille1Plugin;
-}
-
-public abstract class gratatouille/gradle/Gratatouille2Plugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public final class gratatouille/gradle/Gratatouille2PluginKt {
-	public static final fun getGratatouille2 (Lorg/gradle/api/Project;)Lgratatouille/gradle/Gratatouille2Plugin;
+public final class gratatouille/gradle/ExtensionsKt {
+	public static final fun plugin (Lorg/gradle/api/Project;)V
+	public static final fun tasksPlugin (Lorg/gradle/api/Project;)V
+	public static final fun wiringPlugin (Lorg/gradle/api/Project;)V
 }
 
 public abstract interface class gratatouille/gradle/GratatouilleExtension : gratatouille/gradle/CodeGeneratorExtension, gratatouille/gradle/WiringExtension {
-}
-
-public abstract class gratatouille/gradle/GratatouillePlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-}
-
-public final class gratatouille/gradle/GratatouillePluginKt {
-	public static final fun getGratatouille (Lorg/gradle/api/Project;)Lgratatouille/gradle/GratatouillePlugin;
 }
 
 public abstract interface class gratatouille/gradle/GratatouilleTasksExtension : gratatouille/gradle/CodeGeneratorExtension {
 }
 
 public abstract interface class gratatouille/gradle/GratatouilleWiringExtension : gratatouille/gradle/CodeGeneratorExtension, gratatouille/gradle/WiringExtension {
+}
+
+public abstract class gratatouille/gradle/PluginPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public abstract class gratatouille/gradle/TasksPluginPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
 }
 
 public final class gratatouille/gradle/VersionKt {
@@ -81,6 +69,12 @@ public abstract interface class gratatouille/gradle/WiringExtension {
 	public abstract fun pluginDescriptor (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun pluginMarker (Ljava/lang/String;)V
 	public abstract fun pluginMarker (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public abstract class gratatouille/gradle/WiringPluginPlugin : org/gradle/api/Plugin {
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
 }
 
 public final class gratatouille/gradle/internal/DefaultCodeGenerationSpec : gratatouille/gradle/CodeGenerationSpec {
