@@ -6,7 +6,7 @@ _2025-06-11_
 * Cache classloaders in a build service (#39)
 * Split the plugin in 3 different parts:
   * `com.gradleup.gratatouille` for simple cases.
-  * `com.gradleup.gratatouille.wiring` and `com.gradleup.gratatouille.tasks` for classloader isolation tests.
+  * `com.gradleup.gratatouille.wiring` and `com.gradleup.gratatouille.tasks` for classloader isolation cases.
 * Similarly, the runtimes are split:
   * `gratatouille-wiring-runtime` for the wiring.
   * `gratatouille-tasks-runtime` for the tasks.

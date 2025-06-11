@@ -4,7 +4,7 @@ kotlin = "2.1.20"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
 librarian = "0.0.8-SNAPSHOT-07cba857c7fb7a7edb50a020b42acd5578fc42bf"
-gratatouille = "0.0.6"
+gratatouille = "0.0.10"
 
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }

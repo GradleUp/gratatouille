@@ -1,7 +1,6 @@
 package gratatouille.gradle
 
-import gratatouille.GExtension
-import gratatouille.GPlugin
+import gratatouille.wiring.GPlugin
 import gratatouille.gradle.internal.PluginVariant
 import gratatouille.gradle.internal.USAGE_GRATATOUILLE
 import gratatouille.gradle.internal.codeGeneration
