@@ -27,29 +27,9 @@ annotation class GPlugin(val id: String)
 annotation class GExtension(val pluginId: String, val extensionName: String = "", val publicType: KClass<*> = Any::class)
 
 fun String.capitalizeFirstLetter(): String {
-  val builder = StringBuilder(length)
-  var isCapitalized = false
-  forEach {
-    builder.append(if (!isCapitalized && it.isLetter()) {
-      isCapitalized = true
-      it.toString().uppercase()
-    } else {
-      it.toString()
-    })
-  }
-  return builder.toString()
+  return replaceFirstChar { if (it.isLowerCase()) it.titlecaseChar() else it }
 }
 
 fun String.decapitalizeFirstLetter(): String {
-  val builder = StringBuilder(length)
-  var isCapitalized = false
-  forEach {
-    builder.append(if (!isCapitalized && it.isLetter()) {
-      isCapitalized = true
-      it.toString().lowercase()
-    } else {
-      it.toString()
-    })
-  }
-  return builder.toString()
+  return replaceFirstChar { if (it.isUpperCase()) it.lowercaseChar() else it }
 }

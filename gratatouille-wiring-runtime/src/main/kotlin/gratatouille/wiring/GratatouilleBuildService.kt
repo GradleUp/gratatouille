@@ -21,6 +21,7 @@ abstract class GratatouilleBuildService: BuildService<BuildServiceParameters.Non
     }
   }
 
+  @Synchronized
   override fun close() {
     classloaders.clear()
   }
