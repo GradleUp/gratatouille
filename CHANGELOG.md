@@ -1,5 +1,16 @@
 # Next version (unreleased)
 
+# Version 0.0.10
+_2025-06-11_
+
+* Cache classloaders in a build service (#39)
+* Split the plugin in 3 different parts:
+  * `com.gradleup.gratatouille` for simple cases.
+  * `com.gradleup.gratatouille.wiring` and `com.gradleup.gratatouille.tasks` for classloader isolation tests.
+* Similarly, the runtimes are split:
+  * `gratatouille-wiring-runtime` for the wiring.
+  * `gratatouille-tasks-runtime` for the tasks.
+
 # Version 0.0.9
 _2025-05-31_
 
