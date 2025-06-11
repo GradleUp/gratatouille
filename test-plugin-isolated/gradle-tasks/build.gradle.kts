@@ -26,7 +26,7 @@ dependencies {
     implementation(libs.okio)
 }
 
-gratatouille2 {
+gratatouille {
     codeGeneration {
         classLoaderIsolation()
     }

@@ -33,7 +33,7 @@ dependencies {
 }
 
 
-gratatouille1 {
+gratatouille {
     pluginMarker("testplugin.isolated", "default")
     codeGeneration()
 }

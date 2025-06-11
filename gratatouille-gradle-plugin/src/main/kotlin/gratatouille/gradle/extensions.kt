@@ -1,6 +1,7 @@
 package gratatouille.gradle
 
 import gratatouille.GExtension
+import gratatouille.GPlugin
 import gratatouille.gradle.internal.PluginVariant
 import gratatouille.gradle.internal.USAGE_GRATATOUILLE
 import gratatouille.gradle.internal.codeGeneration
@@ -56,7 +57,11 @@ interface WiringExtension {
 
 interface GratatouilleExtension: CodeGeneratorExtension, WiringExtension
 
-@GExtension("com.gradleup.gratatouille", "gratatouille",)
+@GPlugin("com.gradleup.gratatouille")
+fun plugin(project: Project) {
+  project.extensions.create(GratatouilleExtension::class.java, "gratatouille", DefaultGratatouilleExtension::class.java, project)
+}
+
 abstract class DefaultGratatouilleExtension(private val project: Project): GratatouilleExtension {
   init {
     project.configureDefaultVersionsResolutionStrategy()
@@ -85,7 +90,11 @@ abstract class DefaultGratatouilleExtension(private val project: Project): Grata
 
 interface GratatouilleWiringExtension: CodeGeneratorExtension, WiringExtension
 
-@GExtension("com.gradleup.gratatouille.wiring", "gratatouille1",)
+@GPlugin("com.gradleup.gratatouille.wiring")
+fun wiringPlugin(project: Project) {
+  project.extensions.create(GratatouilleWiringExtension::class.java, "gratatouille", DefaultGratatouilleWiringExtension::class.java, project)
+}
+
 abstract class DefaultGratatouilleWiringExtension(private val project: Project): GratatouilleWiringExtension {
 
   init {
@@ -130,7 +139,11 @@ abstract class DefaultGratatouilleWiringExtension(private val project: Project):
 
 interface GratatouilleTasksExtension: CodeGeneratorExtension
 
-@GExtension("com.gradleup.gratatouille.tasks", "gratatouille2",)
+@GPlugin("com.gradleup.gratatouille.tasks")
+fun tasksPlugin(project: Project) {
+  project.extensions.create(GratatouilleTasksExtension::class.java, "gratatouille", DefaultGratatouilleTasksExtension::class.java, project)
+}
+
 abstract class DefaultGratatouilleTasksExtension(private val project: Project): GratatouilleTasksExtension {
   init {
     project.configureDefaultVersionsResolutionStrategy()
