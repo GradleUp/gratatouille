@@ -59,7 +59,7 @@ internal fun prepareIngredients(persons: Int, ingredients: GOutputFile) {
 ```
 Gratatouille automatically maps function parameters to Gradle inputs and outputs(more on outputs [below](#non-overlapping-task-outputs-by-default)).
 
-Gratatouille generates entry points, tasks, workers and the rest of the owl (someone please send the link to that nice Gradle meme, I can't find it anymore). 
+Gratatouille generates entry points, tasks, workers and [the rest of the owl](https://github.com/user-attachments/assets/933f4118-aba8-4aa8-9d13-7c24161127d0)!
 
 <details>
 <summary>Generated code</summary>
