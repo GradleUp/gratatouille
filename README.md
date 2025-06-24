@@ -32,7 +32,7 @@ plugins {
   id("com.google.devtools.ksp")
   // No need to add the 'java-gradle-plugin' plugin.
   // Add the Gratatouille plugin
-  id("com.gradleup.gratatouille").version("0.0.7")
+  id("com.gradleup.gratatouille").version("0.0.10")
 }
 
 gratatouille {
@@ -333,14 +333,14 @@ For classloader isolation to work, your plugin needs 2 projects:
 
 ### Step 1/2: gradle-tasks
 
-Create a `gradle-tasks` project for your plugin tasks and apply the `com.gradleup.gratatouille` plugin:
+Create a `gradle-tasks` project for your plugin tasks and apply the `com.gradleup.gratatouille.tasks` plugin:
 
 ```kotlin
 // implementation/build.gradle.kts
 plugins {
   id("org.jetbrains.kotlin.jvm")
   id("com.google.devtools.ksp")
-  id("com.gradleup.gratatouille.implementation").version("0.0.7")
+  id("com.gradleup.gratatouille.tasks").version("0.0.10")
 }
 
 dependencies {
@@ -383,12 +383,12 @@ To use the generated code in your plugin, create an `gradle-plugin` project next
 > [!IMPORTANT]
 > By using two different projects, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
 
-Apply the `com.gradleup.gratatouille` plugin in your `api` project:
+Apply the `com.gradleup.gratatouille.wiring` plugin in your `gradle-plugin` project:
 
 ```kotlin
 // gradle-plugin/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille").version("0.0.7")
+    id("com.gradleup.gratatouille.wiring").version("0.0.10")
 }
 
 gratatouille {
