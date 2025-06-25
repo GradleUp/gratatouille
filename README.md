@@ -14,6 +14,7 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 * [Parallel execution by default](#parallel-task-execution-by-default)
 * [Compile-time task wiring](#compile-time-task-wiring)
 * [Plugin descriptors and markers without java-gradle-plugin](#descriptors-and-markers)
+* [You build is more up-to-date](#your-build-more-up-to-date)
 * [Classloader isolation](#classloader-isolation-optional) (optional)
 * [kotlinx serialization support](#built-in-kotlinxserialization-support) (experimental)
 
@@ -316,6 +317,10 @@ dependencies {
   compileOnly("dev.gradleplugins:gradle-api:8.0")
 }
 ```
+
+## Your build is more up-to-date
+
+Changing the implementation of a task doesn't invalidate your whole build anymore! Enjoy faster CI times and more granular task invalidation!
 
 ## Classloader isolation (optional)
 
