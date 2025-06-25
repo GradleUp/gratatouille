@@ -14,7 +14,6 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 * [Parallel execution by default](#parallel-task-execution-by-default)
 * [Compile-time task wiring](#compile-time-task-wiring)
 * [Plugin descriptors and markers without java-gradle-plugin](#descriptors-and-markers)
-* [You build is more up-to-date](#your-build-more-up-to-date)
 * [Classloader isolation](#classloader-isolation-optional) (optional)
 * [kotlinx serialization support](#built-in-kotlinxserialization-support) (experimental)
 
@@ -318,10 +317,6 @@ dependencies {
 }
 ```
 
-## Your build is more up-to-date
-
-Changing the implementation of a task doesn't invalidate your whole build anymore! Enjoy faster CI times and more granular task invalidation!
-
 ## Classloader isolation (optional)
 
 Gradle uses [multiple classloaders](https://dev.to/autonomousapps/build-compile-run-a-crash-course-in-classpaths-f4g), and it's notoriously really hard to understand where a given class is loaded from.
@@ -331,6 +326,8 @@ Especially, `buildSrc`/`build-logic` dependencies [leak in the main classpath](h
 To guard against those issues, Gratatouille provides a classloader isolation mode where your tasks use a separate classloader.
 
 This means your tasks can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself.
+
+As an added bonus, isolating your tasks makes your build generally more up-to-date. Changing the implementation of a task doesn't invalidate your whole build anymore. Enjoy faster CI times and more granular task invalidation!
 
 For classloader isolation to work, your plugin needs 2 projects:
 * The **tasks** project is where the task actions are defined and the work is done. This project can add dependencies. 
