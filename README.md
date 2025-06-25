@@ -327,7 +327,8 @@ To guard against those issues, Gratatouille provides a classloader isolation mod
 
 This means your tasks can depend on popular dependencies such as the Kotlin stdlib, KotlinPoet or ASM without risking conflicts with other plugins or the Gradle classpath itself.
 
-As an added bonus, isolating your tasks makes your build generally more up-to-date. Changing the implementation of a task doesn't invalidate your whole build anymore. Enjoy faster CI times and more granular task invalidation!
+> [!TIP]
+> As an added bonus, isolating your tasks makes your build generally more up-to-date. Changing the implementation of a task doesn't invalidate your whole build anymore. Enjoy faster CI times and more granular task invalidation!
 
 For classloader isolation to work, your plugin needs 2 projects:
 * The **tasks** project is where the task actions are defined and the work is done. This project can add dependencies. 
