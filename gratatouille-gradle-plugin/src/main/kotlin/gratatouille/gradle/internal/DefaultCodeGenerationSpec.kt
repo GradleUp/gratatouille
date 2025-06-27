@@ -55,7 +55,10 @@ class DefaultCodeGenerationSpec(private val project: Project): CodeGenerationSpe
       it.dependsOn("kspKotlin")
     }
 
-    project.artifacts.add(configuration.name, exportedFiles)
+    project.artifacts.add(configuration.name, exportedFiles) {
+      it.classifier = "gratatouille"
+      it.extension = "zip"
+    }
 
     adhocComponentWithVariants.addVariantsFromConfiguration(configuration) {}
   }

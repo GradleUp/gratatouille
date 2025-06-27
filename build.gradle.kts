@@ -5,7 +5,7 @@ plugins {
 }
 buildscript {
     dependencies {
-        classpath("gratatouille-build-logic:gratatouille-build-logic:unused")
+        classpath("gratatouille-build-logic:gratatouille-build-logic")
     }
 }
 

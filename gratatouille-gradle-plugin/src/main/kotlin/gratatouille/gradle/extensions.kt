@@ -1,13 +1,7 @@
 package gratatouille.gradle
 
 import gratatouille.wiring.GPlugin
-import gratatouille.gradle.internal.PluginVariant
-import gratatouille.gradle.internal.USAGE_GRATATOUILLE
-import gratatouille.gradle.internal.codeGeneration
-import gratatouille.gradle.internal.configureDefaultVersionsResolutionStrategy
-import gratatouille.gradle.internal.kotlinExtension
-import gratatouille.gradle.internal.pluginDescriptor
-import gratatouille.gradle.internal.pluginMarker
+import gratatouille.gradle.internal.*
 import gratatouille.gradle.tasks.registerUnzipFilesTask
 import org.gradle.api.Action
 import org.gradle.api.Project
