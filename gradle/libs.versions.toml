@@ -3,7 +3,7 @@ ksp = "2.1.20-2.0.0"
 kotlin = "2.1.20"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
-librarian = "0.0.8-SNAPSHOT-07cba857c7fb7a7edb50a020b42acd5578fc42bf"
+librarian = "0.0.10-SNAPSHOT-48478069e3d33d7a116b07674d29ba0a23bded77"
 gratatouille = "0.0.10"
 
 [libraries]
@@ -21,13 +21,12 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
+nmcp = { module = "com.gradleup.nmcp:nmcp", version = "1.0.0-rc.1" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
 gratatouille-gradle-plugin = { module = "com.gradleup.gratatouille:gratatouille-gradle-plugin", version.ref = "gratatouille" }
-gratatouille-runtime = { module = "com.gradleup.gratatouille:gratatouille-core", version.ref = "gratatouille" }
 
 
 [plugins]
-librarian = { id = "com.gradleup.librarian", version.ref = "librarian" }
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compat-patrouille = { id = "com.gradleup.compat.patrouille", version = "0.0.0" }

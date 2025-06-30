@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.buildkonfig)
     implementation(libs.librarian)
+    implementation(libs.nmcp)
     implementation(libs.gratatouille.gradle.plugin)
 }
 
