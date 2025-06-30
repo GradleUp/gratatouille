@@ -9,18 +9,18 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 #v4.2.2
         with:
           fetch-depth: 0
 
-      - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
+      - uses: gradle/actions/setup-gradle@ac638b010cf58a27ee6c972d7336334ccaf61c96 #v4.4.1
       - run: |
           export JAVA_HOME=$JAVA_HOME_21_X64 # Remove when ubuntu-latest updates to Java 21
           ./gradlew dokkatooGeneratePublicationHtml
           mkdir -p build/static
           cp -rf build/dokka/html build/static/kdoc
 
-      - uses: JamesIves/github-pages-deploy-action@94f3c658273cf92fb48ef99e5fbc02bd2dc642b2 #v4.6.3
+      - uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 #v4.7.3
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: build/static # The folder the action should deploy.

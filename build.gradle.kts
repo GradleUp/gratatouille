@@ -4,6 +4,7 @@ plugins {
     id("base")
 }
 buildscript {
+
     dependencies {
         classpath("gratatouille-build-logic:gratatouille-build-logic")
     }
