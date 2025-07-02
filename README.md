@@ -216,6 +216,8 @@ Outputs:
 * Single File using the `GOutputFile` typealias
 * Directory using the `GOutputDirectory` typealias
 
+No need to dive into [the details of `@InputDirectoy`](https://mbonnin.net/2025-01-22_input_directory_is_a_lie/) or [`PathSensitivity`](https://www.linen.dev/s/gradle-community/t/29202922/hey-i-have-a-simple-question-famous-last-words-i-think-it-is#892fd930-9a5d-4471-bd9a-acae3e61e518), Gratatouille input and output types support a wide range of use case with a clear and restricted API.
+
 ### Non-overlapping task outputs by default
 
 Gratatouille allocates paths for output files and directories automatically. Each output gets a dedicated filesystem location at `"build/gtask/${taskName}/${outputName}"`. 
@@ -261,7 +263,7 @@ project.registerCookTask(
 
 ### Build cache by default
 
-`@CacheableTask` is added by default. All input files use `PathSensitivity.RELATIVE` making your tasks relocatable.
+`@CacheableTask` is added by default. All input files use `PathSensitivity.RELATIVE` making your tasks relocatable. 
 
 ### Easy documentation
 
