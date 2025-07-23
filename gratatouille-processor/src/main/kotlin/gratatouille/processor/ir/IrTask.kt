@@ -84,7 +84,17 @@ internal sealed interface IrParameter
 internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
   val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
-  val reservedNames = setOf(taskName, taskDescription, taskGroup, classpath, workerExecutor, extraClasspath)
+  val reservedNames = setOf(
+    // reserved because they clash with Gratatouille built-in parameters and properties
+    taskName,
+    taskDescription,
+    taskGroup,
+    classpath,
+    workerExecutor,
+    extraClasspath,
+    // reserved because they clash with Gradle built-in properties
+    "project",
+  )
   val returnValuesNames = returnValues.map { it.name }.toSet()
 
   this.parameters.forEach { valueParameter ->
