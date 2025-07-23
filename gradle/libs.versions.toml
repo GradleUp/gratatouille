@@ -21,7 +21,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
 kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
 librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version.ref = "librarian" }
-nmcp = { module = "com.gradleup.nmcp:nmcp", version = "1.0.0-rc.1" }
+nmcp = { module = "com.gradleup.nmcp:nmcp", version = "1.0.2-SNAPSHOT-5374b28286b7ef04a45061946bae5eff65f33093" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
 gratatouille-gradle-plugin = { module = "com.gradleup.gratatouille:gratatouille-gradle-plugin", version.ref = "gratatouille" }
