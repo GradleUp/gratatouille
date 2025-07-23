@@ -1,6 +1,7 @@
 package gratatouille.processor.ir
 
 import cast.cast
+import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName
@@ -81,7 +82,7 @@ internal class IrLoggerParameter(val name: String): IrParameter
  */
 internal sealed interface IrParameter
 
-internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
+internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
   val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
   val reservedNames = setOf(
@@ -106,23 +107,24 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     val name = valueParameter.name?.asString()
       ?: error("Gratatouille: anonymous parameters are not supported at ${valueParameter.location}")
 
-    check(!reservedNames.contains(name)) {
-      "Gratatouille: parameter name '${name}' is reserved for internal uses. Please use another name at ${valueParameter.location}."
+    if(reservedNames.contains(name)) {
+      logger.error("Gratatouille: parameter name '${name}' is reserved for Gratatouile and Gradle internal uses.", valueParameter)
     }
-    check(!name.startsWith("is")) {
+    if(name.startsWith("is")) {
       // See somewhere around there https://github.com/gradle/gradle/blob/b3169d65b2d6fbf273930cade0fa41ac8303f8be/platforms/core-configuration/model-core/src/main/java/org/gradle/internal/instantiation/generator/AbstractClassGenerator.java#L338
       // Gradle fails in those cases with:
       // Caused by: java.lang.IllegalArgumentException: Cannot have abstract method ApolloGenerateSourcesTask.isFoo(): DirectoryProperty.
-      "Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name."
+      logger.error("Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name.", valueParameter)
     }
-    check(!returnValuesNames.contains(name)) {
-      "Gratatouille: parameter name '${name}' is already used as return value. Please use another name at ${valueParameter.location}."
+    if(returnValuesNames.contains(name)) {
+      logger.error("Gratatouille: parameter name '${name}' is already used as return value.", valueParameter)
     }
 
     val parameterType: Type = when {
       rawTypename == ClassName(gratatouilleTasksPackageName, "GLogger") -> {
-        check(!optional) {
-          "Gratatouille: The logger parameter may not be nullable."
+        if(optional) {
+          logger.error("Gratatouille: The logger parameter may not be nullable.", valueParameter)
+          return@forEach
         }
         parameters.add(IrLoggerParameter(name))
         return@forEach
@@ -138,21 +140,24 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
 
       rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFile") -> InputFile
       rawTypename == ClassName(gratatouilleTasksPackageName, "GClasspath") -> {
-        check(!optional) {
-          "Gratatouille: optional GClasspath are not supported ${valueParameter.location}"
+        if(optional) {
+          logger.error("Gratatouille: optional GClasspath are not supported.", valueParameter)
+          return@forEach
         }
         Classpath
       }
       rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFiles") -> {
-        check(!optional) {
-          "Gratatouille: optional GInputFiles are not supported ${valueParameter.location}"
+        if(optional) {
+          logger.error("Gratatouille: optional GInputFiles are not supported.", valueParameter)
+          return@forEach
         }
         InputFiles
       }
 
       rawTypename.isFile() -> {
-        check(internal) {
-          "Gratatouille: using java.io.File is only allowed with @GInternal at ${valueParameter.location}. Use @GInputFile or @GOutputFile for input or output files."
+        if(!internal) {
+          logger.error("Gratatouille: using java.io.File is only allowed with @GInternal. Use @GInputFile or @GOutputFile for input or output files.", valueParameter)
+          return@forEach
         }
         JvmType(rawTypename)
       }
@@ -162,7 +167,8 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
         if (typename != null) {
           JvmType(typename)
         } else {
-          error("Gratatouille: '$rawTypename' is not a supported parameter at ${valueParameter.location}")
+          logger.error("Gratatouille: '$rawTypename' is not a supported parameter.", valueParameter)
+          return@forEach
         }
       }
     }
@@ -170,18 +176,18 @@ internal fun KSFunctionDeclaration.toGTask(implementationCoordinates: String?, e
     val manuallyWired = valueParameter.annotations.containsManuallyWired()
     when (parameterType) {
       is OutputDirectory, is OutputFile -> {
-        check(!internal) {
-          "Gratatouille: outputs cannot be annotated with @GInternal at ${valueParameter.location}"
+        if(internal) {
+          logger.error("Gratatouille: outputs cannot be annotated with @GInternal.", valueParameter)
         }
-        check(!optional) {
-          "Gratatouille: outputs cannot be optional at ${valueParameter.location}"
+        if(optional) {
+          logger.error("Gratatouille: outputs cannot be optional.", valueParameter)
         }
       }
 
       else -> {
 
-        check(!manuallyWired) {
-          "Gratatouille: inputs cannot be annotated with @GManuallyWired at ${valueParameter.location}"
+        if(manuallyWired) {
+          logger.error("Gratatouille: inputs cannot be annotated with @GManuallyWired", valueParameter)
         }
       }
     }
