@@ -3,7 +3,7 @@ ksp = "2.1.20-2.0.0"
 kotlin = "2.1.20"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
-librarian = "0.0.10-SNAPSHOT-48478069e3d33d7a116b07674d29ba0a23bded77"
+librarian = "0.0.11-SNAPSHOT-ba8b5ecfcbda070ecc3b5b95056ee359199552b4"
 gratatouille = "0.0.10"
 
 [libraries]
