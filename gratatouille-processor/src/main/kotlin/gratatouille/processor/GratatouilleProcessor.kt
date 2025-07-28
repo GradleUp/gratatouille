@@ -114,7 +114,7 @@ class GratatouilleProcessor(
       when (it) {
         is KSFunctionDeclaration -> {
           val dependencies = it.asIsolatingDependencies()
-          it.toGTask(implementationCoordinates, enableKotlinxSerialization).apply {
+          it.toGTask(logger, implementationCoordinates, enableKotlinxSerialization).apply {
             entryPoint().writeToKotlinDirectory(dependencies)
             taskFile().writeToKotlinOrResourcesDirectory(dependencies)
           }
