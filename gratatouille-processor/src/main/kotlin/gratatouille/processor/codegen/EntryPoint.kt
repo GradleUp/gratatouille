@@ -17,8 +17,9 @@ import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.InputDirectory
 import gratatouille.processor.ir.InputFile
 import gratatouille.processor.ir.InputFiles
+import gratatouille.processor.ir.IrBuildServiceParameter
 import gratatouille.processor.ir.IrLoggerParameter
-import gratatouille.processor.ir.IrPropertyParameter
+import gratatouille.processor.ir.IrTaskPropertyParameter
 import gratatouille.processor.ir.IrTask
 import gratatouille.processor.ir.IrTaskProperty
 import gratatouille.processor.ir.JvmType
@@ -70,8 +71,11 @@ private fun IrTask.funSpec(): FunSpec {
     .apply {
       this@funSpec.parameters.forEach { parameter ->
         when (parameter) {
-          is IrPropertyParameter -> {
+          is IrTaskPropertyParameter -> {
             addParameter(ParameterSpec.builder(parameter.property.name, parameter.property.toTypeName()).build())
+          }
+          is IrBuildServiceParameter -> {
+            addParameter(ParameterSpec.builder(parameter.name, parameter.className).build())
           }
           is IrLoggerParameter -> {
             addParameter(
@@ -95,7 +99,7 @@ private fun IrTask.funSpec(): FunSpec {
         .apply {
           this@funSpec.parameters.forEach {
             when (it) {
-              is IrPropertyParameter -> {
+              is IrTaskPropertyParameter -> {
                 val extra = when (it.property.type) {
                   is KotlinxSerializableInput -> {
                     CodeBlock.of(".%M()", MemberName(gratatouilleTasksPackageName, "decodeJson"))
@@ -110,6 +114,9 @@ private fun IrTask.funSpec(): FunSpec {
                   }
                 }
                 add("%L = %L%L,\n", it.property.name, it.property.name, extra)
+              }
+              is IrBuildServiceParameter -> {
+                add("%L = %L,\n", it.name, it.name)
               }
               is IrLoggerParameter -> {
                 add("%L = %T(%L),\n", it.name, ClassName(gratatouilleTasksPackageName, "DefaultGLogger"), it.name)

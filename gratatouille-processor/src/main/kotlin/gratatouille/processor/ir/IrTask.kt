@@ -25,20 +25,25 @@ internal class IrTask(
   val pure: Boolean
 )
 
-internal val List<IrParameter>.properties: List<IrTaskProperty> get() {
-  return filterIsInstance<IrPropertyParameter>().map { it.property }
-}
-internal fun List<IrParameter>.iterate(
-  onProperty: (IrTaskProperty) -> Unit,
-  onLoggerParameter: (IrLoggerParameter) -> Unit)
-{
+internal val List<IrParameter>.properties: List<IrTaskProperty>
+  get() {
+    return filterIsInstance<IrTaskPropertyParameter>().map { it.property }
+  }
+
+internal fun List<IrParameter>.iterateRunArguments(
+  onRegularParameter: (String) -> Unit,
+  onLoggerParameter: (IrLoggerParameter) -> Unit,
+  onBuildServiceParameter: (String) -> Unit,
+) {
   forEach {
     when (it) {
-      is IrPropertyParameter -> onProperty(it.property)
+      is IrTaskPropertyParameter -> onRegularParameter(it.property.name)
+      is IrBuildServiceParameter -> onBuildServiceParameter(it.name)
       is IrLoggerParameter -> onLoggerParameter(it)
     }
   }
 }
+
 internal val List<IrTaskProperty>.inputs: List<IrTaskProperty> get() = filter { it.type.isInput() }
 internal val List<IrTaskProperty>.outputs: List<IrTaskProperty> get() = filter { !it.type.isInput() }
 
@@ -72,8 +77,9 @@ internal fun Type.isInput(): Boolean {
   }
 }
 
-internal class IrPropertyParameter(val property: IrTaskProperty): IrParameter
-internal class IrLoggerParameter(val name: String): IrParameter
+internal class IrTaskPropertyParameter(val property: IrTaskProperty) : IrParameter
+internal class IrLoggerParameter(val name: String) : IrParameter
+internal class IrBuildServiceParameter(val name: String, val className: ClassName) : IrParameter
 
 /**
  * A parameter in the task action function.
@@ -82,7 +88,11 @@ internal class IrLoggerParameter(val name: String): IrParameter
  */
 internal sealed interface IrParameter
 
-internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoordinates: String?, enableKotlinxSerialization: Boolean): IrTask {
+internal fun KSFunctionDeclaration.toGTask(
+  logger: KSPLogger,
+  implementationCoordinates: String?,
+  enableKotlinxSerialization: Boolean
+): IrTask {
   val parameters = mutableListOf<IrParameter>()
   val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
   val reservedNames = setOf(
@@ -107,22 +117,28 @@ internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoor
     val name = valueParameter.name?.asString()
       ?: error("Gratatouille: anonymous parameters are not supported at ${valueParameter.location}")
 
-    if(reservedNames.contains(name)) {
-      logger.error("Gratatouille: parameter name '${name}' is reserved for Gratatouile and Gradle internal uses.", valueParameter)
+    if (reservedNames.contains(name)) {
+      logger.error(
+        "Gratatouille: parameter name '${name}' is reserved for Gratatouile and Gradle internal uses.",
+        valueParameter
+      )
     }
-    if(name.startsWith("is")) {
+    if (name.startsWith("is")) {
       // See somewhere around there https://github.com/gradle/gradle/blob/b3169d65b2d6fbf273930cade0fa41ac8303f8be/platforms/core-configuration/model-core/src/main/java/org/gradle/internal/instantiation/generator/AbstractClassGenerator.java#L338
       // Gradle fails in those cases with:
       // Caused by: java.lang.IllegalArgumentException: Cannot have abstract method ApolloGenerateSourcesTask.isFoo(): DirectoryProperty.
-      logger.error("Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name.", valueParameter)
+      logger.error(
+        "Gratatouille: parameter name '${name}' starts with 'is' and will not be representable as a Gradle task property. Please choose another name.",
+        valueParameter
+      )
     }
-    if(returnValuesNames.contains(name)) {
+    if (returnValuesNames.contains(name)) {
       logger.error("Gratatouille: parameter name '${name}' is already used as return value.", valueParameter)
     }
 
     val parameterType: Type = when {
       rawTypename == ClassName(gratatouilleTasksPackageName, "GLogger") -> {
-        if(optional) {
+        if (optional) {
           logger.error("Gratatouille: The logger parameter may not be nullable.", valueParameter)
           return@forEach
         }
@@ -140,14 +156,15 @@ internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoor
 
       rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFile") -> InputFile
       rawTypename == ClassName(gratatouilleTasksPackageName, "GClasspath") -> {
-        if(optional) {
+        if (optional) {
           logger.error("Gratatouille: optional GClasspath are not supported.", valueParameter)
           return@forEach
         }
         Classpath
       }
+
       rawTypename == ClassName(gratatouilleTasksPackageName, "GInputFiles") -> {
-        if(optional) {
+        if (optional) {
           logger.error("Gratatouille: optional GInputFiles are not supported.", valueParameter)
           return@forEach
         }
@@ -155,13 +172,21 @@ internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoor
       }
 
       rawTypename.isFile() -> {
-        if(!internal) {
-          logger.error("Gratatouille: using java.io.File is only allowed with @GInternal. Use @GInputFile or @GOutputFile for input or output files.", valueParameter)
+        if (!internal) {
+          logger.error(
+            "Gratatouille: using java.io.File is only allowed with @GInternal. Use @GInputFile or @GOutputFile for input or output files.",
+            valueParameter
+          )
           return@forEach
         }
         JvmType(rawTypename)
       }
+
       resolvedType.isSerializable() -> KotlinxSerializableInput(rawTypename)
+      resolvedType.isBuildService() -> {
+        parameters.add(IrBuildServiceParameter(name, rawTypename as ClassName))
+        return@forEach
+      }
       else -> {
         val typename = rawTypename.toSimpleJvmType()
         if (typename != null) {
@@ -176,24 +201,24 @@ internal fun KSFunctionDeclaration.toGTask(logger: KSPLogger, implementationCoor
     val manuallyWired = valueParameter.annotations.containsManuallyWired()
     when (parameterType) {
       is OutputDirectory, is OutputFile -> {
-        if(internal) {
+        if (internal) {
           logger.error("Gratatouille: outputs cannot be annotated with @GInternal.", valueParameter)
         }
-        if(optional) {
+        if (optional) {
           logger.error("Gratatouille: outputs cannot be optional.", valueParameter)
         }
       }
 
       else -> {
 
-        if(manuallyWired) {
+        if (manuallyWired) {
           logger.error("Gratatouille: inputs cannot be annotated with @GManuallyWired", valueParameter)
         }
       }
     }
 
     parameters.add(
-      IrPropertyParameter(
+      IrTaskPropertyParameter(
         IrTaskProperty(
           name = name,
           type = parameterType,
@@ -278,6 +303,15 @@ private fun KSPropertyDeclaration.toReturnValue(): IrTaskProperty {
   error("Gratatouille: property '${simpleName.asString()}' cannot be serialize to a file at $location")
 }
 
+private fun KSType.isBuildService(): Boolean {
+  val declaration = this.declaration
+  if (declaration !is KSClassDeclaration) {
+    return false
+  }
+  return declaration.superTypes.any {
+    it.resolve().declaration.qualifiedName?.asString() == "org.gradle.api.services.BuildService"
+  }
+}
 
 private fun KSType.isSerializable(): Boolean {
   val declaration = this.declaration
@@ -321,7 +355,7 @@ private fun Sequence<KSAnnotation>.containsManuallyWired(): Boolean {
 private fun TypeName.toSimpleJvmType(): TypeName? {
   return when (this) {
     is ClassName -> when (this.canonicalName) {
-      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double", -> this
+      "kotlin.String", "kotlin.Float", "kotlin.Int", "kotlin.Long", "kotlin.Boolean", "kotlin.Double" -> this
       "$gratatouilleTasksPackageName.GAny" -> ClassName("kotlin", "Any").copy(nullable = this.isNullable)
       else -> null
     }
@@ -336,7 +370,7 @@ private fun TypeName.toSimpleJvmType(): TypeName? {
           arg
         }
         this.copy(
-            typeArguments = typeArguments
+          typeArguments = typeArguments
         )
       }
 
@@ -353,6 +387,7 @@ private fun TypeName.isFile(): Boolean {
       "java.io.File" -> true
       else -> false
     }
+
     else -> false
   }
 }
