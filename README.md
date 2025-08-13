@@ -2,7 +2,7 @@
 
 Gratatouille is an opinionated framework to build Gradle plugins. Write Kotlin functions and the Gratatouille KSP processor generates tasks, workers, and wiring code for you.
 
-When used in classloader isolation mode, Gratatouille enforces a clear separation between your plugin implementation (**tasks**) and your plugin glue (**wiring**) making your tasks immune to [classloader issues](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) 🛡️ 
+When used in classloader isolation mode, Gratatouille enforces a clear separation between your plugin implementation (**tasks**) and your plugin glue (**wiring**) making your tasks immune to [classloader](https://github.com/square/kotlinpoet/issues/1730#issuecomment-1819118527) [issues](https://github.com/gradle/gradle/issues/1370) 🛡️ 
 
 **Key Features**:
 
@@ -15,7 +15,7 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 * [Compile-time task wiring](#compile-time-task-wiring)
 * [Plugin descriptors and markers without java-gradle-plugin](#descriptors-and-markers)
 * [Classloader isolation](#classloader-isolation-optional) (optional)
-* [kotlinx serialization support](#built-in-kotlinxserialization-support) (experimental)
+* [kotlinx serialization support](#experimental-kotlinxserialization-support) (experimental)
 
 Check out the [Apollo Faker Gradle Plugin](https://github.com/apollographql/apollo-kotlin-faker/blob/main/gradle-plugin/build.gradle.kts) for a real life example or [test-app](test-app) for integration tests.
 
