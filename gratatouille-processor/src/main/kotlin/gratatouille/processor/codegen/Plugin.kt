@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import gratatouille.processor.ir.IrPlugin
 
-fun IrPlugin.plugin(): FileSpec {
+internal fun IrPlugin.plugin(): FileSpec {
   return FileSpec.builder(
     packageName = packageName,
     // prefix with 'Generated' to avoid having duplicate source files when building the sources jar
@@ -42,6 +42,6 @@ private fun IrPlugin.typeSpec(): TypeSpec {
     ).build()
 }
 
-object ClassNames {
+internal object ClassNames {
   val Plugin = ClassName("org.gradle.api", "Plugin")
 }

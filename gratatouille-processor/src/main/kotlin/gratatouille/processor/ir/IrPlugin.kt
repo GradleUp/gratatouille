@@ -10,21 +10,19 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import gratatouille.processor.capitalizeFirstLetter
 import gratatouille.processor.decapitalizeFirstLetter
 
-class IrExtension(
+internal class IrExtension(
   val name: String,
   val packageName: String,
   val simpleName: String,
   val hasProjectParameter: Boolean
 )
 
-class IrApplyFunction(
+internal class IrApplyFunction(
   val packageName: String,
   val simpleName: String,
 )
 
-
-
-class IrPlugin(
+internal class IrPlugin(
   val id: String,
   val packageName: String,
   val simpleName: String,
