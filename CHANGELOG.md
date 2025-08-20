@@ -1,5 +1,15 @@
 # Next version (unreleased)
 
+# Version 0.1.1
+_2025-08-20_
+
+* [NEW] Use logger API to report errors by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/60
+* [NEW] Add support for BuildServices in parameters (they still need to be registered ahead of time) by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/63
+* [NEW] Allow to use GPlugin for settings plugins by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/66
+* [FIX] Filter out directories from `GInputFiles` by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/55
+* [FIX] Allow empty package name in plugin classes by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/57
+* [FIX] Reserve 'project' name by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/59
+
 # Version 0.0.10
 _2025-06-11_
 
