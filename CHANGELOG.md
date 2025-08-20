@@ -10,6 +10,13 @@ _2025-08-20_
 * [FIX] Allow empty package name in plugin classes by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/57
 * [FIX] Reserve 'project' name by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/59
 
+# Version 0.1.0
+_2025-06-30_
+
+* Update boostrap version by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/41
+* Add a classifier and extension for generated gratatouille files by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/52
+* Update Librarian and Nmcp versions by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/53
+
 # Version 0.0.10
 _2025-06-11_
 
