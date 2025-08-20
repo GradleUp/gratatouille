@@ -5,6 +5,7 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.Origin
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ksp.toClassName
 import gratatouille.processor.capitalizeFirstLetter
 import gratatouille.processor.decapitalizeFirstLetter
@@ -21,11 +22,14 @@ class IrApplyFunction(
   val simpleName: String,
 )
 
+
+
 class IrPlugin(
   val id: String,
   val packageName: String,
   val simpleName: String,
   val extension: IrExtension?,
+  val target: ClassName,
   val applyFunction: IrApplyFunction?
 )
 
@@ -63,11 +67,12 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
     hasProjectParameter
   )
   return IrPlugin(
-    pluginId,
-    packageName.asString(),
-    simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
-    extension,
-    null
+    id = pluginId,
+    packageName = packageName.asString(),
+    simpleName = simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
+    extension = extension,
+    target = ClassName("org.gradle.api", "Project"),
+    applyFunction = null,
   )
 }
 
@@ -79,17 +84,19 @@ internal fun KSFunctionDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
 
   val pluginId = annotation.arguments.first { it.name?.asString() == "id" }.value as String
 
-  if (!hasSingleProjectParameter()) {
-    logger.error("Gratatouille: @GPlugin functions must have a single 'Project' parameter.")
+  if (parameters.size != 1) {
+    logger.error("Gratatouille: @GPlugin functions must have a single parameter with the target type (usually Project or Settings).")
     return null
   }
 
+  val targetType = parameters.single().type.resolve().toClassName()
   return IrPlugin(
-    pluginId,
-    packageName.asString(),
-    simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
-    null,
-    IrApplyFunction(packageName.asString(), simpleName.asString())
+    id = pluginId,
+    packageName = packageName.asString(),
+    simpleName = simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
+    extension = null,
+    applyFunction = IrApplyFunction(packageName.asString(), simpleName.asString()),
+    target = targetType,
   )
 }
 

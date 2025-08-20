@@ -17,10 +17,10 @@ fun IrPlugin.plugin(): FileSpec {
 
 private fun IrPlugin.typeSpec(): TypeSpec {
   return TypeSpec.classBuilder(simpleName)
-    .addSuperinterface(ClassNames.Plugin.parameterizedBy(ClassNames.Project)).addModifiers(KModifier.ABSTRACT)
+    .addSuperinterface(ClassNames.Plugin.parameterizedBy(target)).addModifiers(KModifier.ABSTRACT)
     .addFunction(
       FunSpec.builder("apply")
-        .addParameter(ParameterSpec("target", ClassNames.Project))
+        .addParameter(ParameterSpec("target", target))
         .addModifiers(KModifier.OVERRIDE)
         .addCode(buildCodeBlock {
           if (extension != null) {
@@ -43,6 +43,5 @@ private fun IrPlugin.typeSpec(): TypeSpec {
 }
 
 object ClassNames {
-  val Project = ClassName("org.gradle.api", "Project")
   val Plugin = ClassName("org.gradle.api", "Plugin")
 }
