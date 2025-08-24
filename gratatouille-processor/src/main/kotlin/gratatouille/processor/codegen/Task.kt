@@ -141,7 +141,7 @@ private fun IrTask.register(): FunSpec {
           properties.inputs.forEach {
             when (it.type) {
               is InputFiles, Classpath -> {
-                add("it.%L.from(%L.filter { it.isFile })\n", it.name, it.name)
+                add("it.%L.from(%L)\n", it.name, it.name)
               }
 
               else -> {
