@@ -32,8 +32,6 @@ public abstract interface annotation class gratatouille/tasks/GManuallyWired : j
 }
 
 public abstract interface annotation class gratatouille/tasks/GTask : java/lang/annotation/Annotation {
-	public abstract fun description ()Ljava/lang/String;
-	public abstract fun group ()Ljava/lang/String;
 	public abstract fun name ()Ljava/lang/String;
 	public abstract fun pure ()Z
 }
