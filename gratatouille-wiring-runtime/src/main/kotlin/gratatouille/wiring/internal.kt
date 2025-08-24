@@ -28,8 +28,14 @@ inline fun <reified T> T.encodeJsonTo(file: File) {
 @GratatouilleWiringInternal
 fun FileCollection.isolateFileCollection(): List<Any> = buildList {
   asFileTree.visit {
-    add(it.file)
-    add(it.path)
+    /**
+     * We used to do this using `FileCollection.filter {}` but looks like it's not working as expected.
+     * See https://github.com/gradle/gradle/issues/34778
+     */
+    if (it.file.isFile) {
+      add(it.file)
+      add(it.path)
+    }
   }
 }
 
