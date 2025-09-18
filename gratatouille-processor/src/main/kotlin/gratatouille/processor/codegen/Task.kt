@@ -1,53 +1,9 @@
 package gratatouille.processor.codegen
 
-import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.MemberName
-import com.squareup.kotlinpoet.ParameterSpec
-import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.buildCodeBlock
-import com.squareup.kotlinpoet.withIndent
-import gratatouille.processor.biConsumer
-import gratatouille.processor.capitalizeFirstLetter
-import gratatouille.processor.classpath
-import gratatouille.processor.classpathParameter
-import gratatouille.processor.decapitalizeFirstLetter
-import gratatouille.processor.extraClasspath
-import gratatouille.processor.gratatouilleBuildService
-import gratatouille.processor.gratatouilleWiringPackageName
-import gratatouille.processor.ir.Classpath
-import gratatouille.processor.ir.InputDirectory
-import gratatouille.processor.ir.InputFile
-import gratatouille.processor.ir.InputFiles
-import gratatouille.processor.ir.IrBuildServiceParameter
-import gratatouille.processor.ir.IrLoggerParameter
-import gratatouille.processor.ir.IrTaskPropertyParameter
-import gratatouille.processor.ir.IrTask
-import gratatouille.processor.ir.IrTaskProperty
-import gratatouille.processor.ir.JvmType
-import gratatouille.processor.ir.KotlinxSerializableInput
-import gratatouille.processor.ir.KotlinxSerializableOutput
-import gratatouille.processor.ir.OutputDirectory
-import gratatouille.processor.ir.OutputFile
-import gratatouille.processor.ir.Type
-import gratatouille.processor.ir.inputs
-import gratatouille.processor.ir.isInput
-import gratatouille.processor.ir.iterateRunArguments
-import gratatouille.processor.ir.outputs
-import gratatouille.processor.ir.properties
-import gratatouille.processor.taskDescription
-import gratatouille.processor.taskGroup
-import gratatouille.processor.taskName
-import gratatouille.processor.toCodeBlock
-import gratatouille.processor.workerExecutor
+import gratatouille.processor.*
+import gratatouille.processor.ir.*
 
 
 internal fun IrTask.taskFile(): FileSpec {
@@ -105,21 +61,25 @@ private fun IrTask.register(): FunSpec {
     }
     .addCode(
       buildCodeBlock {
-        add(
-          "val configuration = this@%L.configurations.detachedConfiguration()\n",
-          registerName(),
-        )
-        if (implementationCoordinates != null) {
-          add("configuration.dependencies.add(dependencies.create(%S))\n", implementationCoordinates)
-
+        if (isolationOptions != null) {
+          add("var configuration = this@%L.configurations.findByName(%S)\n", registerName(), isolationOptions.configurationName)
+          add("if (configuration == null) {\n")
+          withIndent {
+            add("configuration = this@%L.configurations.create(%S)\n", registerName(), isolationOptions.configurationName)
+            add("configuration.dependencies.add(dependencies.create(%S))\n", isolationOptions.coordinates)
+          }
+          add("}\n")
           add(
             "gradle.sharedServices.registerIfAbsent(\"gratatouille\", %T::class.java) {}\n",
             ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService")
           )
         }
+
         add("return tasks.register(${taskName},%T::class.java) {\n", taskClassName())
         withIndent {
-          add("it.${classpath}.from(configuration)\n")
+          if (isolationOptions != null) {
+            add("it.${classpath}.from(configuration)\n")
+          }
           add("if (extraClasspath != null) {\n")
           withIndent {
             add("it.${classpath}.from(extraClasspath)\n")
@@ -213,7 +173,7 @@ private fun IrTask.task(): TypeSpec {
           it.toPropertySpec()
         )
       }
-      if (implementationCoordinates != null) {
+      if (isolationOptions != null) {
         addFunction(
           FunSpec.builder("getGratatouilleBuildService")
             .addModifiers(KModifier.ABSTRACT)
@@ -250,7 +210,7 @@ private fun IrTask.taskAction(): FunSpec {
       buildCodeBlock {
         add("${workerExecutor}().noIsolation().submit(%T::class.java) {\n", workActionClassName())
         withIndent {
-          if (implementationCoordinates != null) {
+          if (isolationOptions != null) {
             add("it.$gratatouilleBuildService.set(getGratatouilleBuildService())\n")
           }
           add("it.${classpath} = ${classpath}.files\n")
@@ -434,7 +394,7 @@ private fun IrTask.workActionExecute(): FunSpec {
       buildCodeBlock {
         add("with(parameters) {\n")
         withIndent {
-          if (implementationCoordinates != null) {
+          if (isolationOptions != null) {
             add("$gratatouilleBuildService.get().classloader($classpath)")
             add(".loadClass(%S)\n", entryPointClassName().canonicalName)
             add(".declaredMethods.single()\n")
@@ -524,13 +484,8 @@ private fun IrTask.workParameters(): TypeSpec {
             )
           }
 
-          is IrLoggerParameter -> {
-            Unit
-          }
+          is IrLoggerParameter -> Unit
         }
-      }
-      parameters.properties.forEach {
-
       }
       returnValues.forEach {
         addProperty(PropertySpec.builder(it.name, it.toTypeName()).mutable(true).build())

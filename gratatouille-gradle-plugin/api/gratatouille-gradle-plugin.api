@@ -1,6 +1,11 @@
+public abstract interface class gratatouille/gradle/ClassloaderIsolationSpec {
+	public abstract fun getConfigurationName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getCoordinates ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class gratatouille/gradle/CodeGenerationSpec {
 	public abstract fun classLoaderIsolation ()V
-	public abstract fun classLoaderIsolation (Ljava/lang/String;)V
+	public abstract fun classLoaderIsolation (Lorg/gradle/api/Action;)V
 	public abstract fun getAddDependencies ()Lorg/gradle/api/provider/Property;
 	public abstract fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
 }
@@ -80,7 +85,7 @@ public abstract class gratatouille/gradle/WiringPlugin : org/gradle/api/Plugin {
 public final class gratatouille/gradle/internal/DefaultCodeGenerationSpec : gratatouille/gradle/CodeGenerationSpec {
 	public fun <init> (Lorg/gradle/api/Project;)V
 	public fun classLoaderIsolation ()V
-	public fun classLoaderIsolation (Ljava/lang/String;)V
+	public fun classLoaderIsolation (Lorg/gradle/api/Action;)V
 	public fun getAddDependencies ()Lorg/gradle/api/provider/Property;
 	public fun getEnableKotlinxSerialization ()Lorg/gradle/api/provider/Property;
 }

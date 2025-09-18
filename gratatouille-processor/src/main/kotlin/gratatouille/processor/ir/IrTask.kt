@@ -17,11 +17,7 @@ internal class IrTask(
   val group: String?,
   val parameters: List<IrParameter>,
   val returnValues: List<IrTaskProperty>,
-  /**
-   * The coordinates where to find the implementation for this action
-   * May be null if the plugin is not isolated
-   */
-  val implementationCoordinates: String?,
+  val isolationOptions: IsolationOptions?,
   val pure: Boolean
 )
 
@@ -90,7 +86,7 @@ internal sealed interface IrParameter
 
 internal fun KSFunctionDeclaration.toGTask(
   logger: KSPLogger,
-  implementationCoordinates: String?,
+  isolationOptions: IsolationOptions?,
   enableKotlinxSerialization: Boolean
 ): IrTask {
   val parameters = mutableListOf<IrParameter>()
@@ -105,6 +101,8 @@ internal fun KSFunctionDeclaration.toGTask(
     extraClasspath,
     // reserved because they clash with Gradle built-in properties
     "project",
+    // reserved because gratatouille uses that as a local variable
+    "configuration"
   )
   val returnValuesNames = returnValues.map { it.name }.toSet()
 
@@ -248,7 +246,7 @@ internal fun KSFunctionDeclaration.toGTask(
     annotationName = name,
     description = description,
     group = group,
-    implementationCoordinates = implementationCoordinates,
+    isolationOptions = isolationOptions,
     pure = pure
   )
 }
