@@ -22,6 +22,7 @@ import gratatouille.processor.classpathParameter
 import gratatouille.processor.decapitalizeFirstLetter
 import gratatouille.processor.extraClasspath
 import gratatouille.processor.gratatouilleBuildService
+import gratatouille.processor.gratatouilleTasks
 import gratatouille.processor.gratatouilleWiringPackageName
 import gratatouille.processor.ir.Classpath
 import gratatouille.processor.ir.InputDirectory
@@ -105,13 +106,16 @@ private fun IrTask.register(): FunSpec {
     }
     .addCode(
       buildCodeBlock {
-        add(
-          "val configuration = this@%L.configurations.detachedConfiguration()\n",
-          registerName(),
-        )
+        add("var configuration = this@%L.configurations.findByName(%S)\n", registerName(), gratatouilleTasks)
+        add("if (configuration == null) {\n")
+        withIndent {
+          add("configuration = this@%L.configurations.create(%S)\n", registerName(), gratatouilleTasks)
+          if (implementationCoordinates != null) {
+            add("configuration.dependencies.add(dependencies.create(%S))\n", implementationCoordinates)
+          }
+        }
+        add("}\n")
         if (implementationCoordinates != null) {
-          add("configuration.dependencies.add(dependencies.create(%S))\n", implementationCoordinates)
-
           add(
             "gradle.sharedServices.registerIfAbsent(\"gratatouille\", %T::class.java) {}\n",
             ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService")

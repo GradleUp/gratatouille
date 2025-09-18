@@ -105,6 +105,8 @@ internal fun KSFunctionDeclaration.toGTask(
     extraClasspath,
     // reserved because they clash with Gradle built-in properties
     "project",
+    // reserved because gratatouille uses that as a local variable
+    "configuration"
   )
   val returnValuesNames = returnValues.map { it.name }.toSet()
 

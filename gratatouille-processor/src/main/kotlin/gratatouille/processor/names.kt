@@ -8,6 +8,7 @@ internal val classpath = "classpath"
 internal val workerExecutor = "getWorkerExecutor"
 internal val extraClasspath = "extraClasspath"
 internal val gratatouilleBuildService = "gratatouilleBuildService"
+internal val gratatouilleTasks = "gratatouilleTasks"
 
 internal val gratatouilleWiringPackageName = "gratatouille.wiring"
 internal val gratatouilleTasksPackageName = "gratatouille.tasks"
