@@ -17,6 +17,7 @@ internal enum class PluginVariant {
   Wiring,
   Tasks
 }
+
 internal fun Project.codeGeneration(action: Action<CodeGenerationSpec>, pluginVariant: PluginVariant) {
   val codeGenerationSpec = DefaultCodeGenerationSpec(this)
   action.execute(codeGenerationSpec)
@@ -31,7 +32,7 @@ internal fun Project.codeGeneration(action: Action<CodeGenerationSpec>, pluginVa
   dependencies.add("ksp", dependencies.create("${BuildConfig.group}:gratatouille-processor"))
 
   if (codeGenerationSpec.addDependencies.getOrElse(true)) {
-    val runtimes = when(pluginVariant) {
+    val runtimes = when (pluginVariant) {
       PluginVariant.Simple -> listOf("wiring", "tasks")
       PluginVariant.Wiring -> listOf("wiring")
       PluginVariant.Tasks -> listOf("tasks")
@@ -41,15 +42,18 @@ internal fun Project.codeGeneration(action: Action<CodeGenerationSpec>, pluginVa
     }
   }
 
-  if (codeGenerationSpec.publishedCoordinates != null) {
-    when(pluginVariant) {
+  val ciSpec = codeGenerationSpec.classloaderIsolationSpec
+  if (ciSpec != null) {
+    when (pluginVariant) {
       PluginVariant.Simple,
       PluginVariant.Wiring -> {
         error("To use classloader isolation, use the com.gradleup.gratatouille.tasks plugin")
       }
+
       PluginVariant.Tasks -> Unit
     }
-    kspExtension.arg("implementationCoordinates", codeGenerationSpec.publishedCoordinates!!)
+    kspExtension.arg("implementationCoordinates", ciSpec.coordinates)
+    kspExtension.arg("configurationName", ciSpec.configurationName)
   }
   kspExtension.arg("enableKotlinxSerialization", codeGenerationSpec.enableKotlinxSerialization.orElse(false).get().toString())
 }
@@ -81,7 +85,7 @@ internal fun Project.pluginMarker(id: String) {
       "Gratatouille: the project contains multiple publications (${publications.joinToString(", ") { it.name }}). Use 'pluginMarker(String, String)' to specify the publication to use."
     }
     val publication = publications.single()
-    check (publication is MavenPublication) {
+    check(publication is MavenPublication) {
       "Gratatouille: the publication is not an instance of MavenPublication."
     }
     createMarkerPublication(id, publication)

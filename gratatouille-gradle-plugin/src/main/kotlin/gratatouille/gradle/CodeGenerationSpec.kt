@@ -1,5 +1,6 @@
 package gratatouille.gradle
 
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 
 interface CodeGenerationSpec {
@@ -20,7 +21,7 @@ interface CodeGenerationSpec {
   fun classLoaderIsolation()
 
   /**
-   * Enables classloader isolation.
+   * Enables classloader isolation
    */
-  fun classLoaderIsolation(publishedCoordinates: String)
+  fun classLoaderIsolation(action: Action<ClassloaderIsolationSpec>)
 }

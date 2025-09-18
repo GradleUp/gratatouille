@@ -20,7 +20,7 @@ import java.util.Properties
 class GratatouilleProcessor(
   private val codeGenerator: CodeGenerator,
   private val logger: KSPLogger,
-  private val implementationCoordinates: String?,
+  private val isolationOptions: IsolationOptions?,
   private val enableKotlinxSerialization: Boolean,
 ) : SymbolProcessor {
   override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -90,7 +90,7 @@ class GratatouilleProcessor(
   private fun FileSpec.writeToKotlinDirectory(dependencies: Dependencies) = writeTo(codeGenerator, dependencies)
   private fun FileSpec.writeToKotlinOrResourcesDirectory(dependencies: Dependencies) {
     val fileSpec = this
-    val file = if (implementationCoordinates != null) {
+    val file = if (isolationOptions != null) {
       codeGenerator.createNewFile(
         dependencies,
         "",
@@ -114,7 +114,7 @@ class GratatouilleProcessor(
       when (it) {
         is KSFunctionDeclaration -> {
           val dependencies = it.asIsolatingDependencies()
-          it.toGTask(logger, implementationCoordinates, enableKotlinxSerialization).apply {
+          it.toGTask(logger, isolationOptions, enableKotlinxSerialization).apply {
             entryPoint().writeToKotlinDirectory(dependencies)
             taskFile().writeToKotlinOrResourcesDirectory(dependencies)
           }
@@ -138,13 +138,24 @@ class GratatouilleProcessorProvider : SymbolProcessorProvider {
   override fun create(
     environment: SymbolProcessorEnvironment
   ): SymbolProcessor {
+    val coordinates = environment.options.get("implementationCoordinates")
+    val isolationOptions = if (coordinates != null) {
+      IsolationOptions(coordinates, environment.options.get("configurationName")!!)
+    } else {
+      null
+    }
     return GratatouilleProcessor(
       environment.codeGenerator,
       environment.logger,
-      environment.options.get("implementationCoordinates"),
+      isolationOptions,
       environment.options.get("enableKotlinxSerialization").toBoolean()
     )
   }
 }
 
 internal val classpathParameter = IrTaskProperty(Classpath, classpath, false, false, false)
+
+class IsolationOptions(
+  val coordinates: String,
+  val configurationName: String
+)
