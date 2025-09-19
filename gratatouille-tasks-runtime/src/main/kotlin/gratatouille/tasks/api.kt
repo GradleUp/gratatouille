@@ -57,12 +57,14 @@ import java.io.File
  * ```
  *
  * @param name the name of the task. If empty, defaults to the name of the function.
+ * @param group the group of the task. If empty, defaults to no group. Tasks without a group are not displayed in `./gradlew --tasks` by default.
+ * @param description the description of the task. If empty, defaults to no description.
  * @param pure whether the annotated function is [pure](https://en.wikipedia.org/wiki/Pure_function), i.e. its outputs only depends
  * on the inputs. Impure functions are marked as non-cacheable and never [up-to-date](https://docs.gradle.org/current/userguide/incremental_build.html).
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
-annotation class GTask(val name: String = "", val pure: Boolean = true)
+annotation class GTask(val name: String = "", val group: String = "", val description: String = "", val pure: Boolean = true)
 
 /**
  * Indicates that the given parameter doesn't contribute snapshotting and should be marked `Internal`.
