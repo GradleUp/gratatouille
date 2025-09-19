@@ -38,6 +38,16 @@ private fun IrTask.register(): FunSpec {
         .build()
     )
     .addParameter(
+      ParameterSpec.builder(taskDescription, ClassName("kotlin", "String").copy(nullable = true))
+        .defaultValue(description.toCodeBlock())
+        .build()
+    )
+    .addParameter(
+      ParameterSpec.builder(taskGroup, ClassName("kotlin", "String").copy(nullable = true))
+        .defaultValue(group.toCodeBlock())
+        .build()
+    )
+    .addParameter(
       ParameterSpec.builder(extraClasspath, ClassName("org.gradle.api.file", "FileCollection").copy(nullable = true))
         .defaultValue("null")
         .build()
@@ -77,6 +87,8 @@ private fun IrTask.register(): FunSpec {
 
         add("return tasks.register(${taskName},%T::class.java) {\n", taskClassName())
         withIndent {
+          add("it.group = ${taskGroup}\n")
+          add("it.description = ${taskDescription}\n")
           if (isolationOptions != null) {
             add("it.${classpath}.from(configuration)\n")
           }
