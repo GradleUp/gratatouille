@@ -275,6 +275,7 @@ private fun PropertySpec.Builder.annotateInput(
   simpleName: String,
   internal: Boolean,
   optional: Boolean,
+  pathSensitive: Boolean
 ) = apply {
   if (internal) {
     addAnnotation(
@@ -286,6 +287,14 @@ private fun PropertySpec.Builder.annotateInput(
     if (optional) {
       addAnnotation(
         AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "Optional"))
+          .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
+          .build()
+      )
+    }
+    if (pathSensitive) {
+      addAnnotation(
+        AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
+          .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
           .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
           .build()
       )
@@ -302,46 +311,29 @@ private fun IrTaskProperty.toPropertySpec(): PropertySpec {
   val builder = when (type) {
     is InputDirectory -> {
       PropertySpec.builder(name, ClassName("org.gradle.api.file", "DirectoryProperty"))
-        .annotateInput("org.gradle.api.tasks", "InputDirectory", internal, optional)
-        .addAnnotation(
-          AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
-            .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
-            .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
-            .build()
-        )
+        .annotateInput("org.gradle.api.tasks", "InputDirectory", internal, optional, true)
     }
 
     is KotlinxSerializableInput, is InputFile -> {
       PropertySpec.builder(name, ClassName("org.gradle.api.file", "RegularFileProperty"))
-        .annotateInput("org.gradle.api.tasks", "InputFile", internal, optional)
-        .addAnnotation(
-          AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
-            .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
-            .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
-            .build()
-        )
+        .annotateInput("org.gradle.api.tasks", "InputFile", internal, optional, true)
+
     }
 
     is InputFiles, Classpath -> {
       PropertySpec.builder(name, ClassName("org.gradle.api.file", "ConfigurableFileCollection"))
         .apply {
           if (type is InputFiles) {
-            annotateInput("org.gradle.api.tasks", "InputFiles", internal, optional)
-            addAnnotation(
-              AnnotationSpec.builder(ClassName("org.gradle.api.tasks", "PathSensitive"))
-                .addMember(CodeBlock.of("%T.RELATIVE", ClassName("org.gradle.api.tasks", "PathSensitivity")))
-                .useSiteTarget(AnnotationSpec.UseSiteTarget.GET)
-                .build()
-            )
+            annotateInput("org.gradle.api.tasks", "InputFiles", internal, optional, true)
           } else {
-            annotateInput("org.gradle.api.tasks", "Classpath", internal, optional)
+            annotateInput("org.gradle.api.tasks", "Classpath", internal, optional, false)
           }
         }
     }
 
     is JvmType -> {
       PropertySpec.builder(name, type.typename.toGradleProperty())
-        .annotateInput("org.gradle.api.tasks", "Input", internal, optional)
+        .annotateInput("org.gradle.api.tasks", "Input", internal, optional, false)
     }
 
     is OutputDirectory -> {
