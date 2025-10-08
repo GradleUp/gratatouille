@@ -6,6 +6,14 @@ import gratatouille.gradle.tasks.registerUnzipFilesTask
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.artifacts.ivyservice.projectmodule.ProjectPublicationRegistry
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.internal.Describables
+import org.gradle.internal.DisplayName
+import org.gradle.plugin.use.PluginId
+import org.gradle.plugin.use.internal.DefaultPluginId
+import org.gradle.plugin.use.resolve.internal.local.PluginPublication
 
 interface CodeGeneratorExtension {
   /**
@@ -46,6 +54,15 @@ interface WiringExtension {
    * @param mainPublication the publication to redirect to.
    */
   fun pluginMarker(id: String, mainPublication: String)
+
+  /**
+   * Registers a local plugin publication so that the plugin is discoverable from included builds.
+   *
+   * This function uses Gradle internal APIs.
+   *
+   * @param id the plugin id
+   */
+  fun pluginLocalPublication(id: String)
 }
 
 interface GratatouilleExtension: CodeGeneratorExtension, WiringExtension
@@ -78,6 +95,10 @@ abstract class DefaultGratatouilleExtension(private val project: Project): Grata
 
   override fun pluginMarker(id: String, mainPublication: String) {
     project.pluginMarker(id, mainPublication)
+  }
+
+  override fun pluginLocalPublication(id: String) {
+    project.pluginLocalPublication(id)
   }
 }
 
@@ -127,6 +148,10 @@ abstract class DefaultGratatouilleWiringExtension(private val project: Project):
 
   override fun pluginMarker(id: String, mainPublication: String) {
     project.pluginMarker(id, mainPublication)
+  }
+
+  override fun pluginLocalPublication(id: String) {
+    project.pluginLocalPublication(id)
   }
 }
 

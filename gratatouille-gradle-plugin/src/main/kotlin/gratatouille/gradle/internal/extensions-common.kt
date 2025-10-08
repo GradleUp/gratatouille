@@ -7,10 +7,18 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
+import org.gradle.api.internal.artifacts.ivyservice.projectmodule.ProjectPublicationRegistry
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
+import org.gradle.configurationcache.extensions.serviceOf
+import org.gradle.internal.Describables
+import org.gradle.internal.DisplayName
+import org.gradle.plugin.use.PluginId
+import org.gradle.plugin.use.internal.DefaultPluginId
+import org.gradle.plugin.use.resolve.internal.local.PluginPublication
 
 internal enum class PluginVariant {
   Simple,
@@ -145,5 +153,32 @@ private fun Project.createMarkerPublication(id: String, mainPublication: MavenPu
         version.textContent = versionProvider.get()
       }
     }
+  }
+}
+
+private class LocalPluginPublication(private val name: String, private val id: String) : PluginPublication {
+  override fun getDisplayName(): DisplayName {
+    return Describables.withTypeAndName("plugin", name)
+  }
+
+  override fun getPluginId(): PluginId {
+    return DefaultPluginId.of(id)
+  }
+}
+
+internal fun Project.pluginLocalPublication(id: String) {
+  val registry = project.serviceOf<ProjectPublicationRegistry>()
+
+  val projectInternal = project as ProjectInternal
+  val publication = LocalPluginPublication("Gratatouille generated local publication for $id", id)
+
+  val registerPublication = ProjectPublicationRegistry::class.java.methods.single { it.name == "registerPublication" }
+  if (registerPublication.parameters.first().type.name == "org.gradle.api.internal.project.ProjectIdentity") {
+    // newer Gradle has the notion of project identity
+    val identity = ProjectInternal::class.java.methods.single { it.name == "getProjectIdentity" }.invoke(projectInternal)
+    registerPublication.invoke(registry, identity, publication)
+  } else {
+    // older Gradle just passes `ProjectInternal`
+    registry.registerPublication(projectInternal, publication)
   }
 }
