@@ -15,6 +15,7 @@ internal fun IrTask.taskFile(): FileSpec {
         .addMember("%T::class", ClassName(gratatouilleWiringPackageName, "GratatouilleWiringInternal"))
         .build()
     )
+    .addImport("org.gradle.api", "UnknownDomainObjectException")
     .addFunction(register())
     .addType(task())
     .addType(workParameters())
@@ -72,11 +73,17 @@ private fun IrTask.register(): FunSpec {
     .addCode(
       buildCodeBlock {
         if (isolationOptions != null) {
-          add("var configuration = this@%L.configurations.findByName(%S)\n", registerName(), isolationOptions.configurationName)
-          add("if (configuration == null) {\n")
+          add("val configurationProvider = try {\n")
           withIndent {
-            add("configuration = this@%L.configurations.create(%S)\n", registerName(), isolationOptions.configurationName)
-            add("configuration.dependencies.add(dependencies.create(%S))\n", isolationOptions.coordinates)
+            add("this@%L.configurations.named(%S)\n", registerName(), isolationOptions.configurationName)
+          }
+          add("} catch (_: UnknownDomainObjectException) {\n")
+          withIndent {
+            add("this@%L.configurations.register(%S) {\n", registerName(), isolationOptions.configurationName)
+            withIndent {
+              add("it.dependencies.add(dependencies.create(%S))\n", isolationOptions.coordinates)
+            }
+            add("}\n")
           }
           add("}\n")
           add(
@@ -90,7 +97,7 @@ private fun IrTask.register(): FunSpec {
           add("it.group = ${taskGroup}\n")
           add("it.description = ${taskDescription}\n")
           if (isolationOptions != null) {
-            add("it.${classpath}.from(configuration)\n")
+            add("it.${classpath}.from(configurationProvider)\n")
           }
           add("if (extraClasspath != null) {\n")
           withIndent {
