@@ -1,5 +1,26 @@
 # Next version (unreleased)
 
+# Version 0.1.3
+_2025_11_04_
+
+Maintenance release.
+
+Brings back `group` and `description` in generated code because it's easy to configure everything in one place, add `pluginLocalPublication()` to make Gratatouille generated plugins work better when used in included builds and more lazy API usages courtesy of @simonlebras, many thanks 🙏
+
+## All changes
+* Use a named configuration for the tasks dependencies by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/71
+* Revert "Remove group and description (#69)" by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/72
+* Do not add path sensitivity annotations for internal properties by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/73
+* Do not include a timestamp in plugin markers by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/74
+* Add GratatouilleExtension.pluginLocalPublication() for included builds compatibility by @martinbonnin in https://github.com/GradleUp/gratatouille/pull/75
+* Use lazy configuration for classpath by @simonlebras in https://github.com/GradleUp/gratatouille/pull/77
+
+# Version 0.1.2 
+_2025_08_27_
+
+* Fix a bug introduced in #55 where filtering the input files would lose the normalized path (#68)
+* Remove `group` and `description` from the codegen. It is very easy to set those outside of Gratatouille (#69)
+
 # Version 0.1.1
 _2025-08-20_
 
