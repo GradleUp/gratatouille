@@ -32,7 +32,7 @@ gratatouille {
 }
 
 // When used in an included build, use the remote coordinates
-configurations.all {
+configurations.configureEach {
     resolutionStrategy {
         useGlobalDependencySubstitutionRules.set(false)
     }
