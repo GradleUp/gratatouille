@@ -22,7 +22,7 @@ class DefaultCodeGenerationSpec(private val project: Project): CodeGenerationSpe
   }
 
   private fun String.sanitize(): String {
-    return this.split(Regex("[^a-zA-Z]")).joinToString(separator = "") {
+    return this.split(Regex("[^a-zA-Z0-9]")).joinToString(separator = "") {
       it.capitalizeFirstLetter()
     }
   }
