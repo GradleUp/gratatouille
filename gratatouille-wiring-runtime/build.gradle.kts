@@ -8,5 +8,4 @@ module()
 dependencies {
     implementation(libs.kotlin.test)
     compileOnly(libs.gradle.api)
-    implementation(libs.kotlinx.serialization.json)
 }
