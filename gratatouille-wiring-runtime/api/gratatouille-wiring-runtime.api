@@ -23,7 +23,6 @@ public abstract interface annotation class gratatouille/wiring/GratatouilleWirin
 }
 
 public final class gratatouille/wiring/InternalKt {
-	public static final fun getJson ()Lkotlinx/serialization/json/Json;
 	public static final fun invokeOrUnwrap (Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun isolate (Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun isolateFileCollection (Lorg/gradle/api/file/FileCollection;)Ljava/util/List;
