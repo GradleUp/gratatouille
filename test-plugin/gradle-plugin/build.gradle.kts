@@ -24,8 +24,6 @@ publishing {
 
 dependencies {
   compileOnly(libs.gradle.api)
-  implementation("com.gradleup.gratatouille:gratatouille-tasks-runtime")
-  implementation("com.gradleup.gratatouille:gratatouille-wiring-runtime")
   testImplementation(gradleTestKit())
   testImplementation(libs.kotlin.test)
 }
@@ -33,9 +31,7 @@ dependencies {
 gratatouille {
   pluginMarker("testplugin", "default")
   pluginMarker("testplugin2", "default")
-  codeGeneration {
-    enableKotlinxSerialization.set(true)
-  }
+  enableKotlinxSerialization.set(true)
 }
 
 tasks.withType(Test::class.java) {

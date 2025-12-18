@@ -25,9 +25,3 @@ publishing {
 dependencies {
     implementation(libs.okio)
 }
-
-gratatouille {
-    codeGeneration {
-        classLoaderIsolation()
-    }
-}

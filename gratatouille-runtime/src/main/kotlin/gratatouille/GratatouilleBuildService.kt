@@ -1,4 +1,4 @@
-package gratatouille.wiring
+package gratatouille
 
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters

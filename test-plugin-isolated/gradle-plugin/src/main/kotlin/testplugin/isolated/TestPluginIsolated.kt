@@ -1,6 +1,6 @@
 package testplugin.isolated
 
-import gratatouille.wiring.GPlugin
+import gratatouille.GPlugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 

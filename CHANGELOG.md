@@ -1,5 +1,54 @@
 # Next version (unreleased)
 
+[BREAKING] `com.gradleup.gratatouille.wiring` is replaced by `com.gradleup.gratatouille` for simplicity.
+
+```kotlin 
+plugins {
+  // Replace 
+  id("com.gradleup.gratatouille.wiring")
+  // With
+  id("com.gradleup.gratatouille")
+}
+```
+
+Similarly, `gratatouille-wiring-runtime` is now just `gratatouille-runtime`:
+
+```kotlin 
+dependencies {
+  // Replace 
+  implementation("gratatouille-wiring-runtime")
+  // With
+  implementation("gratatouille-runtime")
+}
+```
+
+You'll also need to replace the package:
+
+```kotlin
+// Replace
+import gratatouille.wiring.*
+// With
+import gratatouille.*
+```
+
+[BREAKING] Code generation is now enabled automatically if KSP is applied:
+
+```kotlin
+gratatouille {
+  // Remove
+  codeGeneration()
+  
+  // If you need to configure some parameters, those are now top level:
+  
+  // Replace
+  codeGeneration {
+    addDependencies = false
+  }
+  // With
+  addDependencies = false
+}
+```
+
 # Version 0.1.3
 _2025_11_04_
 
@@ -44,7 +93,7 @@ _2025-06-11_
 * Cache classloaders in a build service (#39)
 * Split the plugin in 3 different parts:
   * `com.gradleup.gratatouille` for simple cases.
-  * `com.gradleup.gratatouille.wiring` and `com.gradleup.gratatouille.tasks` for classloader isolation cases.
+  * `com.gradleup.gratatouille` and `com.gradleup.gratatouille.tasks` for classloader isolation cases.
 * Similarly, the runtimes are split:
   * `gratatouille-wiring-runtime` for the wiring.
   * `gratatouille-tasks-runtime` for the tasks.

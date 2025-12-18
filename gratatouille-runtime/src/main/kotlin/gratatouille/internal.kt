@@ -1,4 +1,4 @@
-package gratatouille.wiring
+package gratatouille
 
 import org.gradle.api.file.FileCollection
 import java.lang.reflect.InvocationTargetException

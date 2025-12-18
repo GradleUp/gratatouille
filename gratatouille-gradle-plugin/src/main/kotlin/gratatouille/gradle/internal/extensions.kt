@@ -1,9 +1,6 @@
 package gratatouille.gradle.internal
 
-import com.gradleup.gratatouille.gradle.BuildConfig
-import gratatouille.gradle.CodeGenerationSpec
 import gratatouille.gradle.tasks.registerGenerateDescriptorTask
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
 import org.gradle.api.file.Directory
@@ -19,53 +16,6 @@ import org.gradle.internal.DisplayName
 import org.gradle.plugin.use.PluginId
 import org.gradle.plugin.use.internal.DefaultPluginId
 import org.gradle.plugin.use.resolve.internal.local.PluginPublication
-
-internal enum class PluginVariant {
-  Simple,
-  Wiring,
-  Tasks
-}
-
-internal fun Project.codeGeneration(action: Action<CodeGenerationSpec>, pluginVariant: PluginVariant) {
-  val codeGenerationSpec = DefaultCodeGenerationSpec(this)
-  action.execute(codeGenerationSpec)
-
-  require(pluginManager.hasPlugin("com.google.devtools.ksp")) {
-    "Gratatouille: using code generation requires the 'com.google.devtools.ksp' plugin"
-  }
-  require(pluginManager.hasPlugin("org.jetbrains.kotlin.jvm")) {
-    "Gratatouille: using code generation requires the 'org.jetbrains.kotlin.jvm' plugin"
-  }
-
-  dependencies.add("ksp", dependencies.create("${BuildConfig.group}:gratatouille-processor"))
-
-  if (codeGenerationSpec.addDependencies.getOrElse(true)) {
-    val runtimes = when (pluginVariant) {
-      PluginVariant.Simple -> listOf("wiring", "tasks")
-      PluginVariant.Wiring -> listOf("wiring")
-      PluginVariant.Tasks -> listOf("tasks")
-    }
-    runtimes.forEach {
-      dependencies.add("implementation", dependencies.create("${BuildConfig.group}:gratatouille-$it-runtime"))
-    }
-  }
-
-  val ciSpec = codeGenerationSpec.classloaderIsolationSpec
-  if (ciSpec != null) {
-    when (pluginVariant) {
-      PluginVariant.Simple,
-      PluginVariant.Wiring -> {
-        error("To use classloader isolation, use the com.gradleup.gratatouille.tasks plugin")
-      }
-
-      PluginVariant.Tasks -> Unit
-    }
-    kspExtension.arg("implementationCoordinates", ciSpec.coordinates)
-    kspExtension.arg("configurationName", ciSpec.configurationName)
-  }
-  kspExtension.arg("enableKotlinxSerialization", codeGenerationSpec.enableKotlinxSerialization.orElse(false).get().toString())
-}
-
 
 internal fun Project.pluginDescriptor(id: String, implementationClass: String) {
   val directory = registerDescriptorTask(id, implementationClass)

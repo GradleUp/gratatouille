@@ -11,6 +11,6 @@ updateRepo(args) {
   file("README.md") {
     replacePluginVersion("com.gradleup.gratatouille")
     replacePluginVersion("com.gradleup.gratatouille.tasks")
-    replacePluginVersion("com.gradleup.gratatouille.wiring")
+    replacePluginVersion("com.gradleup.gratatouille")
   }
 }

@@ -13,8 +13,12 @@ internal fun Project.configureDefaultVersionsResolutionStrategy() {
         configuration.withDependencies { dependencySet ->
             val pluginVersion = VERSION
             dependencySet.filterIsInstance<ExternalDependency>()
-                .filter { it.group == BuildConfig.group && it.version.isNullOrEmpty() }
-                .forEach { it.version { constraint -> constraint.require(pluginVersion) } }
+                .filter {
+                    it.group == BuildConfig.group && it.version.isNullOrEmpty()
+                }
+                .forEach {
+                    it.version { constraint -> constraint.require(pluginVersion) }
+                }
         }
     }
 }
