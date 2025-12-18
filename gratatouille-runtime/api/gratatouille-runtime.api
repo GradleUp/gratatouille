@@ -1,28 +1,28 @@
-public final class gratatouille/wiring/ApiKt {
+public final class gratatouille/ApiKt {
 	public static final fun capitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun decapitalizeFirstLetter (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public abstract interface annotation class gratatouille/wiring/GExtension : java/lang/annotation/Annotation {
+public abstract interface annotation class gratatouille/GExtension : java/lang/annotation/Annotation {
 	public abstract fun extensionName ()Ljava/lang/String;
 	public abstract fun pluginId ()Ljava/lang/String;
 	public abstract fun publicType ()Ljava/lang/Class;
 }
 
-public abstract interface annotation class gratatouille/wiring/GPlugin : java/lang/annotation/Annotation {
+public abstract interface annotation class gratatouille/GPlugin : java/lang/annotation/Annotation {
 	public abstract fun id ()Ljava/lang/String;
 }
 
-public abstract class gratatouille/wiring/GratatouilleBuildService : java/lang/AutoCloseable, org/gradle/api/services/BuildService {
+public abstract class gratatouille/GratatouilleBuildService : java/lang/AutoCloseable, org/gradle/api/services/BuildService {
 	public fun <init> ()V
 	public final fun classloader (Ljava/util/Set;)Ljava/lang/ClassLoader;
 	public fun close ()V
 }
 
-public abstract interface annotation class gratatouille/wiring/GratatouilleWiringInternal : java/lang/annotation/Annotation {
+public abstract interface annotation class gratatouille/GratatouilleWiringInternal : java/lang/annotation/Annotation {
 }
 
-public final class gratatouille/wiring/InternalKt {
+public final class gratatouille/InternalKt {
 	public static final fun invokeOrUnwrap (Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun isolate (Ljava/lang/Object;)Ljava/lang/Object;
 	public static final fun isolateFileCollection (Lorg/gradle/api/file/FileCollection;)Ljava/util/List;
