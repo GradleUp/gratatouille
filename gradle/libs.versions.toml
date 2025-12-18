@@ -1,6 +1,7 @@
 [versions]
-ksp = "2.3.0"
+ksp = "2.3.4"
 kgp = "2.3.0"
+tapmoc = "0.3.2"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
 librarian = "0.2.2-SNAPSHOT-22b5cf626236be6e39cdcfa486f713b4360d87d8"
@@ -9,9 +10,8 @@ gratatouille = "0.1.3"
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 ksp-gradle-plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "ksp" }
-
+tapmoc = { module = "com.gradleup.tapmoc:com.gradleup.tapmoc.gradle.plugin", version.ref = "tapmoc" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
-vespene = "net.mbonnin.vespene:vespene-lib:0.5"
 buildkonfig = "com.github.gmazzo.buildconfig:plugin:5.6.2"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kgp" }
 kotlin-serialization-plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kgp" }
@@ -29,4 +29,4 @@ gratatouille-gradle-plugin = { module = "com.gradleup.gratatouille:gratatouille-
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.jvm", version.ref = "kgp" }
-compat-patrouille = { id = "com.gradleup.compat.patrouille", version = "0.0.0" }
+tapmoc = { id = "com.gradleup.tapmoc", version.ref = "tapmoc" }
