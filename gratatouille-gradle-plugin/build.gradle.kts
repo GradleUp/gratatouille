@@ -9,6 +9,7 @@ plugins {
 module()
 
 dependencies {
+    implementation(libs.tapmoc)
     compileOnly(libs.ksp.api)
     compileOnly(libs.gradle.api)
     compileOnly(libs.ksp.gradle.plugin)
