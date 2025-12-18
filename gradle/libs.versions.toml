@@ -5,7 +5,8 @@ tapmoc = "0.3.2"
 coroutines = "1.8.0"
 kotlinpoet = "1.14.2"
 librarian = "0.2.2-SNAPSHOT-22b5cf626236be6e39cdcfa486f713b4360d87d8"
-gratatouille = "0.1.3"
+gratatouille-published = "0.2.0"
+gratatouille = "0.2.0"
 
 [libraries]
 ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
@@ -24,6 +25,8 @@ librarian = { module = "com.gradleup.librarian:librarian-gradle-plugin", version
 nmcp = { module = "com.gradleup.nmcp:nmcp", version = "1.0.2-SNAPSHOT-5374b28286b7ef04a45061946bae5eff65f33093" }
 okio = "com.squareup.okio:okio:3.9.0"
 cast = "net.mbonnin.cast:cast:0.0.1"
+gratatouille-runtime = { module = "com.gradleup.gratatouille:gratatouille-runtime", version.ref = "gratatouille-published" }
+gratatouille-runtime-tasks = { module = "com.gradleup.gratatouille:gratatouille-tasks-runtime", version.ref = "gratatouille-published" }
 gratatouille-gradle-plugin = { module = "com.gradleup.gratatouille:gratatouille-gradle-plugin", version.ref = "gratatouille" }
 
 

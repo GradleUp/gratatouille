@@ -1,17 +1,14 @@
 package gratatouille.gradle.internal
 
 import com.gradleup.gratatouille.gradle.BuildConfig
-import gratatouille.gradle.ClassloaderIsolationSpec
+import gratatouille.capitalizeFirstLetter
 import gratatouille.gradle.CodeGenerationExtension
 import gratatouille.gradle.GratatouilleTasksExtension
 import gratatouille.gradle.tasks.registerZipFilesTask
-import gratatouille.wiring.capitalizeFirstLetter
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.configurationcache.problems.PropertyTrace
 
 internal fun Project.configureCodeGeneration(
   extension: CodeGenerationExtension,
