@@ -2,7 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
-    id("com.gradleup.gratatouille.wiring")
+    id("com.gradleup.gratatouille")
     id("maven-publish")
 }
 
@@ -35,7 +35,6 @@ dependencies {
 
 gratatouille {
     pluginMarker("testplugin.isolated", "default")
-    codeGeneration()
 }
 
 tasks.withType(Test::class.java) {

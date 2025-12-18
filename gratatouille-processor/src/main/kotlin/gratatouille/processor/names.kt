@@ -10,5 +10,5 @@ internal val extraClasspath = "extraClasspath"
 internal val gratatouilleBuildService = "gratatouilleBuildService"
 internal val gratatouilleTasks = "gratatouilleTasks"
 
-internal val gratatouilleWiringPackageName = "gratatouille.wiring"
+internal val gratatouilleWiringPackageName = "gratatouille"
 internal val gratatouilleTasksPackageName = "gratatouille.tasks"

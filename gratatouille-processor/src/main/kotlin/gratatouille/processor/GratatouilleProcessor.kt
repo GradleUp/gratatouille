@@ -10,12 +10,7 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import gratatouille.processor.codegen.entryPoint
 import gratatouille.processor.codegen.plugin
 import gratatouille.processor.codegen.taskFile
-import gratatouille.processor.ir.Classpath
-import gratatouille.processor.ir.IrPlugin
-import gratatouille.processor.ir.IrTaskProperty
-import gratatouille.processor.ir.toGTask
-import gratatouille.processor.ir.toIrPlugin
-import java.util.Properties
+import gratatouille.processor.ir.*
 
 class GratatouilleProcessor(
   private val codeGenerator: CodeGenerator,
@@ -77,7 +72,6 @@ class GratatouilleProcessor(
 
         else -> {
           logger.error("@GPlugin is only valid on functions", it)
-          null
         }
       }
     }
@@ -92,7 +86,6 @@ class GratatouilleProcessor(
 
         else -> {
           logger.error("@GExtension is only valid on classes", it)
-          null
         }
       }
     }
@@ -121,7 +114,7 @@ class GratatouilleProcessor(
   }
 
   private fun processTasks(symbols: Sequence<KSAnnotated>) {
-    symbols.forEach { it ->
+    symbols.forEach {
       when (it) {
         is KSFunctionDeclaration -> {
           val dependencies = it.asIsolatingDependencies()
@@ -164,7 +157,7 @@ class GratatouilleProcessorProvider : SymbolProcessorProvider {
   }
 }
 
-internal val classpathParameter = IrTaskProperty(Classpath, classpath, false, false, false)
+internal val classpathParameter = IrTaskProperty(Classpath, classpath, internal = false, optional = false, manuallyWired = false)
 
 class IsolationOptions(
   val coordinates: String,

@@ -6,7 +6,7 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 
 **Key Features**:
 
-* [Tasks Generation](#functions)
+* [Tasks Generation](#functional-programming-style)
 * [Comprehensive input/output types](#supported-input-and-output-types)
 * [Non overlapping task outputs by default](#non-overlapping-task-outputs-by-default)
 * [Build cache by default](#build-cache-by-default)
@@ -17,7 +17,7 @@ When used in classloader isolation mode, Gratatouille enforces a clear separatio
 * [Classloader isolation](#classloader-isolation-optional) (optional)
 * [kotlinx serialization support](#experimental-kotlinxserialization-support) (experimental)
 
-Check out the [Apollo Faker Gradle Plugin](https://github.com/apollographql/apollo-kotlin-faker/blob/main/gradle-plugin/build.gradle.kts) for a real life example or [test-app](test-app) for integration tests.
+Check out the [Apollo Faker Gradle Plugin](https://github.com/apollographql/apollo-kotlin-faker/blob/main/gradle-plugin/build.gradle.kts) for a real-life example or [test-app](test-app) for integration tests.
 
 Gratatouille also uses Gratatouille to build its plugin, check [gratatouille-gradle-plugin/build.gradle.kts](gratatouille-gradle-plugin/build.gradle.kts) for more details. 
 
@@ -37,9 +37,9 @@ plugins {
 
 gratatouille {
   // Configure the plugin marker
+  // This is only required for publication. 
+  // If you're using GradleUp/Librarian, you can skip this step.
   pluginMarker("com.example.myplugin")
-  // Enable code generation
-  codeGeneration()
 }
 ```
 
@@ -192,7 +192,7 @@ fun myPlugin(project: Project) {
 }
 ```
 
-No need to implement `DefaultTask`, no risk of forgetting `@Cacheable`, etc... Gratatouille provides good defaults making it easier to write plugins.
+No need to implement `DefaultTask`, no risk of forgetting `@Cacheable`, etc... Gratatouille provides good defaults, making it easier to write plugins.
 
 ## Features
 
@@ -352,15 +352,12 @@ dependencies {
     // Add dependencies needed to do your task work
     implementation("com.squareup:kotlinpoet:1.14.2")
     implementation("org.ow2.asm:asm-commons:9.6")
-    // do **not** add gradleApi() here
+    // do **not** add gradle-api here
 }
 
 gratatouille {
-  // Enable code generation
-  codeGeneration {
-    // Enables classloader isolation
-    classLoaderIsolation()
-  }
+  // You may specify additional configuration options here
+  enableKotlinxSerialization.set(true)
 }
 ```
 
@@ -379,7 +376,7 @@ internal fun prepareIngredients(persons: Int, ingredients: GOutputFile) {
 }
 ```
 
-When using this mode, the plugin wiring code is generated as resources that are included by the `gradle-plugin` project. 
+When using this mode, the plugin wiring code is generated as resources that are automatically included by the `gradle-plugin` project. 
 
 ### Step 2/2 gradle-plugin
 
@@ -388,12 +385,12 @@ To use the generated code in your plugin, create an `gradle-plugin` project next
 > [!IMPORTANT]
 > By using two different projects, Gratatouille ensures that Gradle classes do not leak in your plugin implementation and vice-versa.
 
-Apply the `com.gradleup.gratatouille.wiring` plugin in your `gradle-plugin` project:
+Apply the `com.gradleup.gratatouille` plugin in your `gradle-plugin` project:
 
 ```kotlin
 // gradle-plugin/build.gradle.kts
 plugins {
-    id("com.gradleup.gratatouille.wiring").version("0.1.3")
+    id("com.gradleup.gratatouille").version("0.1.3")
 }
 
 gratatouille {

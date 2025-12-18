@@ -1,4 +1,4 @@
-package gratatouille.wiring
+package gratatouille
 
 import kotlin.reflect.KClass
 

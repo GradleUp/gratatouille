@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.kgp)
-    alias(libs.plugins.compat.patrouille)
+    alias(libs.plugins.tapmoc)
 }
 
-compatPatrouille {
+tapmoc {
     java(17)
     kotlin(embeddedKotlinVersion)
 }
@@ -12,11 +12,11 @@ dependencies {
     implementation(libs.kotlin.serialization.plugin)
     implementation(libs.ksp.gradle.plugin)
     implementation(libs.gradle.api)
-    implementation(libs.vespene)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.buildkonfig)
     implementation(libs.librarian)
     implementation(libs.nmcp)
+    implementation(libs.tapmoc)
     implementation(libs.gratatouille.gradle.plugin)
 }
 
