@@ -35,53 +35,6 @@ abstract class DefaultGratatouilleExtension(private val project: Project): Grata
     project.pluginManager.apply("com.gradleup.tapmoc")
   }
 
-  override fun gradleTarget(gradleVersion: String) {
-    gradleTarget(gradleVersion, 17)
-  }
-
-  override fun gradleTarget(gradleVersion: String, javaVersion: Int) {
-    val version = GradleVersion.version(gradleVersion)
-    project.extensions.getByType(TapmocExtension::class.java).apply {
-      java(javaVersion)
-      kotlin(kotlinVersionFor(version))
-    }
-    if (version >= GradleVersion.version("8.14")) {
-      val dependency = project.dependencies.create("org.gradle.experimental:gradle-public-api:$$gradleVersion")
-      (dependency as ExternalModuleDependency).capabilities {
-        it.requireCapability("org.gradle.experimental:gradle-public-api-internal")
-      }
-      project.dependencies.add("compileOnlyApi", dependency)
-    } else {
-      project.dependencies.add("compileOnlyApi", "dev.gradleplugins:gradle-api:$gradleVersion")
-    }
-
-  }
-
-  private fun kotlinVersionFor(version: GradleVersion): String {
-
-    // See https://docs.gradle.org/current/userguide/compatibility.html
-    return when  {
-      version >= GradleVersion.version("9.2.0") -> "2.2.0"
-      version >= GradleVersion.version("9.0.0") -> "2.0.0"
-      version >= GradleVersion.version("8.12") -> "2.0.21"
-      version >= GradleVersion.version("8.11") -> "2.0.20"
-      version >= GradleVersion.version("8.10") -> "1.9.24"
-      version >= GradleVersion.version("8.9") -> "1.9.23"
-      version >= GradleVersion.version("8.7") -> "1.9.22"
-      version >= GradleVersion.version("8.5") -> "1.9.20"
-      version >= GradleVersion.version("8.4") -> "1.9.10"
-      version >= GradleVersion.version("8.3") -> "1.9.0"
-      version >= GradleVersion.version("8.2") -> "1.8.20"
-      version >= GradleVersion.version("8.0") -> "1.8.10"
-      version >= GradleVersion.version("7.6") -> "1.7.10"
-      version >= GradleVersion.version("7.5") -> "1.6.21"
-      version >= GradleVersion.version("7.3") -> "1.5.31"
-      version >= GradleVersion.version("7.2") -> "1.5.21"
-      version >= GradleVersion.version("7.0") -> "1.4.31"
-      else -> error("Unsupported Gradle version: $version")
-    }
-  }
-
   override fun pluginDescriptor(id: String, implementationClass: String) {
     project.pluginDescriptor(id, implementationClass)
   }

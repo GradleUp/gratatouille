@@ -29,9 +29,10 @@ private fun IrPlugin.typeSpec(): TypeSpec {
               extension.name,
               ClassName(extension.packageName, extension.simpleName)
             )
-            if (extension.hasProjectParameter) {
+            if (extension.hasProjectParameter || extension.hasSettingsParameter) {
               add(", target")
             }
+
             add(")")
           }
           if (applyFunction != null) {

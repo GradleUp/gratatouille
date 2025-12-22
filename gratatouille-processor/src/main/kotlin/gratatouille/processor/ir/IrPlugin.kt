@@ -14,7 +14,8 @@ internal class IrExtension(
   val name: String,
   val packageName: String,
   val simpleName: String,
-  val hasProjectParameter: Boolean
+  val hasProjectParameter: Boolean,
+  val hasSettingsParameter: Boolean
 )
 
 internal class IrApplyFunction(
@@ -40,6 +41,7 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
 
   val constructor = getConstructors().singleOrNull()
   var hasProjectParameter = false
+  var hasSettingsParameter = false
   if (constructor != null) {
     constructor.parameters.forEach {
       if (it.type.resolve().toClassName().toString() == "org.gradle.api.Project") {
@@ -48,8 +50,14 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
         } else {
           logger.error("Gratatouille: only one 'Project' constructor parameter is allowed in @GExtension classes.")
         }
+      } else if (it.type.resolve().toClassName().toString() == "org.gradle.api.initialization.Settings") {
+        if (!hasSettingsParameter) {
+          hasSettingsParameter = true
+        } else {
+          logger.error("Gratatouille: only one 'Settings' constructor parameter is allowed in @GExtension classes.")
+        }
       } else {
-        logger.error("Gratatouille: @GExtension classes only support one constructor parameter of 'org.gradle.apiProject' type.")
+        logger.error("Gratatouille: @GExtension constructor parameters may only be of `org.gradle.api.Project` or `org.gradle.api.initialization.Settings` type.")
       }
     }
   }
@@ -58,25 +66,31 @@ internal fun KSClassDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
     extensionName = simpleName.asString().removeSuffix("Extension").decapitalizeFirstLetter()
   }
 
+  check (!(hasProjectParameter && hasSettingsParameter)) {
+    "Gratatouille: @GExtension classes may either have a `Project` or `Settings` constructor parameter, but not both."
+  }
+
   val extension = IrExtension(
     extensionName,
     packageName.asString(),
     simpleName.asString(),
-    hasProjectParameter
+    hasProjectParameter,
+    hasSettingsParameter
   )
   return IrPlugin(
     id = pluginId,
     packageName = packageName.asString(),
     simpleName = simpleName.asString().capitalizeFirstLetter().maybeAddPluginSuffix(),
     extension = extension,
-    target = ClassName("org.gradle.api", "Project"),
+    target = if (hasSettingsParameter) ClassName("org.gradle.api.initialization", "Settings") else ClassName("org.gradle.api", "Project"),
     applyFunction = null,
   )
 }
 
-internal fun String.maybeAddPluginSuffix():  String {
+internal fun String.maybeAddPluginSuffix(): String {
   return if (endsWith("Plugin")) this else this + "Plugin"
 }
+
 internal fun KSFunctionDeclaration.toIrPlugin(logger: KSPLogger): IrPlugin? {
   val annotation = annotations.first { it.shortName.asString() == "GPlugin" }
 
