@@ -10,6 +10,8 @@ module()
 
 dependencies {
     implementation(libs.tapmoc)
+    implementation(libs.gratatouille.runtime)
+    implementation(libs.gratatouille.runtime.tasks)
     compileOnly(libs.ksp.api)
     compileOnly(libs.gradle.api)
     compileOnly(libs.ksp.gradle.plugin)
@@ -25,9 +27,6 @@ buildConfig {
     buildConfigField("group", group.toString())
 }
 
-gratatouille {
-    codeGeneration()
-}
 
 // When used in an included build, use the remote coordinates
 configurations.configureEach {

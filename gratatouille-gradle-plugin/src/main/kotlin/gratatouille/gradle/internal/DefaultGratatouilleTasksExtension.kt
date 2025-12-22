@@ -1,7 +1,7 @@
 package gratatouille.gradle.internal
 
 import gratatouille.gradle.GratatouilleTasksExtension
-import gratatouille.wiring.GExtension
+import gratatouille.GExtension
 import org.gradle.api.Project
 
 @Suppress("unused")

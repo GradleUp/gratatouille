@@ -2,7 +2,7 @@ package gratatouille.gradle.internal
 
 import gratatouille.gradle.GratatouilleExtension
 import gratatouille.gradle.tasks.registerUnzipFilesTask
-import gratatouille.wiring.GExtension
+import gratatouille.GExtension
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.attributes.Usage
