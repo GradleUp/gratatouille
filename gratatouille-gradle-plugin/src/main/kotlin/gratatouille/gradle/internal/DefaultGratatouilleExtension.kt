@@ -35,28 +35,6 @@ abstract class DefaultGratatouilleExtension(private val project: Project): Grata
     project.pluginManager.apply("com.gradleup.tapmoc")
   }
 
-  override fun gradleTarget(gradleVersion: String) {
-    gradleTarget(gradleVersion, 17)
-  }
-
-  override fun gradleTarget(gradleVersion: String, javaVersion: Int) {
-    val version = GradleVersion.version(gradleVersion)
-    project.extensions.getByType(TapmocExtension::class.java).apply {
-      java(javaVersion)
-      kotlin(kotlinVersionFor(version))
-    }
-    if (version >= GradleVersion.version("8.14")) {
-      val dependency = project.dependencies.create("org.gradle.experimental:gradle-public-api:$$gradleVersion")
-      (dependency as ExternalModuleDependency).capabilities {
-        it.requireCapability("org.gradle.experimental:gradle-public-api-internal")
-      }
-      project.dependencies.add("compileOnlyApi", dependency)
-    } else {
-      project.dependencies.add("compileOnlyApi", "dev.gradleplugins:gradle-api:$gradleVersion")
-    }
-
-  }
-
   private fun kotlinVersionFor(version: GradleVersion): String {
 
     // See https://docs.gradle.org/current/userguide/compatibility.html
