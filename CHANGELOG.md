@@ -1,6 +1,11 @@
 # Next version (unreleased)
 
-[BREAKING] `com.gradleup.gratatouille.wiring` is replaced by `com.gradleup.gratatouille` for simplicity.
+# 0.2.0 
+_2025_12_22_
+
+This release simplifies the Gradle configuration and adds support for generating `Settings` plugins, alongside a few other fixes.
+
+## `com.gradleup.gratatouille.wiring` is replaced by `com.gradleup.gratatouille` for simplicity.
 
 ```kotlin 
 plugins {
@@ -31,7 +36,7 @@ import gratatouille.wiring.*
 import gratatouille.*
 ```
 
-[BREAKING] Code generation is now enabled automatically if KSP is applied:
+Code generation is now enabled automatically if KSP is applied:
 
 ```kotlin
 gratatouille {
@@ -48,6 +53,16 @@ gratatouille {
   addDependencies = false
 }
 ```
+
+👷‍♂️ All changes:
+
+* [NEW] Add support for settings plugins in https://github.com/GradleUp/gratatouille/pull/87
+* [BREAKING] Merge the `com.gradleup.gratatouille.wiring` and the `com.gradleup.gratatouille` plugins and simplifiy configuration in https://github.com/GradleUp/gratatouille/pull/84
+* [FIX] Allow digits in the isolated classloader configuration name in https://github.com/GradleUp/gratatouille/pull/80
+* [FIX] Remove json dependency in the wiring runtime in https://github.com/GradleUp/gratatouille/pull/82
+* [FIX] Change configurations.all to configurations.configureEach in https://github.com/GradleUp/gratatouille/pull/81
+
+
 
 # Version 0.1.3
 _2025_11_04_
