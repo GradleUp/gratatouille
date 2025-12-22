@@ -11,6 +11,5 @@ jobs:
       - uses: gradle/actions/setup-gradle@ac638b010cf58a27ee6c972d7336334ccaf61c96 #v4.4.1
       - run: |
           ./gradlew build
-          ./gradlew -p test-plugin build
-          ./gradlew -p test-plugin-isolated build
-          ./gradlew -p test-app build
+          ./scripts/integration-tests.sh
+          

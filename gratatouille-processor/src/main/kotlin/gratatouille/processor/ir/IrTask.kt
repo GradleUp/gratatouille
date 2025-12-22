@@ -90,7 +90,7 @@ internal fun KSFunctionDeclaration.toGTask(
   enableKotlinxSerialization: Boolean
 ): IrTask {
   val parameters = mutableListOf<IrParameter>()
-  val returnValues = returnType.toReturnValues(enableKotlinxSerialization)
+  val returnValues = returnType.toReturnValues(logger, enableKotlinxSerialization)
   val reservedNames = setOf(
     // reserved because they clash with Gratatouille built-in parameters and properties
     taskName,
@@ -185,6 +185,7 @@ internal fun KSFunctionDeclaration.toGTask(
         parameters.add(IrBuildServiceParameter(name, rawTypename as ClassName))
         return@forEach
       }
+
       else -> {
         val typename = rawTypename.toSimpleJvmType()
         if (typename != null) {
@@ -251,14 +252,18 @@ internal fun KSFunctionDeclaration.toGTask(
   )
 }
 
-private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean): List<IrTaskProperty> {
+private fun KSTypeReference?.toReturnValues(
+  logger: KSPLogger,
+  enableKotlinxSerialization: Boolean
+): List<IrTaskProperty> {
   if (this == null) {
     return emptyList()
   }
 
   val typename = toTypeName()
-  check(!typename.isNullable) {
-    "Gratatouille: optional outputs are not supported $location"
+  if (typename.isNullable) {
+    logger.error("Gratatouille: optional outputs are not supported $location", this)
+    return emptyList()
   }
 
   if (typename == ClassName("kotlin", "Unit")) {
@@ -266,7 +271,11 @@ private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean)
   }
 
   if (!enableKotlinxSerialization) {
-    error("Gratatouille: return values are not enabled, use enableKotlinxSerialization.set(true) to opt-in experimental support.")
+    logger.error(
+      "Gratatouille: return values are not enabled, use enableKotlinxSerialization.set(true) to opt-in experimental support.",
+      this
+    )
+    return emptyList()
   }
 
   val resolvedType = this.resolve()
@@ -275,8 +284,9 @@ private fun KSTypeReference?.toReturnValues(enableKotlinxSerialization: Boolean)
   }
 
   val declaration = resolvedType.declaration
-  check(declaration is KSClassDeclaration) {
-    "Gratatouille: only classes are allowed as return values"
+  if(declaration !is KSClassDeclaration) {
+    logger.error("Gratatouille: only classes are allowed as return values", this)
+    return emptyList()
   }
 
   return declaration.getAllProperties().filter { it.isPublic() }.toList().map {
