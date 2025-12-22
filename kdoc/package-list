@@ -7,7 +7,7 @@ gratatouille.gradle.internal
 gratatouille.gradle.tasks
 module:gratatouille-processor
 gratatouille.processor
+module:gratatouille-runtime
+gratatouille
 module:gratatouille-tasks-runtime
 gratatouille.tasks
-module:gratatouille-wiring-runtime
-gratatouille.wiring

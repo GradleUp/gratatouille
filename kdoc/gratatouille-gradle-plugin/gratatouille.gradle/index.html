@@ -1,22 +1,22 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>gratatouille.gradle</title>
-<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
     <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
+      if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    } else {
+      } else {
         const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
         }
-    }
+      }
     </script>
 <script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
@@ -24,52 +24,84 @@
 <link href="../../styles/main.css" rel="Stylesheet">
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
-<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
-<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script></head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-<a class="library-name--link" href="../../index.html">
-                            gratatouille
-                    </a>            </div>
-            <div class="library-version">
-<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;gratatouille.gradle/index.html&quot;}">0.1.4-SNAPSHOT</dokka-template-command>            </div>
-        </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":gratatouille-gradle-plugin/main">jvm</button>
-        </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    gratatouille
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+<dokka-template-command data="{&quot;@class&quot;:&quot;org.jetbrains.dokka.base.templating.ReplaceVersionsCommand&quot;,&quot;location&quot;:&quot;gratatouille.gradle/index.html&quot;}">0.1.4-SNAPSHOT</dokka-template-command>        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":gratatouille-gradle-plugin/main">jvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":gratatouille-gradle-plugin/main" data-filter=":gratatouille-gradle-plugin/main">
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
-            <div id="main">
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    gratatouille
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
 <div class="main-content" data-page-type="package" id="content" pageids="gratatouille-gradle-plugin::gratatouille.gradle////PointingToDeclaration//-1360592001">
   <div class="breadcrumbs"><a href="../index.html">gratatouille-gradle-plugin</a><span class="delimiter">/</span><span class="current">gratatouille.gradle</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
   </div>
   <div class="tabbedcontent">
-    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
     <div class="tabs-section-body">
       <div data-togglable="TYPE">
-        <h2 class="">Types</h2>
+        <h2 class="tableheader">Types</h2>
         <div class="table"><a data-name="-896970586%2FClasslikes%2F-1360592001" anchor-label="ClassloaderIsolationSpec" id="-896970586%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
+          <div class="table-row table-row_content" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-classloader-isolation-spec/index.html"><span>Classloader</span><wbr><span>Isolation</span><wbr><span><span>Spec</span></span></a></div>
@@ -83,83 +115,23 @@
               </div>
             </div>
           </div>
-<a data-name="2041588420%2FClasslikes%2F-1360592001" anchor-label="CodeGenerationSpec" id="2041588420%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
+<a data-name="-1149157468%2FClasslikes%2F-1360592001" anchor-label="CodeGenerationExtension" id="-1149157468%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-code-generation-spec/index.html"><span>Code</span><wbr><span>Generation</span><wbr><span><span>Spec</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2041588420%2FClasslikes%2F-1360592001"></span>
+                  <div><a href="-code-generation-extension/index.html"><span>Code</span><wbr><span>Generation</span><wbr><span><span>Extension</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1149157468%2FClasslikes%2F-1360592001"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-code-generation-spec/index.html">CodeGenerationSpec</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="959382571%2FClasslikes%2F-1360592001" anchor-label="CodeGeneratorExtension" id="959382571%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-code-generator-extension/index.html"><span>Code</span><wbr><span>Generator</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="959382571%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-code-generator-extension/index.html">CodeGeneratorExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-98504967%2FClasslikes%2F-1360592001" anchor-label="DefaultGratatouilleExtension" id="-98504967%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-default-gratatouille-extension/index.html"><span>Default</span><wbr><span>Gratatouille</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-98504967%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-default-gratatouille-extension/index.html">DefaultGratatouilleExtension</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span> : <a href="-gratatouille-extension/index.html">GratatouilleExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="387449657%2FClasslikes%2F-1360592001" anchor-label="DefaultGratatouilleTasksExtension" id="387449657%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-default-gratatouille-tasks-extension/index.html"><span>Default</span><wbr><span>Gratatouille</span><wbr><span>Tasks</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="387449657%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-default-gratatouille-tasks-extension/index.html">DefaultGratatouilleTasksExtension</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span> : <a href="-gratatouille-tasks-extension/index.html">GratatouilleTasksExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="486191451%2FClasslikes%2F-1360592001" anchor-label="DefaultGratatouilleWiringExtension" id="486191451%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-default-gratatouille-wiring-extension/index.html"><span>Default</span><wbr><span>Gratatouille</span><wbr><span>Wiring</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="486191451%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-default-gratatouille-wiring-extension/index.html">DefaultGratatouilleWiringExtension</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span> : <a href="-gratatouille-wiring-extension/index.html">GratatouilleWiringExtension</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-code-generation-extension/index.html">CodeGenerationExtension</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-100412526%2FClasslikes%2F-1360592001" anchor-label="GratatouilleExtension" id="-100412526%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
+          <div class="table-row table-row_content" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-gratatouille-extension/index.html"><span>Gratatouille</span><wbr><span><span>Extension</span></span></a></div>
@@ -168,13 +140,13 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-gratatouille-extension/index.html">GratatouilleExtension</a> : <a href="-code-generator-extension/index.html">CodeGeneratorExtension</a>, <a href="-wiring-extension/index.html">WiringExtension</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-gratatouille-extension/index.html">GratatouilleExtension</a> : <a href="-code-generation-extension/index.html">CodeGenerationExtension</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
 <a data-name="-898034112%2FClasslikes%2F-1360592001" anchor-label="GratatouilleTasksExtension" id="-898034112%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
+          <div class="table-row table-row_content" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-gratatouille-tasks-extension/index.html"><span>Gratatouille</span><wbr><span>Tasks</span><wbr><span><span>Extension</span></span></a></div>
@@ -183,82 +155,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-gratatouille-tasks-extension/index.html">GratatouilleTasksExtension</a> : <a href="-code-generator-extension/index.html">CodeGeneratorExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-709099724%2FClasslikes%2F-1360592001" anchor-label="GratatouilleWiringExtension" id="-709099724%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-gratatouille-wiring-extension/index.html"><span>Gratatouille</span><wbr><span>Wiring</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-709099724%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-gratatouille-wiring-extension/index.html">GratatouilleWiringExtension</a> : <a href="-code-generator-extension/index.html">CodeGeneratorExtension</a>, <a href="-wiring-extension/index.html">WiringExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="478062513%2FClasslikes%2F-1360592001" anchor-label="Plugin" id="478062513%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-plugin/index.html"><span><span>Plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="478062513%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-plugin/index.html">Plugin</a> : <span data-unresolved-link="org.gradle.api/Plugin///PointingToDeclaration/">Plugin</span><span class="token operator">&lt;</span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span><span class="token operator">&gt; </span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-196383875%2FClasslikes%2F-1360592001" anchor-label="TasksPlugin" id="-196383875%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-tasks-plugin/index.html"><span>Tasks</span><wbr><span><span>Plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-196383875%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-tasks-plugin/index.html">TasksPlugin</a> : <span data-unresolved-link="org.gradle.api/Plugin///PointingToDeclaration/">Plugin</span><span class="token operator">&lt;</span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span><span class="token operator">&gt; </span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="2139907713%2FClasslikes%2F-1360592001" anchor-label="WiringExtension" id="2139907713%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-wiring-extension/index.html"><span>Wiring</span><wbr><span><span>Extension</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2139907713%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-wiring-extension/index.html">WiringExtension</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1017435407%2FClasslikes%2F-1360592001" anchor-label="WiringPlugin" id="1017435407%2FClasslikes%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-wiring-plugin/index.html"><span>Wiring</span><wbr><span><span>Plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1017435407%2FClasslikes%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="-wiring-plugin/index.html">WiringPlugin</a> : <span data-unresolved-link="org.gradle.api/Plugin///PointingToDeclaration/">Plugin</span><span class="token operator">&lt;</span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span><span class="token operator">&gt; </span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-gratatouille-tasks-extension/index.html">GratatouilleTasksExtension</a> : <a href="-code-generation-extension/index.html">CodeGenerationExtension</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -266,9 +163,9 @@
         </div>
       </div>
       <div data-togglable="PROPERTY">
-        <h2 class="">Properties</h2>
+        <h2 class="tableheader">Properties</h2>
         <div class="table"><a data-name="-150927641%2FProperties%2F-1360592001" anchor-label="VERSION" id="-150927641%2FProperties%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
+          <div class="table-row table-row_content" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-v-e-r-s-i-o-n.html"><span><span>VERSION</span></span></a></div>
@@ -277,56 +174,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-field/index.html"><span class="token annotation builtin">JvmField</span></a></div></div><span class="token keyword">val </span><a href="-v-e-r-s-i-o-n.html">VERSION</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div data-togglable="FUNCTION">
-        <h2 class="">Functions</h2>
-        <div class="table"><a data-name="-1621390528%2FFunctions%2F-1360592001" anchor-label="plugin" id="-1621390528%2FFunctions%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="plugin.html"><span><span>plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1621390528%2FFunctions%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="plugin.html"><span class="token function">plugin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="823270998%2FFunctions%2F-1360592001" anchor-label="tasksPlugin" id="823270998%2FFunctions%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="tasks-plugin.html"><span>tasks</span><wbr><span><span>Plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="823270998%2FFunctions%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="tasks-plugin.html"><span class="token function">tasksPlugin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="71915998%2FFunctions%2F-1360592001" anchor-label="wiringPlugin" id="71915998%2FFunctions%2F-1360592001" data-filterable-set=":gratatouille-gradle-plugin/main"></a>
-          <div class="table-row" data-filterable-current=":gratatouille-gradle-plugin/main" data-filterable-set=":gratatouille-gradle-plugin/main">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="wiring-plugin.html"><span>wiring</span><wbr><span><span>Plugin</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="71915998%2FFunctions%2F-1360592001"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="wiring-plugin.html"><span class="token function">wiringPlugin</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">project<span class="token operator">: </span><span data-unresolved-link="org.gradle.api/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":gratatouille-gradle-plugin/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-field/index.html"><span class="token annotation builtin">JvmField</span></a></div></div><span class="token keyword">val </span><a href="-v-e-r-s-i-o-n.html">VERSION</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -336,12 +184,22 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
             </div>
         </div>
     </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
