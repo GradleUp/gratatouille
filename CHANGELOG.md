@@ -1,5 +1,10 @@
 # Next version (unreleased)
 
+# 0.2.1
+_2025_12_25_
+
+Hotfix release to make it possible for plugins built with Gratatouille > 0.2.0 to work with the ones built with Gratatouille < 0.2.0 (#90)
+
 # 0.2.0 
 _2025_12_22_
 
