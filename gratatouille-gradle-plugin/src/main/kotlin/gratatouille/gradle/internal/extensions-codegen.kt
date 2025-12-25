@@ -4,8 +4,10 @@ import com.gradleup.gratatouille.gradle.BuildConfig
 import gratatouille.capitalizeFirstLetter
 import gratatouille.gradle.CodeGenerationExtension
 import gratatouille.gradle.GratatouilleTasksExtension
+import gratatouille.gradle.VERSION
 import gratatouille.gradle.tasks.registerZipFilesTask
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -19,12 +21,21 @@ internal fun Project.configureCodeGeneration(
       kspExtension.arg("enableKotlinxSerialization", extension.enableKotlinxSerialization.orElse(false).map { it.toString() })
 
       val taskExtension = extension as? GratatouilleTasksExtension
-      if (extension.addDependencies) {
-        if (taskExtension == null) {
-          // This is the main plugin
-          dependencies.add("implementation", dependencies.create("${BuildConfig.group}:gratatouille-runtime"))
+
+      val implementation = configurations.named("implementation")
+      implementation.configure { scope ->
+        scope.withDependencies { dependencySet ->
+          if (extension.addDependencies) {
+            if (taskExtension == null) {
+              dependencySet.addLater(provider {
+                dependencies.create("${BuildConfig.group}:gratatouille-runtime:$VERSION")
+              })
+            }
+            dependencySet.addLater(provider {
+              dependencies.create("${BuildConfig.group}:gratatouille-tasks-runtime:$VERSION")
+            })
+          }
         }
-        dependencies.add("implementation", dependencies.create("${BuildConfig.group}:gratatouille-tasks-runtime"))
       }
 
       if (taskExtension != null) {

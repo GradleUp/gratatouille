@@ -14,6 +14,5 @@ abstract class DefaultGratatouilleTasksExtension(project: Project): Gratatouille
     configurationName.convention(defaultCoordinates.map { "gratatouille${it.sanitize()}" })
 
     project.configureCodeGeneration(this)
-    project.configureDefaultVersionsResolutionStrategy()
   }
 }
