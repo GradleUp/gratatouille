@@ -17,7 +17,7 @@ internal fun Project.configureCodeGeneration(
 ) {
   pluginManager.withPlugin("com.google.devtools.ksp") {
     pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
-      dependencies.add("ksp", dependencies.create("${BuildConfig.group}:gratatouille-processor"))
+      dependencies.add("ksp", dependencies.create("${BuildConfig.group}:gratatouille-processor:$VERSION"))
       kspExtension.arg("enableKotlinxSerialization", extension.enableKotlinxSerialization.orElse(false).map { it.toString() })
 
       val taskExtension = extension as? GratatouilleTasksExtension
