@@ -30,7 +30,6 @@ abstract class DefaultGratatouilleExtension(private val project: Project): Grata
 
     project.kotlinExtension.sourceSets.getByName("main").kotlin.srcDir(unzipSources)
 
-    project.configureDefaultVersionsResolutionStrategy()
     project.configureCodeGeneration(this)
     project.pluginManager.apply("com.gradleup.tapmoc")
   }

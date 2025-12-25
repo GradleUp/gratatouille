@@ -8,21 +8,6 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 
-internal fun Project.configureDefaultVersionsResolutionStrategy() {
-    configurations.configureEach { configuration ->
-        configuration.withDependencies { dependencySet ->
-            val pluginVersion = VERSION
-            dependencySet.filterIsInstance<ExternalDependency>()
-                .filter {
-                    it.group == BuildConfig.group && it.version.isNullOrEmpty()
-                }
-                .forEach {
-                    it.version { constraint -> constraint.require(pluginVersion) }
-                }
-        }
-    }
-}
-
 internal fun String.displayName() =
     this.split(".").joinToString(separator = "") { it.replaceFirstChar { it.uppercase() } }
 
