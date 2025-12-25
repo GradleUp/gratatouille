@@ -87,7 +87,8 @@ private fun IrTask.register(): FunSpec {
           }
           add("}\n")
           add(
-            "gradle.sharedServices.registerIfAbsent(\"gratatouille\", %T::class.java) {}\n",
+            "gradle.sharedServices.registerIfAbsent(%S, %T::class.java) {}\n",
+            gratatouilleBuildServiceName,
             ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService")
           )
         }
@@ -198,7 +199,7 @@ private fun IrTask.task(): TypeSpec {
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(
               AnnotationSpec.builder(ClassName("org.gradle.api.services", "ServiceReference"))
-                .addMember("%S", "gratatouille")
+                .addMember("%S", gratatouilleBuildServiceName)
                 .build()
             )
             .returns(ClassName(gratatouilleWiringPackageName, "GratatouilleBuildService").toGradleProperty())
