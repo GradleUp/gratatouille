@@ -7,7 +7,9 @@ internal val outputFile = "outputFile"
 internal val classpath = "classpath"
 internal val workerExecutor = "getWorkerExecutor"
 internal val extraClasspath = "extraClasspath"
-internal val gratatouilleBuildService = "gratatouilleBuildService2"
+internal val gratatouilleBuildService = "gratatouilleBuildService"
+// Bump this every time the BuildService class name changes
+internal val gratatouilleBuildServiceName = "gratatouille2"
 
 internal val gratatouilleWiringPackageName = "gratatouille"
 internal val gratatouilleTasksPackageName = "gratatouille.tasks"
