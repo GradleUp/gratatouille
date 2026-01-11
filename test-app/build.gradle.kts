@@ -1,6 +1,5 @@
 import testplugin.TestExtension
 import testplugin.isolated.TestExtensionIsolated
-import kotlin.test.assertFailsWith
 
 buildscript {
   dependencies {
@@ -49,8 +48,9 @@ tasks.register("build") {
     check(file("build/gtask/taskActionIsolated/outputFile").readText() == "hello world - okio.Buffer")
 
     // Make sure we don't have okio in the classpath
-    assertFailsWith<ClassNotFoundException> {
+    try {
       Class.forName("okio.Buffer")
-    }
+      error("An error was expected")
+    } catch (_: ClassNotFoundException) { }
   }
 }
