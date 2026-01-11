@@ -6,6 +6,5 @@ plugins {
 module()
 
 dependencies {
-    implementation(libs.kotlin.test)
     compileOnly(libs.gradle.api)
 }
