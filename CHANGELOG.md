@@ -1,5 +1,13 @@
 # Next version (unreleased)
 
+# 0.2.2
+_2026_01_14_
+
+Small-ish version with 2 bug fixes:
+
+* [FIX] fix `addDependency = false` (#92, #93)
+* [FIX] Remove `kotlin-test` dependency from `gratatouille-runtime` (#95)
+
 # 0.2.1
 _2025_12_25_
 
