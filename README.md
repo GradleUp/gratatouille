@@ -1,4 +1,20 @@
-# Gratatouille 🐘🤝🐭👉🧑‍🍳 
+<header>
+  <div align="center">
+    <h1>Gratatouille 🐘🤝🐭👉🧑‍🍳 </h1>
+  </div>
+    <div align="center">
+
+[![Slack](https://img.shields.io/static/v1?label=gradle-community&message=gradleup&color=A97BFF&logo=slack&style=flat-square)](https://gradle-community.slack.com/archives/C07GJEMUZDH)
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.gradleup.gratatouille/gratatouille-gradle-plugin?style=flat-square)](https://central.sonatype.com/namespace/com.gradleup.nmcp)
+<!--[![Maven Snapshots](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcentral.sonatype.com%2Frepository%2Fmaven-snapshots%2Fcom%2Fgradleup%2Fgratatouille%2Fgratatouille-gradle-plugin%2Fmaven-metadata.xml&style=flat-square&label=maven-snapshots&color=%2300538A&strategy=latestProperty)](https://central.sonatype.com/repository/maven-snapshots/com/gradleup/gratatouille/gratatouille-gradle-plugin/maven-metadata.xml)
+[![Gradleup Snapshots](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fstorage.googleapis.com%2Fgradleup%2Fm2%2Fcom%2Fgradleup%2Fgratatouille%2fgratatouille-gradle-plugin%2Fmaven-metadata.xml&style=flat-square&label=gradleup-snapshots&color=%2315252D&strategy=latestProperty)](https://storage.googleapis.com/gradleup/m2/com/gradleup/gratatouille/gratatouille-gradle-plugin/maven-metadata.xml)-->
+  </div> 
+</header>
+
+
+---
+
 
 Gratatouille is an opinionated framework to build Gradle plugins. Write Kotlin functions and the Gratatouille KSP processor generates tasks, workers, and wiring code for you.
 
