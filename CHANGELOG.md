@@ -1,5 +1,10 @@
 # Next version (unreleased)
 
+# 0.2.3
+_2026_05_22_
+
+Make generated code compatible with Gradle 9 nullability annotations (#97).
+
 # 0.2.2
 _2026_01_14_
 
