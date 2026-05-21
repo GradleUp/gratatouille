@@ -39,13 +39,13 @@ private fun IrTask.register(): FunSpec {
         .build()
     )
     .addParameter(
-      ParameterSpec.builder(taskDescription, ClassName("kotlin", "String").copy(nullable = true))
-        .defaultValue(description.toCodeBlock())
+      ParameterSpec.builder(taskDescription, ClassName("kotlin", "String"))
+        .defaultValue(description.orEmpty().toCodeBlock())
         .build()
     )
     .addParameter(
-      ParameterSpec.builder(taskGroup, ClassName("kotlin", "String").copy(nullable = true))
-        .defaultValue(group.toCodeBlock())
+      ParameterSpec.builder(taskGroup, ClassName("kotlin", "String"))
+        .defaultValue(group.orEmpty().toCodeBlock())
         .build()
     )
     .addParameter(
