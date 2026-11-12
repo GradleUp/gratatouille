@@ -97,7 +97,10 @@ annotation class GFileName(val name: String)
 typealias GInputFile = File
 
 /**
- * An input file with a normalized path
+ * An input file with a normalized path trying to match Gradle file normalization.
+ * Because [normalizedPath] might be persisted and generated on different platforms, it always uses `/` as a separator.
+ *
+ * @param normalizedPath the normalized path with `/` as separator, regardless of the platform.
  */
 class FileWithPath(val file: File, val normalizedPath: String)
 
